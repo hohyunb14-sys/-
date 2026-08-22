@@ -228,7 +228,30 @@ button{font:inherit;color:inherit;cursor:pointer}
 .rv-hint{font-size:11px;color:var(--paper-faint);line-height:1.6;margin:0}
 .screen .clickhint{position:absolute;bottom:12px;right:12px;font-size:11px;color:var(--paper-faint);background:rgba(11,13,19,.78);border:1px solid var(--line);border-radius:2px;padding:5px 9px}
 
-/* org chart */
+/* live badge */
+.livetag{
+  position:absolute;top:12px;left:12px;display:flex;align-items:center;gap:7px;
+  font-size:11.5px;padding:5px 10px;border-radius:2px;
+  background:rgba(11,13,19,.82);border:1px solid #3D6B52;color:#8FD3AC;
+}
+.livetag i{width:6px;height:6px;border-radius:50%;background:#6FB89A;flex:none}
+.screen .mode-tag.shift{top:auto;bottom:12px;left:12px}
+
+/* prompt bridge */
+.promptcard[hidden]{display:none}
+.promptcard h2 .n{color:var(--brass)}
+.pbox{
+  background:#12151D;border:1px solid var(--line);border-radius:3px;
+  padding:12px 13px;font-family:var(--f-body);font-size:12.5px;line-height:1.7;
+  color:var(--paper);white-space:pre-wrap;max-height:230px;overflow-y:auto;
+  overflow-wrap:anywhere;
+}
+.pfoot{display:flex;gap:8px;align-items:center;margin-top:10px;flex-wrap:wrap}
+.pfoot .note{font-size:11.5px;color:var(--paper-faint);flex:1;min-width:180px}
+.realnote{font-size:11.5px;color:var(--paper-faint);margin:0}
+.realnote b{color:var(--brass);font-weight:500}
+
+/* org chart
 .org{font-size:12.5px;line-height:1.75}
 .org .lv0{font-family:var(--f-display);font-weight:700;color:var(--paper)}
 .org .row{display:flex;gap:7px;align-items:baseline;white-space:nowrap;overflow:hidden}
@@ -306,6 +329,7 @@ button{font:inherit;color:inherit;cursor:pointer}
       <section class="stage">
         <div class="screen">
           <canvas id="map" width="960" height="600" aria-label="사무실 평면도 애니메이션: 비서와 직원 캐릭터들이 방 사이를 이동하며 지시를 전달하고, 서로 찾아가 대화하고, 회의실에 모여 회의합니다."></canvas>
+          <div class="livetag" id="livetag" hidden><i></i><span></span></div>
           <div class="mode-tag" id="modetag">근무일 모드</div>
           <div class="clickhint">방을 클릭하면 콘텐츠 연관도가 열립니다</div>
 
@@ -340,8 +364,19 @@ button{font:inherit;color:inherit;cursor:pointer}
             <button type="submit" class="ghost send">지시</button>
           </form>
           <div class="order-list" id="orderlist"></div>
+          <p class="realnote" id="realnote" hidden></p>
         </div>
       </section>
+
+      <div class="card promptcard" id="promptcard" hidden>
+        <h2>Claude Code 에 붙여넣을 지시 <span class="n" id="ptarget"></span></h2>
+        <div class="pbox" id="pbox"></div>
+        <div class="pfoot">
+          <button class="ghost send" id="pcopy">복사</button>
+          <button class="ghost" id="pclose">닫기</button>
+          <span class="note">이 방의 원칙이 이미 들어 있습니다. 터미널에서 <b>claude</b> 를 켜고 그대로 붙여넣으세요.</span>
+        </div>
+      </div>
 
       <div class="duo">
       <div class="card">
@@ -409,6 +444,7 @@ button{font:inherit;color:inherit;cursor:pointer}
   </div>
 </div>
 
+<script src="state.js"></script>
 <script>
 (function () {
   "use strict";
@@ -417,6 +453,14 @@ button{font:inherit;color:inherit;cursor:pointer}
   const cv = document.getElementById("map");
   const ctx = cv.getContext("2d");
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  function mixHex(hex, amt) {
+    const n = parseInt(hex.slice(1), 16);
+    const c = [(n >> 16), ((n >> 8) & 255), (n & 255)].map(function (v) {
+      return Math.max(0, Math.min(255, v + amt));
+    });
+    return "#" + c.map(function (v) { return ("0" + v.toString(16)).slice(-2); }).join("");
+  }
 
   function shade(hex, amt) {
     const n = parseInt(hex.slice(1), 16);
@@ -547,7 +591,7 @@ button{font:inherit;color:inherit;cursor:pointer}
     { accent: "#D98BA8", floor: "#43323A", wall: "#5B4450", rug: "#4C3A43" },
     { accent: "#7FC4C9", floor: "#2C3D40", wall: "#3D5457", rug: "#354A4D" }
   ];
-  function workRooms() { return ROOMS.filter(function (r) { return !r.isMeeting; }); }
+  function workRooms() { return ROOMS.filter(function (r) { return !r.isMeeting && !r.hidden; }); }
 
   /* ============================================================
      직원 — 각자 이름과 역할이 있는 캐릭터
@@ -1259,6 +1303,7 @@ button{font:inherit;color:inherit;cursor:pointer}
     tiles(150, TOPY - 14, 660, 28, "#222735", "rgba(0,0,0,.16)");
     tiles(150, BOTY - 14, 650, 28, "#222735", "rgba(0,0,0,.16)");
     ROOMS.forEach(function (rm) {
+      if (rm.hidden) return;
       const cy = rm.j[1];
       const y1 = rm.side === "top" ? rm.rect.y + rm.rect.h : cy + 14;
       const y2 = rm.side === "top" ? cy - 14 : rm.rect.y;
@@ -1277,9 +1322,9 @@ button{font:inherit;color:inherit;cursor:pointer}
     ctx.strokeRect(HUB.x + 25.5, HUB.y + 99.5, 109, 19);
     plant(HUB.x + 14, HUB.y + 34); plant(HUB.x + HUB.w - 14, HUB.y + 34);
 
-    ROOMS.forEach(roomShell);
-    ROOMS.forEach(props);
-    ROOMS.forEach(shelf);
+    ROOMS.forEach(function (r) { if (r.hidden) return; roomShell(r); });
+    ROOMS.forEach(function (r) { if (r.hidden) return; props(r); });
+    ROOMS.forEach(function (r) { if (r.hidden) return; shelf(r); });
 
     // 대표
     person(BOSS.x, BOSS.y, { coat: "#4C5670", hair: "#191A22", facing: "down", tick: tick });
@@ -1482,7 +1527,8 @@ button{font:inherit;color:inherit;cursor:pointer}
         return '<div class="' + fresh.trim() + '">' + br + ' <span class="path" style="color:' + r.c + '">' +
           r.p + '</span><span class="n">' + r.n + '</span></div>';
       }).join("") +
-      '<div>&nbsp;&nbsp; <span class="path">daily/' + today() + '.md</span><span class="n">1</span></div>';
+      '<div>&nbsp;&nbsp; <span class="path">daily/' + (REAL && REAL.today ? REAL.today.date : today()) +
+      '.md</span><span class="n">' + (REAL ? (REAL.today && REAL.today.found ? 1 : 0) : 1) + '</span></div>';
   }
   function renderBrief() {
     const working = AGENTS.filter(function (a) { return a.active; }).length;
@@ -1502,6 +1548,25 @@ button{font:inherit;color:inherit;cursor:pointer}
   const elTokBar = document.getElementById("tokbar");
   const elTokRows = document.getElementById("tokrows");
   function renderTokens() {
+    if (REAL && TOK.real) {
+      const t = TOK.real;
+      elTokNum.textContent = fmt(t.today);
+      elTokBar.style.width = (t.total ? Math.min(100, t.today / t.total * 100) : 0) + "%";
+      const suf = document.querySelector(".tok-total span");
+      if (suf) suf.textContent = "tok · 오늘 (누적 " + fmt(t.total) + ")";
+      const mx = Math.max.apply(null, [1].concat(t.byProject.map(function (r) { return r.tokens; })));
+      elTokRows.innerHTML = t.byProject.map(function (r) {
+        return '<div class="tok-row" style="color:var(--brass)">' +
+          '<span class="who">' + r.name + '</span>' +
+          '<span class="track"><i style="width:' + (r.tokens / mx * 100) + '%"></i></span>' +
+          '<span class="num">' + fmt(r.tokens) + '</span></div>';
+      }).join("") || '<div class="tok-row"><span class="who">기록 없음</span></div>';
+      document.getElementById("tokday").textContent = "오늘 · 실측";
+      const note = document.querySelector(".tok-note");
+      if (note) note.innerHTML = "<b>실측</b>입니다 — <code>~/.claude/projects</code> 로그를 읽었습니다. " +
+        "누적 " + fmt(t.total) + " tok, 프로젝트별 상위 " + t.byProject.length + "개.";
+      return;
+    }
     elTokNum.textContent = fmt(TOK.total);
     elTokBar.style.width = Math.min(100, TOK.total / TOK.budget * 100) + "%";
     const rows = [{ n: SEC.name, k: "sec", c: SEC.coat }].concat(AGENTS.map(function (a) {
@@ -1589,9 +1654,12 @@ button{font:inherit;color:inherit;cursor:pointer}
     if (!src || !dst || src.key === dst.key || src.isMeeting) {
       pending.push(task);
       addLog(dst.name, "<em>" + item.label + "</em>에서 파생 · " + d.label);
+      showPrompt(task, item);
       return true;
     }
-    return negotiate(src, dst, item, task);
+    const ok = negotiate(src, dst, item, task);
+    if (ok) showPrompt(task, item);
+    return ok;
   }
 
   /* ---- 다른 방 일이면 두 실장이 먼저 조율한다 ---- */
@@ -1635,7 +1703,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 
   function allItems() {
     const out = [];
-    ROOMS.forEach(function (r) { r.items.forEach(function (it) { out.push(it); }); });
+    ROOMS.forEach(function (r) { if (!r.hidden) r.items.forEach(function (it) { out.push(it); }); });
     return out;
   }
   function itemById(id) {
@@ -1658,14 +1726,14 @@ button{font:inherit;color:inherit;cursor:pointer}
       extSeen[it.id] = 1; ext.push({ it: it, room: o, why: why });
     }
     ROOMS.forEach(function (o) {
-      if (o === room) return;
+      if (o === room || o.hidden) return;
       o.items.forEach(function (it) {
         if (it.parent && mine[it.parent]) addExt(it, o, "child");
         else if (items.some(function (m) { return m.parent === it.id; })) addExt(it, o, "parent");
       });
     });
     ROOMS.forEach(function (o) {
-      if (o === room) return;
+      if (o === room || o.hidden) return;
       o.items.forEach(function (it) {
         const hit = it.tags.some(function (t) { return items.some(function (m) { return m.tags.indexOf(t) >= 0; }); });
         if (hit) addExt(it, o, "tag");
@@ -1855,6 +1923,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 
   function hitRoom(lx, ly) {
     for (let i = 0; i < ROOMS.length; i++) {
+      if (ROOMS[i].hidden) continue;
       const r = ROOMS[i].rect;
       if (lx >= r.x && lx <= r.x + r.w && ly >= r.y && ly <= r.y + r.h) return ROOMS[i].key;
     }
@@ -1923,10 +1992,12 @@ button{font:inherit;color:inherit;cursor:pointer}
       ROUTE_WORDS[k].forEach(function (w) { if (text.indexOf(w) >= 0 && tags.indexOf(w) < 0 && tags.length < 3) tags.push(w); });
     });
     if (!tags.length) tags.push("지시");
-    issue({
+    const task = {
       room: roomKey, title: text, product: short, file: "order-" + customSeq,
       dur: 3 + Math.min(6, text.length / 11), tok: 2200 + text.length * 190, tags: tags
-    });
+    };
+    issue(task);
+    showPrompt(task, null);
     if (!sure) addLog("비서", "방을 못 정해서 <em>" + R[roomKey].name + "</em>으로 보냅니다");
   }
 
@@ -2036,6 +2107,174 @@ button{font:inherit;color:inherit;cursor:pointer}
     const canNew = ROOMS.filter(function (r) { return r.custom; }).length < ROOM_SLOTS.length;
     sr.innerHTML = room + (canNew ? '<option value="__new__">+ 새 방 만들기</option>' : "");
   }
+
+  /* ============================================================
+     실데이터 — ~/agency 를 읽어온 state.js 가 있으면 그것으로 채운다
+     ============================================================ */
+  let REAL = null;
+
+  function tagsFor(label, room) {
+    const t = [];
+    Object.keys(ROUTE_WORDS).forEach(function (k) {
+      ROUTE_WORDS[k].forEach(function (w) { if (label.indexOf(w) >= 0 && t.indexOf(w) < 0 && t.length < 3) t.push(w); });
+    });
+    if (!t.length) t.push(room && room.identity ? "기록" : "기록");
+    return t;
+  }
+
+  function applyState() {
+    const st = window.AGENCY_STATE;
+    if (!st || !st.rooms || !st.rooms.length) return null;
+
+    const base = [R.content, R.health, R.channel];
+    const mapped = [];
+    st.rooms.slice(0, 5).forEach(function (rs, i) {
+      let room;
+      if (i < base.length) room = base[i];
+      else { room = createRoom(rs.name, rs.principle); if (!room) return; }
+      room.name = rs.name;
+      room.srcKey = rs.key;
+      room.folder = "rooms/" + rs.key;
+      room.accent = rs.color || room.accent;
+      room.hidden = false;
+      room.identity = {
+        motto: rs.motto, principle: rs.principle,
+        refuse: rs.refuse || [], voice: rs.voice || ""
+      };
+      room.items = [];
+      room.extras = rs.extras || 0;
+      mapped.push({ room: room, src: rs });
+    });
+    for (let i = st.rooms.length; i < base.length; i++) base[i].hidden = true;
+
+    // 사람
+    AGENTS.length = 0;
+    Object.keys(AG).forEach(function (k) { delete AG[k]; });
+    Object.keys(act).forEach(function (k) { if (k !== "sec") delete act[k]; });
+    Object.keys(TOK.by).forEach(function (k) { if (k !== "sec") delete TOK.by[k]; });
+    (st.team || []).forEach(function (t, i) {
+      const m = mapped.filter(function (x) { return x.src.key === t.room; })[0];
+      if (!m) return;
+      const n = roomAgents(m.room.key).length;
+      if (n >= m.room.slots.length) return;
+      const key = "p" + i;
+      const ag = {
+        key: key, name: t.name, role: t.role, room: m.room.key,
+        coat: mixHex(m.room.accent, -52 - n * 16), hair: HAIRS[i % HAIRS.length], skin: "#E4B489",
+        slotIndex: n, rank: t.rank || RANKS[Math.min(n, RANKS.length - 1)],
+        active: null, progress: 0
+      };
+      AGENTS.push(ag); AG[key] = ag; TOK.by[key] = 0;
+      spawnActor(ag);
+    });
+
+    // 결과물
+    const byFile = {};
+    mapped.forEach(function (m) {
+      m.src.items.forEach(function (f) {
+        const it = {
+          label: f.label, file: f.file.replace(/\.(md|markdown)$/i, ""),
+          tags: (f.tags && f.tags.length) ? f.tags : tagsFor(f.label, m.room),
+          color: m.room.accent, kind: "item", by: f.by || "",
+          constraints: (f.constraints && f.constraints.length) ? f.constraints : null,
+          parent: null, _from: f.from || ""
+        };
+        addItem(m.room, it);
+        byFile[f.file] = it.id;
+        m.room.lastFile = f.file;
+      });
+    });
+    (st.meetings || []).concat(st.depts || []).forEach(function (f) {
+      const it = {
+        label: f.label, file: f.file.replace(/\.(md|markdown)$/i, ""),
+        tags: (f.tags && f.tags.length) ? f.tags : [f.kind === "dept" ? "부서" : "회의"],
+        color: f.kind === "dept" ? "#C9564A" : R.meeting.accent, kind: f.kind,
+        constraints: (f.constraints && f.constraints.length) ? f.constraints : null,
+        parent: null, _from: f.from || ""
+      };
+      addItem(R.meeting, it);
+      byFile[f.file] = it.id;
+    });
+    allItems().forEach(function (it) { if (it._from && byFile[it._from]) it.parent = byFile[it._from]; });
+
+    // 부서 설명을 실제 방 이름으로
+    for (let i = DEPTS.length - 1; i >= 0; i--) {
+      const d = DEPTS[i];
+      if (!d.rooms.every(function (k) { return R[k] && !R[k].hidden; })) { DEPTS.splice(i, 1); continue; }
+      d.line = d.rooms.map(function (k) { return "“" + R[k].identity.motto + "”"; }).join(" + ") + " → " + d.product;
+      d.rooms.forEach(function (k) { d.have[k] = 0; });
+    }
+
+    // 오늘 · 토큰
+    if (st.today && st.today.mode) setMode(st.today.mode);
+    if (st.tokens) {
+      TOK.total = st.tokens.today || st.tokens.total || 0;
+      TOK.real = st.tokens;
+    }
+
+    // 화면 표시
+    const lt = document.getElementById("livetag");
+    const when = (st.scannedAt || "").slice(11, 16);
+    lt.hidden = false;
+    lt.querySelector("span").textContent = "실데이터 · " + (st.agencyDir || "~/agency") + (when ? " · " + when + " 스캔" : "");
+    document.getElementById("modetag").classList.add("shift");
+    document.getElementById("orderlist").hidden = true;
+    const rn = document.getElementById("realnote");
+    rn.hidden = false;
+    rn.innerHTML = "여기서 낸 지시는 <b>화면 안에서만</b> 돕니다. 실제 파일은 Claude Code 가 만듭니다 — " +
+      "지시를 내리면 그 방 원칙이 들어간 <b>붙여넣을 프롬프트</b>가 아래에 나옵니다.";
+    state.auto = false;
+    const ba = document.getElementById("auto");
+    ba.setAttribute("aria-pressed", "false");
+    addLog("시스템", "<em>" + (st.agencyDir || "~/agency") + "</em> 읽음 · 결과물 " +
+      allItems().length + "개, " + AGENTS.length + "명");
+    return st;
+  }
+
+  /* ---- 화면의 지시를 Claude Code 프롬프트로 ---- */
+  const pcard = document.getElementById("promptcard");
+  const pbox = document.getElementById("pbox");
+  function showPrompt(task, srcItem) {
+    if (!REAL) return;
+    const room = R[task.room], id = room.identity || {};
+    const stamp = today();
+    let t = "(~/agency 에서 claude 를 켠 상태 기준)\n\n" + room.folder + "/ 에서 작업해줘.\n\n";
+    t += "할 일: " + task.title + "\n";
+    if (srcItem) t += "출처 파일: " + (srcItem.file || "") + ".md\n";
+    t += "\n이 방 원칙 (" + room.folder + "/CLAUDE.md):\n";
+    t += "- “" + (id.motto || room.name) + "” — " + (id.principle || "") + "\n";
+    if (id.refuse && id.refuse.length) t += "- 안 하는 것: " + id.refuse.join(", ") + "\n";
+    if (id.voice) t += "- 말투: " + id.voice + "\n";
+    if (task.constraints && task.constraints.length) {
+      t += "\n다른 방과 조율한 것:\n" + task.constraints.map(function (c) { return "- " + c; }).join("\n") + "\n";
+    }
+    t += "\n결과는 " + room.folder + "/" + stamp + "_제목.md 로 새로 만들고, 앞머리에 이렇게 적어줘.\n";
+    t += "---\n결과물: " + task.product + "\n태그: " + task.tags.join(", ") + "\n작성: " +
+      ((headOf(room.key) && headOf(room.key).name + " " + headOf(room.key).rank) || "") + "\n";
+    if (srcItem) t += "출처: " + (srcItem.file || "") + ".md\n";
+    if (task.constraints && task.constraints.length) t += "원칙: " + task.constraints.join(", ") + "\n";
+    t += "---\n\n기존 파일은 지우거나 고치지 말아줘.";
+    pbox.textContent = t;
+    document.getElementById("ptarget").textContent = room.name;
+    pcard.hidden = false;
+    pcard.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
+  document.getElementById("pclose").addEventListener("click", function () { pcard.hidden = true; });
+  document.getElementById("pcopy").addEventListener("click", function () {
+    const btn = document.getElementById("pcopy");
+    const done = function () { btn.textContent = "복사됨"; setTimeout(function () { btn.textContent = "복사"; }, 1600); };
+    try {
+      navigator.clipboard.writeText(pbox.textContent).then(done, function () {
+        const r = document.createRange(); r.selectNodeContents(pbox);
+        const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(r);
+        btn.textContent = "전체 선택됨 — ⌘C";
+      });
+    } catch (e) {
+      const r = document.createRange(); r.selectNodeContents(pbox);
+      const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(r);
+      btn.textContent = "전체 선택됨 — ⌘C";
+    }
+  });
 
   /* ============================================================
      컨트롤
@@ -2193,7 +2432,10 @@ button{font:inherit;color:inherit;cursor:pointer}
   }
   clock(); setInterval(clock, 20000);
 
-  renderRoomSelects(); loadRoster(); renderRoomSelects();
+  REAL = applyState();
+  renderRoomSelects();
+  if (!REAL) loadRoster();
+  renderRoomSelects();
   renderTeam(); renderOrg(); renderTree(); renderBrief(); renderDepts(); renderMtg(); renderTx(); renderTokens(); renderLog();
   addLog("시스템", "사무실 문을 열었습니다");
   fit();
