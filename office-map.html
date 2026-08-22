@@ -1,0 +1,1018 @@
+<title>방호현 에이전시</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@400;700;800&family=IBM+Plex+Sans+KR:wght@400;500;600&family=Silkscreen:wght@400;700&display=swap">
+
+<style>
+:root{
+  --ground:#0F1117;
+  --panel:#171A22;
+  --panel-2:#1C202A;
+  --line:#2A2F3B;
+  --line-soft:#232733;
+  --paper:#E9E4D8;
+  --paper-dim:#98A0B0;
+  --paper-faint:#697184;
+  --brass:#E0A458;
+  --jade:#6FB89A;
+  --violet:#9A87D4;
+  --ember:#C9564A;
+
+  --f-display:"Gothic A1","Apple SD Gothic Neo",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans KR","Apple SD Gothic Neo",system-ui,sans-serif;
+  --f-data:"Silkscreen","IBM Plex Sans KR",monospace;
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  background:var(--ground);
+  color:var(--paper);
+  font-family:var(--f-body);
+  font-size:14px;
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+  background-image:
+    radial-gradient(1100px 600px at 22% -10%, rgba(224,164,88,.07), transparent 60%),
+    radial-gradient(900px 700px at 92% 110%, rgba(154,135,212,.07), transparent 60%);
+}
+
+.wrap{max-width:1440px;margin:0 auto;padding:24px 22px 40px}
+
+/* ---------- header ---------- */
+.top{
+  display:flex;align-items:flex-end;justify-content:space-between;
+  gap:20px;flex-wrap:wrap;
+  padding-bottom:16px;margin-bottom:18px;
+  border-bottom:1px solid var(--line);
+}
+.brand{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.brand h1{
+  font-family:var(--f-display);font-weight:800;
+  font-size:clamp(21px,2.5vw,30px);letter-spacing:-.02em;
+  margin:0;color:var(--paper);text-wrap:balance;
+}
+.brand .sub{color:var(--paper-faint);font-size:13px}
+.topmeta{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.clock{
+  font-family:var(--f-data);font-size:15px;color:var(--brass);
+  letter-spacing:.04em;font-variant-numeric:tabular-nums;
+}
+.datestr{font-size:12.5px;color:var(--paper-faint)}
+
+/* ---------- shell ---------- */
+.shell{display:grid;grid-template-columns:minmax(0,1fr) 348px;gap:18px;align-items:start}
+@media (max-width:1060px){.shell{grid-template-columns:1fr}}
+.col{display:flex;flex-direction:column;gap:16px;min-width:0}
+
+/* ---------- stage ---------- */
+.stage{
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:4px;
+  overflow:hidden;
+}
+.screen{position:relative;width:100%;aspect-ratio:960/600;background:#0B0D13}
+.screen canvas{display:block;width:100%;height:100%;image-rendering:pixelated}
+.screen .mode-tag{
+  position:absolute;top:12px;left:12px;
+  font-family:var(--f-data);font-size:10px;letter-spacing:.12em;
+  padding:5px 9px;border-radius:2px;
+  background:rgba(11,13,19,.78);border:1px solid var(--line);
+  color:var(--paper-dim);
+}
+
+/* ---------- order bar ---------- */
+.orders{
+  border-top:1px solid var(--line);
+  padding:14px 16px 16px;
+  background:var(--panel-2);
+  display:flex;flex-direction:column;gap:11px;
+}
+.orders-head{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+}
+.eyebrow{
+  font-family:var(--f-data);font-size:10px;letter-spacing:.14em;
+  color:var(--paper-faint);
+}
+.order-list{display:flex;flex-wrap:wrap;gap:8px}
+button{font:inherit;color:inherit;cursor:pointer}
+.order{
+  display:inline-flex;align-items:center;gap:8px;
+  background:#20242F;border:1px solid var(--line);
+  border-left:3px solid var(--rc,var(--brass));
+  border-radius:3px;padding:8px 12px;font-size:12.5px;
+  transition:background .14s ease,transform .14s ease,border-color .14s ease;
+}
+.order:hover{background:#282D3A;transform:translateY(-1px)}
+.order:active{transform:translateY(0)}
+.order .rc-dot{width:6px;height:6px;border-radius:50%;background:var(--rc,var(--brass))}
+.order:focus-visible,.pill:focus-visible,.ghost:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
+
+.controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.ghost{
+  background:transparent;border:1px solid var(--line);border-radius:3px;
+  padding:6px 11px;font-size:12px;color:var(--paper-dim);
+  transition:border-color .14s ease,color .14s ease;
+}
+.ghost:hover{border-color:#3C4354;color:var(--paper)}
+.ghost[aria-pressed="true"]{border-color:var(--brass);color:var(--brass)}
+
+/* ---------- console rail ---------- */
+.rail{display:flex;flex-direction:column;gap:14px}
+.card{
+  background:var(--panel);border:1px solid var(--line);border-radius:4px;
+  padding:14px 15px;
+}
+.card > h2{
+  font-family:var(--f-data);font-size:10px;letter-spacing:.14em;
+  color:var(--paper-faint);margin:0 0 11px;font-weight:400;
+}
+
+/* mode switch */
+.modes{display:flex;gap:6px;margin-bottom:12px}
+.pill{
+  flex:1;background:#20242F;border:1px solid var(--line);
+  border-radius:3px;padding:8px 6px;font-size:12.5px;color:var(--paper-dim);
+  transition:all .16s ease;
+}
+.pill[aria-pressed="true"]{background:#2B3140;border-color:#4A5266;color:var(--paper)}
+.brief{
+  font-size:13px;line-height:1.65;color:var(--paper);
+  border-left:2px solid var(--brass);padding-left:11px;
+}
+.brief b{color:var(--brass);font-weight:600;font-variant-numeric:tabular-nums}
+
+/* room cards */
+.rooms{display:flex;flex-direction:column;gap:9px}
+.room{
+  background:var(--panel-2);border:1px solid var(--line-soft);
+  border-radius:3px;padding:10px 11px;
+  display:flex;flex-direction:column;gap:7px;
+}
+.room-top{display:flex;align-items:center;gap:8px}
+.room-swatch{width:9px;height:9px;border-radius:1px;flex:none}
+.room-name{font-family:var(--f-display);font-weight:700;font-size:13.5px;flex:1;letter-spacing:-.01em}
+.room-count{
+  font-family:var(--f-data);font-size:13px;color:var(--paper);
+  font-variant-numeric:tabular-nums;
+}
+.room-count span{font-size:9px;color:var(--paper-faint);margin-left:3px}
+.room-status{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.status-txt{font-size:11.5px;color:var(--paper-faint)}
+.status-txt.on{color:var(--paper-dim)}
+.bar{height:3px;background:#252A36;border-radius:2px;overflow:hidden;flex:1;max-width:110px}
+.bar i{display:block;height:100%;width:0%;background:currentColor;transition:width .2s linear}
+.room-last{font-size:11px;color:var(--paper-faint);font-family:var(--f-body)}
+
+/* log */
+.log{
+  display:flex;flex-direction:column;gap:0;
+  max-height:168px;overflow-y:auto;
+  font-size:12px;
+}
+.log li{
+  list-style:none;display:flex;gap:9px;padding:5px 0;
+  border-bottom:1px solid var(--line-soft);
+}
+.log li:last-child{border-bottom:0}
+.log time{
+  font-family:var(--f-data);font-size:10px;color:var(--paper-faint);
+  padding-top:2px;flex:none;font-variant-numeric:tabular-nums;
+}
+.log p{margin:0;color:var(--paper-dim);line-height:1.5}
+.log p em{font-style:normal;color:var(--paper)}
+.log::-webkit-scrollbar{width:6px}
+.log::-webkit-scrollbar-thumb{background:#2E3441;border-radius:3px}
+
+/* folder mirror */
+.tree{
+  font-family:var(--f-data);font-size:11px;line-height:2;
+  color:var(--paper-faint);letter-spacing:.01em;
+}
+.tree div{display:flex;align-items:center;gap:8px;white-space:nowrap}
+.tree .path{color:var(--paper-dim);overflow:hidden;text-overflow:ellipsis}
+.tree .n{margin-left:auto;color:var(--paper);font-variant-numeric:tabular-nums}
+.tree .fresh{animation:flash 1.1s ease-out}
+@keyframes flash{from{color:var(--brass)}to{color:inherit}}
+.mirror-note{
+  margin:0;font-family:var(--f-body);font-size:12px;
+  color:var(--paper-faint);line-height:1.7;max-width:34ch;
+}
+.mirror-body{display:grid;grid-template-columns:minmax(220px,1fr) auto;gap:26px;align-items:start}
+@media (max-width:640px){.mirror-body{grid-template-columns:1fr;gap:14px}}
+
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.001s !important;transition-duration:.001s !important}
+}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <h1>방호현 에이전시</h1>
+      <span class="sub">비서 1명 · 방 3개 · 오늘의 운영 현황</span>
+    </div>
+    <div class="topmeta">
+      <span class="datestr" id="datestr"></span>
+      <span class="clock" id="clock">00:00</span>
+    </div>
+  </header>
+
+  <div class="shell">
+    <div class="col">
+    <section class="stage">
+      <div class="screen">
+        <canvas id="map" width="960" height="600" aria-label="사무실 평면도 애니메이션: 비서 캐릭터가 방 사이를 이동하며 지시를 전달하고 결과물을 정리합니다."></canvas>
+        <div class="mode-tag" id="modetag">근무일 모드</div>
+      </div>
+
+      <div class="orders">
+        <div class="orders-head">
+          <span class="eyebrow">지시 내리기</span>
+          <div class="controls">
+            <button class="ghost" id="auto" aria-pressed="true">자동 진행</button>
+            <button class="ghost" id="reset">비우기</button>
+          </div>
+        </div>
+        <div class="order-list" id="orderlist"></div>
+      </div>
+    </section>
+
+      <div class="card">
+        <h2>~/agency/</h2>
+        <div class="mirror-body">
+          <div class="tree" id="tree"></div>
+          <p class="mirror-note">화면은 이 폴더를 비추는 거울입니다. 방에 물건이 하나 쌓이면 여기에 파일이 하나 생깁니다.</p>
+        </div>
+      </div>
+    </div>
+
+    <aside class="rail">
+      <div class="card">
+        <h2>TODAY</h2>
+        <div class="modes">
+          <button class="pill" id="m-work" aria-pressed="true">근무일</button>
+          <button class="pill" id="m-off" aria-pressed="false">휴무일</button>
+        </div>
+        <p class="brief" id="brief"></p>
+      </div>
+
+      <div class="card">
+        <h2>ROOMS</h2>
+        <div class="rooms" id="roomcards"></div>
+      </div>
+
+      <div class="card">
+        <h2>ACTIVITY</h2>
+        <ul class="log" id="log"></ul>
+      </div>
+
+    </aside>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ============================================================
+     0. 기본 설정
+     ============================================================ */
+  const W = 960, H = 600;
+  const cv = document.getElementById("map");
+  const ctx = cv.getContext("2d");
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  function shade(hex, amt) {
+    const n = parseInt(hex.slice(1), 16);
+    let r = (n >> 16) + amt, g = ((n >> 8) & 255) + amt, b = (n & 255) + amt;
+    r = Math.max(0, Math.min(255, r)); g = Math.max(0, Math.min(255, g)); b = Math.max(0, Math.min(255, b));
+    return "rgb(" + r + "," + g + "," + b + ")";
+  }
+  function pad(n) { return n < 10 ? "0" + n : "" + n; }
+  function nowHM() { const d = new Date(); return pad(d.getHours()) + ":" + pad(d.getMinutes()); }
+
+  /* ============================================================
+     1. 방 정의 — 화면의 방 = ~/agency/rooms 의 폴더 하나
+     ============================================================ */
+  const ROOMS = [
+    {
+      key: "content", name: "장례 콘텐츠실", folder: "rooms/funeral-content",
+      accent: "#E0A458", floor: "#33364A", wall: "#454A63", rug: "#3B3E55",
+      rect: { x: 60, y: 40, w: 250, h: 152 },
+      door: 185, stand: { x: 185, y: 162 },
+      staff: { x: 208, y: 112 }, desk: { x: 176, y: 108, w: 66, h: 24 },
+      shelf: { x: 78, y: 60, w: 78, h: 48 },
+      staffCoat: "#B8543F", staffHair: "#20191C",
+      role: "작가"
+    },
+    {
+      key: "health", name: "건강관리실", folder: "rooms/health",
+      accent: "#6FB89A", floor: "#2C4038", wall: "#3B564A", rug: "#33493F",
+      rect: { x: 650, y: 40, w: 250, h: 152 },
+      door: 775, stand: { x: 775, y: 162 },
+      staff: { x: 752, y: 112 }, desk: { x: 720, y: 108, w: 66, h: 24 },
+      shelf: { x: 806, y: 60, w: 78, h: 48 },
+      staffCoat: "#3F8E74", staffHair: "#181F1C",
+      role: "트레이너"
+    },
+    {
+      key: "channel", name: "자기계발 채널실", folder: "rooms/channel",
+      accent: "#9A87D4", floor: "#3A3049", wall: "#4C4062", rug: "#443856",
+      rect: { x: 356, y: 432, w: 250, h: 132 },
+      door: 480, stand: { x: 480, y: 470 },
+      staff: { x: 546, y: 522 }, desk: { x: 514, y: 524, w: 66, h: 24 },
+      shelf: { x: 372, y: 502, w: 78, h: 44 },
+      staffCoat: "#6C5AA8", staffHair: "#1C1826",
+      role: "PD"
+    }
+  ];
+  const R = {};
+  ROOMS.forEach(function (r) {
+    R[r.key] = r;
+    r.items = [];      // 서가에 쌓인 결과물
+    r.queue = [];      // 하달받은 대기 작업
+    r.active = null;   // 작업 중
+    r.progress = 0;
+    r.pops = [];       // 완료 연출
+    r.lastFile = "—";
+  });
+
+  const HUB = { x: 400, y: 240, w: 160, h: 142 };
+  const HOME = { x: 480, y: 348 };
+  const BOSS = { x: 470, y: 296 };
+  const CORRIDOR_Y = 220;
+
+  const PATHS = {
+    content: [[480, 348], [480, CORRIDOR_Y], [185, CORRIDOR_Y], [185, 162]],
+    health: [[480, 348], [480, CORRIDOR_Y], [775, CORRIDOR_Y], [775, 162]],
+    channel: [[480, 348], [480, 470]]
+  };
+
+  /* ============================================================
+     2. 지시 프리셋 — 대표가 던지는 말 한마디
+     ============================================================ */
+  const PRESETS = [
+    { room: "content", title: "‘장례 준비 5단계’ 영상 기획", product: "대본 초안", file: "script-5steps", dur: 5 },
+    { room: "content", title: "PD 인터뷰 질문지 정리", product: "질문지", file: "pd-interview", dur: 4.5 },
+    { room: "health", title: "오늘 운동 기록 (1시간 20분)", product: "운동 로그", file: "workout-log", dur: 3 },
+    { room: "health", title: "이번 주 체중 추이 정리", product: "체중 리포트", file: "weight-trend", dur: 4 },
+    { room: "channel", title: "오늘 브리핑 영상 대본", product: "브리핑 카드", file: "daily-brief", dur: 4 },
+    { room: "channel", title: "사진 연습 과제 배정", product: "연습 과제", file: "photo-drill", dur: 3.5 }
+  ];
+
+  /* ============================================================
+     3. 상태
+     ============================================================ */
+  const state = {
+    mode: "work",            // work | off
+    auto: !reduceMotion,
+    autoTimer: 3.0,
+    log: [],
+    files: 0
+  };
+  const SPEED = { work: 1.0, off: 1.45 };   // 휴무일엔 일이 빨리 돈다
+
+  const sec = {                              // 비서 = 나(Claude)
+    x: HOME.x, y: HOME.y, facing: "up", walkT: 0,
+    mode: "idle",                            // idle | go | hand | back | report
+    path: null, seg: 0, t: 0, task: null, wait: 0, bubble: null
+  };
+
+  const boss = { bubble: null, bubbleT: 0 };
+
+  /* ============================================================
+     4. 지시 → 비서 큐
+     ============================================================ */
+  const pending = [];
+
+  function issue(preset) {
+    pending.push(preset);
+    boss.bubble = preset.title;
+    boss.bubbleT = 2.6;
+    addLog("대표", "“" + preset.title + "”");
+  }
+
+  function addLog(who, text) {
+    state.log.unshift({ t: nowHM(), who: who, text: text });
+    if (state.log.length > 40) state.log.pop();
+    renderLog();
+  }
+
+  /* ============================================================
+     5. 비서 상태 기계
+     ============================================================ */
+  function startDelivery(task) {
+    sec.task = task;
+    sec.path = PATHS[task.room];
+    sec.seg = 0; sec.t = 0;
+    sec.mode = "go";
+    sec.bubble = null;
+  }
+
+  function updateSec(dt) {
+    const spd = 152 * SPEED[state.mode];
+
+    if (sec.mode === "idle") {
+      sec.facing = "up";
+      if (pending.length) startDelivery(pending.shift());
+      return;
+    }
+
+    if (sec.mode === "hand" || sec.mode === "report") {
+      sec.wait -= dt;
+      if (sec.wait <= 0) {
+        if (sec.mode === "hand") {
+          sec.mode = "back"; sec.seg = 0; sec.t = 0; sec.bubble = null;
+        } else {
+          sec.mode = "idle"; sec.bubble = null; sec.task = null;
+        }
+      }
+      return;
+    }
+
+    // 이동 중
+    const path = sec.path;
+    const fwd = sec.mode === "go";
+    const pts = fwd ? path : path.slice().reverse();
+    if (sec.seg >= pts.length - 1) { arrive(); return; }
+
+    const a = pts[sec.seg], b = pts[sec.seg + 1];
+    const dx = b[0] - a[0], dy = b[1] - a[1];
+    const len = Math.hypot(dx, dy);
+    sec.t += (spd * dt) / len;
+    if (sec.t >= 1) { sec.t = 0; sec.seg++; sec.x = b[0]; sec.y = b[1]; if (sec.seg >= pts.length - 1) arrive(); return; }
+
+    sec.x = a[0] + dx * sec.t;
+    sec.y = a[1] + dy * sec.t;
+    sec.facing = Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? "right" : "left") : (dy > 0 ? "down" : "up");
+    sec.walkT += dt * (spd / 26);
+  }
+
+  function arrive() {
+    if (sec.mode === "go") {
+      const room = R[sec.task.room];
+      room.queue.push(sec.task);
+      sec.mode = "hand"; sec.wait = 1.1; sec.facing = "up";
+      sec.bubble = room.name + "에 하달했습니다";
+      addLog("비서", "<em>" + room.name + "</em>에 하달 · " + sec.task.product);
+      if (!room.active) beginWork(room);
+    } else {
+      sec.x = HOME.x; sec.y = HOME.y; sec.facing = "up";
+      sec.mode = "report"; sec.wait = .85;
+      sec.bubble = "전달 완료했습니다";
+    }
+  }
+
+  /* ============================================================
+     6. 직원 작업 → 결과물이 서가에 쌓인다
+     ============================================================ */
+  function beginWork(room) {
+    room.active = room.queue.shift();
+    room.progress = 0;
+  }
+
+  function updateRooms(dt) {
+    ROOMS.forEach(function (room) {
+      for (let i = room.pops.length - 1; i >= 0; i--) {
+        room.pops[i].life -= dt;
+        if (room.pops[i].life <= 0) room.pops.splice(i, 1);
+      }
+      if (!room.active) {
+        if (room.queue.length) beginWork(room);
+        return;
+      }
+      room.progress += dt / (room.active.dur / SPEED[state.mode]);
+      if (room.progress >= 1) {
+        const done = room.active;
+        room.items.push(done.product);
+        room.active = null; room.progress = 0;
+        room.pops.push({ life: 1.4 });
+        const d = new Date();
+        const stamp = d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate());
+        room.lastFile = stamp + "_" + done.file + ".md";
+        state.files++;
+        addLog(room.name, "<em>" + done.product + "</em> 완료 · 서가 " + room.items.length + "개");
+        renderRooms(); renderTree(); renderBrief();
+      }
+    });
+  }
+
+  /* ============================================================
+     7. 그리기 — 픽셀 오피스
+     ============================================================ */
+  function px(x) { return Math.round(x); }
+
+  function drawFloorTiles(x, y, w, h, base, tile) {
+    ctx.fillStyle = base;
+    ctx.fillRect(px(x), px(y), px(w), px(h));
+    ctx.strokeStyle = tile;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    for (let gx = x + 16; gx < x + w; gx += 16) { ctx.moveTo(px(gx) + .5, y); ctx.lineTo(px(gx) + .5, y + h); }
+    for (let gy = y + 16; gy < y + h; gy += 16) { ctx.moveTo(x, px(gy) + .5); ctx.lineTo(x + w, px(gy) + .5); }
+    ctx.stroke();
+  }
+
+  function drawRoomShell(room) {
+    const r = room.rect;
+    // 벽 (테두리 4px)
+    ctx.fillStyle = room.wall;
+    ctx.fillRect(r.x - 4, r.y - 4, r.w + 8, r.h + 8);
+    ctx.fillStyle = shade(room.wall, -22);
+    ctx.fillRect(r.x - 4, r.y + r.h, r.w + 8, 4);
+    // 바닥
+    drawFloorTiles(r.x, r.y, r.w, r.h, room.floor, "rgba(0,0,0,.14)");
+    // 러그
+    ctx.fillStyle = room.rug;
+    ctx.fillRect(px(r.x + r.w / 2 - 44), px(r.y + r.h - 52), 88, 34);
+    ctx.strokeStyle = "rgba(255,255,255,.05)";
+    ctx.strokeRect(px(r.x + r.w / 2 - 44) + .5, px(r.y + r.h - 52) + .5, 87, 33);
+    // 문 (아래쪽 벽 뚫기)
+    ctx.fillStyle = "#1A1D26";
+    if (room.key === "channel") ctx.fillRect(px(room.door - 11), r.y - 4, 22, 4);
+    else ctx.fillRect(px(room.door - 11), r.y + r.h, 22, 4);
+  }
+
+  function drawShelf(room) {
+    const s = room.shelf;
+    ctx.fillStyle = "#241E1A";
+    ctx.fillRect(px(s.x), px(s.y), px(s.w), px(s.h));
+    ctx.fillStyle = "#332A23";
+    ctx.fillRect(px(s.x) + 2, px(s.y) + 2, px(s.w) - 4, px(s.h) - 4);
+    const rows = 3, rowH = (s.h - 4) / rows;
+    ctx.fillStyle = "#241E1A";
+    for (let i = 1; i < rows; i++) ctx.fillRect(px(s.x) + 2, px(s.y + 2 + rowH * i), px(s.w) - 4, 2);
+
+    // 쌓인 결과물
+    const perRow = 6, cap = rows * perRow;
+    const n = Math.min(room.items.length, cap);
+    for (let i = 0; i < n; i++) {
+      const row = rows - 1 - Math.floor(i / perRow);
+      const col = i % perRow;
+      const bx = s.x + 5 + col * 11;
+      const by = s.y + 2 + rowH * row + rowH - 15;
+      const hh = 11 + ((i * 7) % 3);
+      ctx.fillStyle = i % 3 === 0 ? room.accent : shade(room.accent, -55);
+      ctx.fillRect(px(bx), px(by + (11 - hh)), 8, hh);
+      ctx.fillStyle = "rgba(255,255,255,.18)";
+      ctx.fillRect(px(bx), px(by + (11 - hh)), 8, 2);
+    }
+    if (room.items.length > cap) {
+      ctx.fillStyle = room.accent;
+      ctx.font = '700 10px "Silkscreen", monospace';
+      ctx.textAlign = "right";
+      ctx.fillText("+" + (room.items.length - cap), px(s.x + s.w), px(s.y + s.h + 11));
+      ctx.textAlign = "left";
+    }
+  }
+
+  function drawDesk(d, accent, prop) {
+    ctx.fillStyle = "#2A2119";
+    ctx.fillRect(px(d.x), px(d.y), px(d.w), px(d.h));
+    ctx.fillStyle = "#3B2E22";
+    ctx.fillRect(px(d.x), px(d.y), px(d.w), px(d.h) - 5);
+    ctx.fillStyle = "rgba(255,255,255,.07)";
+    ctx.fillRect(px(d.x), px(d.y), px(d.w), 2);
+    if (prop === "lamp") {
+      // 서류 더미 + 스탠드
+      ctx.fillStyle = "#E4DCC6";
+      ctx.fillRect(px(d.x + 7), px(d.y + 4), 14, 10);
+      ctx.fillStyle = "#C3B999";
+      ctx.fillRect(px(d.x + 7), px(d.y + 4), 14, 2);
+      ctx.fillStyle = "#2A2F3C";
+      ctx.fillRect(px(d.x + d.w - 16), px(d.y - 12), 3, 16);
+      ctx.fillStyle = accent;
+      ctx.fillRect(px(d.x + d.w - 21), px(d.y - 17), 13, 6);
+      return;
+    }
+    // 모니터
+    ctx.fillStyle = "#181C24";
+    ctx.fillRect(px(d.x + d.w / 2 - 13), px(d.y - 13), 26, 14);
+    ctx.fillStyle = accent;
+    ctx.globalAlpha = .55;
+    ctx.fillRect(px(d.x + d.w / 2 - 11), px(d.y - 11), 22, 10);
+    ctx.globalAlpha = 1;
+  }
+
+  function drawPerson(x, y, o) {
+    const coat = o.coat, hair = o.hair || "#221B1E", skin = o.skin || "#E4B489";
+    const facing = o.facing || "down";
+    const stepping = o.stepping ? (Math.floor(o.walkT) % 2) : 0;
+    const bob = o.working ? Math.round(Math.sin(o.tick * 6) * 1) : 0;
+
+    ctx.fillStyle = "rgba(0,0,0,.30)";
+    ctx.beginPath();
+    ctx.ellipse(px(x), px(y) + 1, 7, 3, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    const yy = y + bob;
+    // 다리
+    ctx.fillStyle = "#252A36";
+    ctx.fillRect(px(x - 4), px(yy - 6 - (stepping ? 1 : 0)), 3, 6 + (stepping ? 1 : 0));
+    ctx.fillRect(px(x + 1), px(yy - 6 - (stepping ? 0 : 1)), 3, 6 + (stepping ? 0 : 1));
+    // 몸
+    ctx.fillStyle = coat;
+    ctx.fillRect(px(x - 5), px(yy - 17), 10, 12);
+    ctx.fillStyle = shade(coat, -26);
+    ctx.fillRect(px(x - 7), px(yy - 16), 2, 9);
+    ctx.fillRect(px(x + 5), px(yy - 16), 2, 9);
+    ctx.fillStyle = "rgba(255,255,255,.10)";
+    ctx.fillRect(px(x - 5), px(yy - 17), 10, 2);
+    // 머리
+    ctx.fillStyle = skin;
+    ctx.fillRect(px(x - 4), px(yy - 25), 8, 8);
+    ctx.fillStyle = hair;
+    if (facing === "up") {
+      ctx.fillRect(px(x - 5), px(yy - 26), 10, 8);
+    } else {
+      ctx.fillRect(px(x - 5), px(yy - 26), 10, 4);
+      ctx.fillRect(px(x - 5), px(yy - 26), 2, 7);
+      ctx.fillRect(px(x + 3), px(yy - 26), 2, 7);
+      ctx.fillStyle = "#191B22";
+      if (facing === "down") { ctx.fillRect(px(x - 2), px(yy - 21), 2, 2); ctx.fillRect(px(x + 1), px(yy - 21), 2, 2); }
+      else if (facing === "left") ctx.fillRect(px(x - 3), px(yy - 21), 2, 2);
+      else ctx.fillRect(px(x + 2), px(yy - 21), 2, 2);
+    }
+    // 손에 든 지시서
+    if (o.carry) {
+      const hx = facing === "left" ? x - 11 : x + 6;
+      ctx.fillStyle = "#F0E9D8";
+      ctx.fillRect(px(hx), px(yy - 13), 6, 8);
+      ctx.fillStyle = "#C0B69C";
+      ctx.fillRect(px(hx), px(yy - 13), 6, 2);
+    }
+  }
+
+  function bubble(x, y, text, accent) {
+    ctx.font = '500 12px "IBM Plex Sans KR", sans-serif';
+    const w = Math.min(230, ctx.measureText(text).width + 20);
+    const h = 24;
+    const bx = Math.max(8, Math.min(W - w - 8, x - w / 2));
+    const by = y - h - 8;
+    ctx.fillStyle = "rgba(14,16,22,.92)";
+    ctx.strokeStyle = accent;
+    ctx.lineWidth = 1;
+    ctx.fillRect(px(bx), px(by), px(w), h);
+    ctx.strokeRect(px(bx) + .5, px(by) + .5, px(w) - 1, h - 1);
+    ctx.beginPath();
+    ctx.moveTo(px(x) - 4, px(by + h));
+    ctx.lineTo(px(x) + 4, px(by + h));
+    ctx.lineTo(px(x), px(by + h) + 6);
+    ctx.closePath();
+    ctx.fillStyle = "rgba(14,16,22,.92)";
+    ctx.fill();
+    ctx.fillStyle = "#E9E4D8";
+    ctx.textAlign = "center";
+    ctx.fillText(text, px(bx + w / 2), px(by + 16));
+    ctx.textAlign = "left";
+  }
+
+  function drawRoomProps(room) {
+    const r = room.rect;
+    if (room.key === "content") {
+      // 촛대
+      ctx.fillStyle = "#2B2620"; ctx.fillRect(px(r.x + 218), px(r.y + 104), 12, 26);
+      ctx.fillStyle = "#E9E4D8"; ctx.fillRect(px(r.x + 221), px(r.y + 92), 6, 14);
+      ctx.fillStyle = "#F0C070"; ctx.fillRect(px(r.x + 223), px(r.y + 86), 2, 6);
+      // 카메라 삼각대
+      ctx.fillStyle = "#22262F"; ctx.fillRect(px(r.x + 34), px(r.y + 108), 3, 24);
+      ctx.fillRect(px(r.x + 28), px(r.y + 96), 16, 12);
+      ctx.fillStyle = "#4A5262"; ctx.fillRect(px(r.x + 42), px(r.y + 99), 5, 6);
+    } else if (room.key === "health") {
+      // 러닝머신
+      ctx.fillStyle = "#232E2A"; ctx.fillRect(px(r.x + 22), px(r.y + 92), 42, 46);
+      ctx.fillStyle = "#1A2320"; ctx.fillRect(px(r.x + 26), px(r.y + 100), 34, 34);
+      ctx.fillStyle = "#43604F"; ctx.fillRect(px(r.x + 22), px(r.y + 88), 42, 5);
+      // 체중계
+      ctx.fillStyle = "#2E4038"; ctx.fillRect(px(r.x + 24), px(r.y + 150), 22, 14);
+      ctx.fillStyle = room.accent; ctx.fillRect(px(r.x + 31), px(r.y + 154), 8, 3);
+    } else {
+      // 링라이트 + 배경지
+      ctx.fillStyle = "#2B2438"; ctx.fillRect(px(r.x + 168), px(r.y + 16), 62, 8);
+      ctx.strokeStyle = room.accent; ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.arc(px(r.x + 62), px(r.y + 44), 15, 0, Math.PI * 2); ctx.stroke();
+      ctx.fillStyle = "#22262F"; ctx.fillRect(px(r.x + 61), px(r.y + 58), 3, 22);
+      // 카메라
+      ctx.fillStyle = "#1E2229"; ctx.fillRect(px(r.x + 108), px(r.y + 34), 20, 13);
+      ctx.fillStyle = "#4A5262"; ctx.fillRect(px(r.x + 128), px(r.y + 37), 5, 7);
+    }
+  }
+
+  function drawPlant(x, y) {
+    ctx.fillStyle = "#5A4230";
+    ctx.fillRect(px(x - 5), px(y), 10, 9);
+    ctx.fillStyle = "#6C5038";
+    ctx.fillRect(px(x - 5), px(y), 10, 2);
+    ctx.fillStyle = "#3E6B4E";
+    ctx.fillRect(px(x - 6), px(y - 9), 12, 9);
+    ctx.fillRect(px(x - 3), px(y - 14), 6, 6);
+    ctx.fillStyle = "#4E845E";
+    ctx.fillRect(px(x - 4), px(y - 8), 4, 4);
+  }
+
+  function drawLabel(text, x, y, color) {
+    ctx.font = '600 11px "IBM Plex Sans KR", sans-serif';
+    ctx.textAlign = "center";
+    ctx.fillStyle = "rgba(10,12,17,.55)";
+    const w = ctx.measureText(text).width + 14;
+    ctx.fillRect(px(x - w / 2), px(y - 11), px(w), 16);
+    ctx.fillStyle = color;
+    ctx.fillText(text, px(x), px(y));
+    ctx.textAlign = "left";
+  }
+
+  // 조명 레이어 (multiply) — 근무일은 어둡게, 휴무일은 환하게
+  let lightMap = null, lightMapMode = null;
+  function buildLightMap(mode) {
+    const off = document.createElement("canvas");
+    off.width = W; off.height = H;
+    const c = off.getContext("2d");
+    c.fillStyle = mode === "work" ? "#7C8098" : "#C3C7D4";
+    c.fillRect(0, 0, W, H);
+    const lamps = [
+      [185, 120, 150], [775, 120, 150], [480, 500, 140],
+      [470, 292, 110], [480, 340, 120], [480, 220, 125], [280, 220, 110], [680, 220, 110], [480, 408, 90]
+    ];
+    c.globalCompositeOperation = "lighter";
+    lamps.forEach(function (l) {
+      const g = c.createRadialGradient(l[0], l[1], 4, l[0], l[1], l[2]);
+      g.addColorStop(0, "rgba(255,246,225,.95)");
+      g.addColorStop(.55, "rgba(255,240,210,.35)");
+      g.addColorStop(1, "rgba(0,0,0,0)");
+      c.fillStyle = g;
+      c.beginPath(); c.arc(l[0], l[1], l[2], 0, Math.PI * 2); c.fill();
+    });
+    return off;
+  }
+
+  let tick = 0;
+  function draw(dt) {
+    tick += dt;
+
+    // 배경
+    ctx.fillStyle = "#0B0D13";
+    ctx.fillRect(0, 0, W, H);
+    ctx.strokeStyle = "rgba(255,255,255,.022)";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    for (let x = 0; x <= W; x += 24) { ctx.moveTo(x + .5, 0); ctx.lineTo(x + .5, H); }
+    for (let y = 0; y <= H; y += 24) { ctx.moveTo(0, y + .5); ctx.lineTo(W, y + .5); }
+    ctx.stroke();
+
+    // 복도
+    ctx.fillStyle = "#1B1F29";
+    ctx.fillRect(168, CORRIDOR_Y - 16, 624, 32);
+    ctx.fillRect(169, 192, 32, 30);
+    ctx.fillRect(759, 192, 32, 30);
+    ctx.fillRect(464, 380, 32, 54);
+    drawFloorTiles(168, CORRIDOR_Y - 16, 624, 32, "#222735", "rgba(0,0,0,.16)");
+    drawFloorTiles(169, 192, 32, 30, "#222735", "rgba(0,0,0,.16)");
+    drawFloorTiles(759, 192, 32, 30, "#222735", "rgba(0,0,0,.16)");
+    drawFloorTiles(464, 380, 32, 54, "#222735", "rgba(0,0,0,.16)");
+
+    // 허브 (대표실)
+    ctx.fillStyle = "#4B4438";
+    ctx.fillRect(HUB.x - 4, HUB.y - 4, HUB.w + 8, HUB.h + 8);
+    drawFloorTiles(HUB.x, HUB.y, HUB.w, HUB.h, "#3D3A31", "rgba(0,0,0,.15)");
+    ctx.fillStyle = "#1A1D26";
+    ctx.fillRect(464, HUB.y - 4, 32, 4);
+    ctx.fillRect(464, HUB.y + HUB.h, 32, 4);
+    ctx.fillStyle = "#514534";
+    ctx.fillRect(HUB.x + 22, HUB.y + 108, 116, 30);
+    ctx.strokeStyle = "rgba(224,164,88,.22)";
+    ctx.lineWidth = 1;
+    ctx.strokeRect(HUB.x + 25.5, HUB.y + 111.5, 109, 23);
+    drawPlant(HUB.x + 14, HUB.y + 30);
+    drawPlant(HUB.x + HUB.w - 14, HUB.y + 30);
+
+    // 방
+    ROOMS.forEach(drawRoomShell);
+    ROOMS.forEach(drawRoomProps);
+    ROOMS.forEach(drawShelf);
+
+    // 대표
+    drawPerson(BOSS.x, BOSS.y, { coat: "#4C5670", hair: "#191A22", facing: "down", tick: tick });
+    drawDesk({ x: 444, y: 298, w: 72, h: 26 }, "#E0A458", "lamp");
+
+    // 직원
+    ROOMS.forEach(function (room) {
+      drawPerson(room.staff.x, room.staff.y, {
+        coat: room.staffCoat, hair: room.staffHair,
+        facing: room.key === "channel" ? "left" : "down",
+        working: !!room.active, tick: tick
+      });
+      drawDesk(room.desk, room.accent);
+
+      // 진행률
+      if (room.active) {
+        const bx = room.desk.x, by = room.desk.y - 32;
+        ctx.fillStyle = "rgba(10,12,17,.7)";
+        ctx.fillRect(px(bx), px(by), px(room.desk.w), 5);
+        ctx.fillStyle = room.accent;
+        ctx.fillRect(px(bx) + 1, px(by) + 1, Math.max(1, (room.desk.w - 2) * Math.min(1, room.progress)), 3);
+      }
+      // 완료 팝
+      room.pops.forEach(function (p) {
+        const k = 1 - p.life / 1.4;
+        ctx.globalAlpha = Math.max(0, 1 - k);
+        ctx.fillStyle = room.accent;
+        ctx.fillRect(px(room.staff.x - 4), px(room.staff.y - 34 - k * 22), 8, 10);
+        ctx.globalAlpha = 1;
+      });
+    });
+
+    // 비서
+    drawPerson(sec.x, sec.y, {
+      coat: "#D9814A", hair: "#2A1F1B", skin: "#F0C9A0",
+      facing: sec.facing, stepping: sec.mode === "go" || sec.mode === "back",
+      walkT: sec.walkT, carry: sec.mode === "go", tick: tick
+    });
+
+    // 조명
+    if (lightMapMode !== state.mode) { lightMap = buildLightMap(state.mode); lightMapMode = state.mode; }
+    ctx.globalCompositeOperation = "multiply";
+    ctx.drawImage(lightMap, 0, 0);
+    ctx.globalCompositeOperation = "source-over";
+
+    // 방 이름표 (조명 위)
+    ROOMS.forEach(function (room) {
+      drawLabel(room.name, room.rect.x + room.rect.w / 2, room.rect.y + 16, room.accent);
+    });
+    drawLabel("대표실", HUB.x + HUB.w / 2, HUB.y + 15, "#E9E4D8");
+
+    // 말풍선
+    if (boss.bubbleT > 0) {
+      boss.bubbleT -= dt;
+      bubble(BOSS.x + 10, BOSS.y - 26, boss.bubble, "#E0A458");
+    }
+    if (sec.bubble) bubble(sec.x, sec.y - 30, sec.bubble, "#D9814A");
+  }
+
+  /* ============================================================
+     8. 콘솔(오른쪽 레일) 렌더
+     ============================================================ */
+  const elLog = document.getElementById("log");
+  const elRooms = document.getElementById("roomcards");
+  const elTree = document.getElementById("tree");
+  const elBrief = document.getElementById("brief");
+
+  function renderLog() {
+    elLog.innerHTML = state.log.map(function (l) {
+      return "<li><time>" + l.t + "</time><p><em>" + l.who + "</em> " + l.text + "</p></li>";
+    }).join("");
+  }
+
+  function renderRooms() {
+    elRooms.innerHTML = ROOMS.map(function (r) {
+      const busy = !!r.active;
+      const waiting = r.queue.length;
+      const status = busy ? "작업 중 · " + r.active.product
+        : waiting ? "대기 " + waiting + "건"
+          : r.items.length ? "정리 완료" : "비어 있음";
+      const pct = busy ? Math.round(r.progress * 100) : 0;
+      return '<div class="room" style="color:' + r.accent + '">' +
+        '<div class="room-top">' +
+        '<span class="room-swatch" style="background:' + r.accent + '"></span>' +
+        '<span class="room-name" style="color:var(--paper)">' + r.name + '</span>' +
+        '<span class="room-count">' + r.items.length + '<span>개</span></span>' +
+        '</div>' +
+        '<div class="room-status">' +
+        '<span class="status-txt' + (busy ? " on" : "") + '" style="color:' + (busy ? r.accent : "") + '">' + status + '</span>' +
+        '<span class="bar"><i style="width:' + pct + '%"></i></span>' +
+        '</div>' +
+        '<div class="room-last">최근 · ' + r.lastFile + '</div>' +
+        '</div>';
+    }).join("");
+  }
+
+  let prevCounts = {};
+  function renderTree() {
+    elTree.innerHTML =
+      '<div><span class="path">~/agency/</span></div>' +
+      ROOMS.map(function (r, i) {
+        const branch = i === ROOMS.length - 1 ? "&#9492;&#9472;" : "&#9500;&#9472;";
+        const fresh = prevCounts[r.key] !== undefined && prevCounts[r.key] !== r.items.length ? " fresh" : "";
+        prevCounts[r.key] = r.items.length;
+        return '<div class="' + fresh.trim() + '">' + branch +
+          ' <span class="path" style="color:' + r.accent + '">' + r.folder + '/</span>' +
+          '<span class="n">' + r.items.length + '</span></div>';
+      }).join("") +
+      '<div>&nbsp;&nbsp; <span class="path">daily/' + new Date().toISOString().slice(0, 10) + '.md</span><span class="n">1</span></div>';
+  }
+
+  function renderBrief() {
+    const working = ROOMS.filter(function (r) { return r.active; }).length;
+    const waiting = ROOMS.reduce(function (a, r) { return a + r.queue.length; }, 0) + pending.length;
+    const total = ROOMS.reduce(function (a, r) { return a + r.items.length; }, 0);
+    const head = state.mode === "work"
+      ? "대표님, 오늘은 <b>근무일</b>입니다. 무리한 일정은 넣지 않았습니다."
+      : "대표님, 오늘은 <b>휴무일</b>입니다. 밀린 작업을 몰아서 돌리고 있습니다.";
+    const body = total === 0 && working === 0
+      ? " 아직 지시하신 내용이 없어 사무실은 조용합니다."
+      : " 진행 중 <b>" + working + "</b>건, 대기 <b>" + waiting + "</b>건, 오늘 정리한 결과물 <b>" + total + "</b>개.";
+    elBrief.innerHTML = head + body;
+  }
+
+  /* ============================================================
+     9. 컨트롤
+     ============================================================ */
+  const elOrders = document.getElementById("orderlist");
+  elOrders.innerHTML = PRESETS.map(function (p, i) {
+    return '<button class="order" data-i="' + i + '" style="--rc:' + R[p.room].accent + '">' +
+      '<span class="rc-dot"></span>' + p.title + '</button>';
+  }).join("");
+  elOrders.addEventListener("click", function (e) {
+    const b = e.target.closest(".order");
+    if (b) issue(PRESETS[+b.dataset.i]);
+  });
+
+  const btnAuto = document.getElementById("auto");
+  btnAuto.setAttribute("aria-pressed", String(state.auto));
+  btnAuto.addEventListener("click", function () {
+    state.auto = !state.auto;
+    btnAuto.setAttribute("aria-pressed", String(state.auto));
+  });
+
+  document.getElementById("reset").addEventListener("click", function () {
+    ROOMS.forEach(function (r) { r.items = []; r.queue = []; r.active = null; r.progress = 0; r.lastFile = "—"; });
+    pending.length = 0;
+    state.log = [];
+    addLog("시스템", "서가를 비웠습니다");
+    renderRooms(); renderTree(); renderBrief();
+  });
+
+  const mWork = document.getElementById("m-work"), mOff = document.getElementById("m-off");
+  const tag = document.getElementById("modetag");
+  function setMode(m) {
+    state.mode = m;
+    mWork.setAttribute("aria-pressed", String(m === "work"));
+    mOff.setAttribute("aria-pressed", String(m === "off"));
+    tag.textContent = (m === "work" ? "근무일" : "휴무일") + " 모드";
+    addLog("시스템", m === "work" ? "근무일 모드 — 브리핑은 짧게, 요구는 줄입니다" : "휴무일 모드 — 밀린 작업을 몰아서 처리합니다");
+    renderBrief();
+  }
+  mWork.addEventListener("click", function () { setMode("work"); });
+  mOff.addEventListener("click", function () { setMode("off"); });
+
+  /* ============================================================
+     10. 루프
+     ============================================================ */
+  function fitCanvas() {
+    const rect = cv.getBoundingClientRect();
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const s = (rect.width / W) * dpr;
+    cv.width = Math.round(W * s);
+    cv.height = Math.round(H * s);
+    ctx.setTransform(s, 0, 0, s, 0, 0);
+    ctx.imageSmoothingEnabled = false;
+  }
+  window.addEventListener("resize", fitCanvas);
+
+  let last = performance.now();
+  function loop(now) {
+    const dt = Math.min(.05, (now - last) / 1000);
+    last = now;
+
+    if (state.auto) {
+      state.autoTimer -= dt;
+      if (state.autoTimer <= 0) {
+        issue(PRESETS[Math.floor(Math.random() * PRESETS.length)]);
+        state.autoTimer = (state.mode === "work" ? 7 : 4.2) + Math.random() * 3;
+      }
+    }
+    updateSec(dt);
+    updateRooms(dt);
+    draw(dt);
+    renderRoomsThrottled(dt);
+    requestAnimationFrame(loop);
+  }
+
+  let rrT = 0;
+  function renderRoomsThrottled(dt) {
+    rrT += dt;
+    if (rrT > .25) { rrT = 0; renderRooms(); renderBrief(); }
+  }
+
+  // 시계
+  function tickClock() {
+    const d = new Date();
+    document.getElementById("clock").textContent = pad(d.getHours()) + ":" + pad(d.getMinutes());
+    document.getElementById("datestr").textContent =
+      d.getFullYear() + "." + pad(d.getMonth() + 1) + "." + pad(d.getDate()) +
+      " " + ["일", "월", "화", "수", "목", "금", "토"][d.getDay()] + "요일";
+  }
+  tickClock();
+  setInterval(tickClock, 20000);
+
+  renderRooms(); renderTree(); renderBrief();
+  addLog("시스템", "사무실 문을 열었습니다");
+  fitCanvas();
+
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitCanvas);
+  requestAnimationFrame(function (t) { last = t; loop(t); });
+})();
+</script>
