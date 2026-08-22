@@ -16,7 +16,7 @@
   --brass:#E0A458;
   --jade:#6FB89A;
   --violet:#9A87D4;
-  --ember:#C9564A;
+  --ember:#D9814A;
 
   --f-display:"Gothic A1","Apple SD Gothic Neo",system-ui,sans-serif;
   --f-body:"IBM Plex Sans KR","Apple SD Gothic Neo",system-ui,sans-serif;
@@ -38,7 +38,7 @@ body{
     radial-gradient(900px 700px at 92% 110%, rgba(154,135,212,.07), transparent 60%);
 }
 
-.wrap{max-width:1440px;margin:0 auto;padding:24px 22px 40px}
+.wrap{max-width:1460px;margin:0 auto;padding:24px 22px 40px}
 
 /* ---------- header ---------- */
 .top{
@@ -62,41 +62,30 @@ body{
 .datestr{font-size:12.5px;color:var(--paper-faint)}
 
 /* ---------- shell ---------- */
-.shell{display:grid;grid-template-columns:minmax(0,1fr) 348px;gap:18px;align-items:start}
-@media (max-width:1060px){.shell{grid-template-columns:1fr}}
+.shell{display:grid;grid-template-columns:minmax(0,1fr) 352px;gap:18px;align-items:start}
+@media (max-width:1080px){.shell{grid-template-columns:1fr}}
 .col{display:flex;flex-direction:column;gap:16px;min-width:0}
+.duo{display:grid;grid-template-columns:minmax(0,1fr) 324px;gap:16px;align-items:start}
+@media (max-width:900px){.duo{grid-template-columns:1fr}}
 
 /* ---------- stage ---------- */
-.stage{
-  background:var(--panel);
-  border:1px solid var(--line);
-  border-radius:4px;
-  overflow:hidden;
-}
+.stage{background:var(--panel);border:1px solid var(--line);border-radius:4px;overflow:hidden}
 .screen{position:relative;width:100%;aspect-ratio:960/600;background:#0B0D13}
 .screen canvas{display:block;width:100%;height:100%;image-rendering:pixelated}
 .screen .mode-tag{
   position:absolute;top:12px;left:12px;
   font-family:var(--f-data);font-size:10px;letter-spacing:.12em;
   padding:5px 9px;border-radius:2px;
-  background:rgba(11,13,19,.78);border:1px solid var(--line);
-  color:var(--paper-dim);
+  background:rgba(11,13,19,.78);border:1px solid var(--line);color:var(--paper-dim);
 }
 
 /* ---------- order bar ---------- */
 .orders{
-  border-top:1px solid var(--line);
-  padding:14px 16px 16px;
-  background:var(--panel-2);
+  border-top:1px solid var(--line);padding:14px 16px 16px;background:var(--panel-2);
   display:flex;flex-direction:column;gap:11px;
 }
-.orders-head{
-  display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
-}
-.eyebrow{
-  font-family:var(--f-data);font-size:10px;letter-spacing:.14em;
-  color:var(--paper-faint);
-}
+.orders-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.eyebrow{font-family:var(--f-data);font-size:10px;letter-spacing:.14em;color:var(--paper-faint)}
 .order-list{display:flex;flex-wrap:wrap;gap:8px}
 button{font:inherit;color:inherit;cursor:pointer}
 .order{
@@ -104,7 +93,7 @@ button{font:inherit;color:inherit;cursor:pointer}
   background:#20242F;border:1px solid var(--line);
   border-left:3px solid var(--rc,var(--brass));
   border-radius:3px;padding:8px 12px;font-size:12.5px;
-  transition:background .14s ease,transform .14s ease,border-color .14s ease;
+  transition:background .14s ease,transform .14s ease;
 }
 .order:hover{background:#282D3A;transform:translateY(-1px)}
 .order:active{transform:translateY(0)}
@@ -115,94 +104,129 @@ button{font:inherit;color:inherit;cursor:pointer}
 .ghost{
   background:transparent;border:1px solid var(--line);border-radius:3px;
   padding:6px 11px;font-size:12px;color:var(--paper-dim);
-  transition:border-color .14s ease,color .14s ease;
+  transition:border-color .14s ease,color .14s ease,background .14s ease;
 }
 .ghost:hover{border-color:#3C4354;color:var(--paper)}
 .ghost[aria-pressed="true"]{border-color:var(--brass);color:var(--brass)}
+.ghost.call{border-color:#5A4A30;color:var(--brass);background:#241F17}
+.ghost.call:hover{background:#2E2718;border-color:var(--brass)}
+.ghost:disabled{opacity:.4;cursor:not-allowed}
 
-/* ---------- console rail ---------- */
+/* ---------- rail ---------- */
 .rail{display:flex;flex-direction:column;gap:14px}
-.card{
-  background:var(--panel);border:1px solid var(--line);border-radius:4px;
-  padding:14px 15px;
-}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:14px 15px}
 .card > h2{
   font-family:var(--f-data);font-size:10px;letter-spacing:.14em;
   color:var(--paper-faint);margin:0 0 11px;font-weight:400;
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
 }
+.card > h2 .n{font-family:var(--f-body);font-size:11.5px;color:var(--paper-dim);letter-spacing:0}
 
-/* mode switch */
 .modes{display:flex;gap:6px;margin-bottom:12px}
 .pill{
-  flex:1;background:#20242F;border:1px solid var(--line);
-  border-radius:3px;padding:8px 6px;font-size:12.5px;color:var(--paper-dim);
-  transition:all .16s ease;
+  flex:1;background:#20242F;border:1px solid var(--line);border-radius:3px;
+  padding:8px 6px;font-size:12.5px;color:var(--paper-dim);transition:all .16s ease;
 }
 .pill[aria-pressed="true"]{background:#2B3140;border-color:#4A5266;color:var(--paper)}
-.brief{
-  font-size:13px;line-height:1.65;color:var(--paper);
-  border-left:2px solid var(--brass);padding-left:11px;
-}
+.brief{font-size:13px;line-height:1.65;color:var(--paper);border-left:2px solid var(--brass);padding-left:11px;margin:0}
 .brief b{color:var(--brass);font-weight:600;font-variant-numeric:tabular-nums}
 
-/* room cards */
-.rooms{display:flex;flex-direction:column;gap:9px}
-.room{
-  background:var(--panel-2);border:1px solid var(--line-soft);
-  border-radius:3px;padding:10px 11px;
-  display:flex;flex-direction:column;gap:7px;
+/* team */
+.team{display:flex;flex-direction:column}
+.member{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-bottom:1px solid var(--line-soft)}
+.member:last-child{border-bottom:0}
+.avatar{width:20px;height:24px;border-radius:2px;flex:none;margin-top:2px;position:relative;overflow:hidden}
+.avatar i{position:absolute;left:0;right:0;top:0;height:8px;background:rgba(0,0,0,.45)}
+.m-main{flex:1;min-width:0}
+.m-name{font-family:var(--f-display);font-weight:700;font-size:13.5px;letter-spacing:-.01em}
+.m-name span{font-weight:400;font-size:11.5px;color:var(--paper-faint);margin-left:6px;font-family:var(--f-body)}
+.m-sub{font-size:11.5px;color:var(--paper-faint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.m-state{
+  font-size:10.5px;padding:3px 7px;border-radius:2px;white-space:nowrap;
+  border:1px solid currentColor;margin-top:3px;opacity:.9;
 }
-.room-top{display:flex;align-items:center;gap:8px}
-.room-swatch{width:9px;height:9px;border-radius:1px;flex:none}
-.room-name{font-family:var(--f-display);font-weight:700;font-size:13.5px;flex:1;letter-spacing:-.01em}
-.room-count{
-  font-family:var(--f-data);font-size:13px;color:var(--paper);
-  font-variant-numeric:tabular-nums;
-}
-.room-count span{font-size:9px;color:var(--paper-faint);margin-left:3px}
-.room-status{display:flex;align-items:center;justify-content:space-between;gap:8px}
-.status-txt{font-size:11.5px;color:var(--paper-faint)}
-.status-txt.on{color:var(--paper-dim)}
-.bar{height:3px;background:#252A36;border-radius:2px;overflow:hidden;flex:1;max-width:110px}
-.bar i{display:block;height:100%;width:0%;background:currentColor;transition:width .2s linear}
-.room-last{font-size:11px;color:var(--paper-faint);font-family:var(--f-body)}
+
+/* transcript */
+.tx{margin:0;padding:0;display:flex;flex-direction:column;max-height:216px;overflow-y:auto}
+.tx li{list-style:none;padding:6px 0;border-bottom:1px solid var(--line-soft);font-size:12.5px;line-height:1.6;color:var(--paper-dim)}
+.tx li:last-child{border-bottom:0}
+.tx b{font-weight:600;margin-right:6px;font-family:var(--f-display)}
+.empty{font-size:12px;color:var(--paper-faint);margin:0;line-height:1.7}
 
 /* log */
-.log{
-  display:flex;flex-direction:column;gap:0;
-  max-height:168px;overflow-y:auto;
-  font-size:12px;
-}
-.log li{
-  list-style:none;display:flex;gap:9px;padding:5px 0;
-  border-bottom:1px solid var(--line-soft);
-}
+.log{margin:0;padding:0;display:flex;flex-direction:column;max-height:168px;overflow-y:auto;font-size:12px}
+.log li{list-style:none;display:flex;gap:9px;padding:5px 0;border-bottom:1px solid var(--line-soft)}
 .log li:last-child{border-bottom:0}
-.log time{
-  font-family:var(--f-data);font-size:10px;color:var(--paper-faint);
-  padding-top:2px;flex:none;font-variant-numeric:tabular-nums;
-}
+.log time{font-family:var(--f-data);font-size:10px;color:var(--paper-faint);padding-top:2px;flex:none;font-variant-numeric:tabular-nums}
 .log p{margin:0;color:var(--paper-dim);line-height:1.5}
 .log p em{font-style:normal;color:var(--paper)}
-.log::-webkit-scrollbar{width:6px}
-.log::-webkit-scrollbar-thumb{background:#2E3441;border-radius:3px}
+.tx::-webkit-scrollbar,.log::-webkit-scrollbar{width:6px}
+.tx::-webkit-scrollbar-thumb,.log::-webkit-scrollbar-thumb{background:#2E3441;border-radius:3px}
 
 /* folder mirror */
-.tree{
-  font-family:var(--f-data);font-size:11px;line-height:2;
-  color:var(--paper-faint);letter-spacing:.01em;
-}
+.mirror-body{display:grid;grid-template-columns:minmax(230px,1fr) auto;gap:26px;align-items:start}
+@media (max-width:640px){.mirror-body{grid-template-columns:1fr;gap:14px}}
+.tree{font-family:var(--f-data);font-size:11px;line-height:2;color:var(--paper-faint);letter-spacing:.01em}
 .tree div{display:flex;align-items:center;gap:8px;white-space:nowrap}
 .tree .path{color:var(--paper-dim);overflow:hidden;text-overflow:ellipsis}
 .tree .n{margin-left:auto;color:var(--paper);font-variant-numeric:tabular-nums}
 .tree .fresh{animation:flash 1.1s ease-out}
 @keyframes flash{from{color:var(--brass)}to{color:inherit}}
-.mirror-note{
-  margin:0;font-family:var(--f-body);font-size:12px;
-  color:var(--paper-faint);line-height:1.7;max-width:34ch;
-}
-.mirror-body{display:grid;grid-template-columns:minmax(220px,1fr) auto;gap:26px;align-items:start}
-@media (max-width:640px){.mirror-body{grid-template-columns:1fr;gap:14px}}
+.mirror-note{margin:0;font-family:var(--f-body);font-size:12px;color:var(--paper-faint);line-height:1.7;max-width:34ch}
+
+/* departments */
+.depts{display:flex;flex-direction:column;gap:9px}
+.dept{background:var(--panel-2);border:1px solid var(--line-soft);border-left:3px solid var(--dc);border-radius:3px;padding:10px 11px;display:flex;flex-direction:column;gap:7px}
+.dept.ready{border-color:var(--dc);background:#20242F}
+.dept-top{display:flex;align-items:center;gap:8px}
+.dept-name{font-family:var(--f-display);font-weight:700;font-size:13px;flex:1;letter-spacing:-.01em}
+.dept-rooms{display:flex;gap:3px}
+.dept-rooms i{width:8px;height:8px;border-radius:1px;display:block}
+.dept-line{font-size:11.5px;color:var(--paper-faint);line-height:1.5}
+.dept-foot{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.dept-prog{font-family:var(--f-data);font-size:10px;color:var(--paper-dim);font-variant-numeric:tabular-nums}
+.syn{border:1px solid var(--dc);color:var(--dc);background:transparent;border-radius:2px;padding:4px 9px;font-size:11.5px;transition:background .14s ease}
+.syn:hover:not(:disabled){background:rgba(255,255,255,.06)}
+.syn:disabled{opacity:.32;cursor:not-allowed;border-color:var(--line);color:var(--paper-faint)}
+.syn:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
+
+/* tokens */
+.tok-total{display:flex;align-items:baseline;gap:8px;margin-bottom:4px}
+.tok-total b{font-family:var(--f-data);font-size:22px;color:var(--brass);font-variant-numeric:tabular-nums;font-weight:400}
+.tok-total span{font-size:11.5px;color:var(--paper-faint)}
+.tok-bar{height:5px;background:#252A36;border-radius:3px;overflow:hidden;margin:8px 0 12px}
+.tok-bar i{display:block;height:100%;background:linear-gradient(90deg,#6FB89A,#E0A458);transition:width .3s ease}
+.tok-rows{display:flex;flex-direction:column;gap:6px}
+.tok-row{display:grid;grid-template-columns:56px 1fr 56px;gap:8px;align-items:center;font-size:11.5px}
+.tok-row .who{color:var(--paper-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tok-row .track{height:4px;background:#252A36;border-radius:2px;overflow:hidden}
+.tok-row .track i{display:block;height:100%;background:currentColor;transition:width .3s ease}
+.tok-row .num{font-family:var(--f-data);font-size:10px;text-align:right;color:var(--paper);font-variant-numeric:tabular-nums}
+.tok-note{margin:11px 0 0;font-size:11px;color:var(--paper-faint);line-height:1.6}
+
+/* room detail overlay */
+.roomview{position:absolute;inset:0;background:rgba(9,11,16,.9);display:flex;align-items:center;justify-content:center;padding:18px;z-index:5;animation:fade .18s ease-out}
+.roomview[hidden]{display:none}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.rv-inner{width:100%;max-width:860px;max-height:100%;background:var(--panel);border:1px solid var(--rvc,var(--brass));border-radius:4px;display:flex;flex-direction:column;overflow:hidden}
+.rv-head{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--line);background:var(--panel-2)}
+.rv-dot{width:10px;height:10px;border-radius:1px;background:var(--rvc);flex:none}
+.rv-head h3{margin:0;font-family:var(--f-display);font-weight:800;font-size:16px;letter-spacing:-.02em}
+.rv-meta{font-size:11.5px;color:var(--paper-faint);flex:1}
+.rv-close{background:transparent;border:1px solid var(--line);border-radius:2px;width:26px;height:26px;line-height:1;color:var(--paper-dim);font-size:13px}
+.rv-close:hover{border-color:#3C4354;color:var(--paper)}
+.rv-body{display:grid;grid-template-columns:minmax(0,1fr) 216px;gap:0;min-height:0;height:min(62vh,440px);overflow:hidden}
+@media (max-width:720px){.rv-body{grid-template-columns:1fr}.rv-side{display:none}}
+.rv-graph{width:100%;height:100%;display:block;background:#12141B}
+.rv-side{border-left:1px solid var(--line);padding:12px 13px;overflow-y:auto;background:var(--panel)}
+.rv-side h4{margin:0 0 8px;font-family:var(--f-data);font-size:9.5px;letter-spacing:.12em;color:var(--paper-faint);font-weight:400}
+.rv-side ul{margin:0 0 14px;padding:0}
+.rv-side li{list-style:none;font-size:11.5px;color:var(--paper-dim);padding:4px 0;border-bottom:1px solid var(--line-soft);display:flex;gap:7px;align-items:baseline}
+.rv-side li:last-child{border-bottom:0}
+.rv-side li b{font-weight:500;color:var(--paper)}
+.rv-tag{font-family:var(--f-data);font-size:9px;padding:1px 4px;border-radius:2px;border:1px solid currentColor;opacity:.75}
+.rv-hint{font-size:11px;color:var(--paper-faint);line-height:1.6;margin:0}
+.screen .clickhint{position:absolute;bottom:12px;right:12px;font-size:11px;color:var(--paper-faint);background:rgba(11,13,19,.78);border:1px solid var(--line);border-radius:2px;padding:5px 9px}
 
 @media (prefers-reduced-motion:reduce){
   *{animation-duration:.001s !important;transition-duration:.001s !important}
@@ -213,7 +237,7 @@ button{font:inherit;color:inherit;cursor:pointer}
   <header class="top">
     <div class="brand">
       <h1>방호현 에이전시</h1>
-      <span class="sub">비서 1명 · 방 3개 · 오늘의 운영 현황</span>
+      <span class="sub">대표 1 · 비서 1 · 직원 3 · 방 4개</span>
     </div>
     <div class="topmeta">
       <span class="datestr" id="datestr"></span>
@@ -223,30 +247,56 @@ button{font:inherit;color:inherit;cursor:pointer}
 
   <div class="shell">
     <div class="col">
-    <section class="stage">
-      <div class="screen">
-        <canvas id="map" width="960" height="600" aria-label="사무실 평면도 애니메이션: 비서 캐릭터가 방 사이를 이동하며 지시를 전달하고 결과물을 정리합니다."></canvas>
-        <div class="mode-tag" id="modetag">근무일 모드</div>
-      </div>
+      <section class="stage">
+        <div class="screen">
+          <canvas id="map" width="960" height="600" aria-label="사무실 평면도 애니메이션: 비서와 직원 캐릭터들이 방 사이를 이동하며 지시를 전달하고, 서로 찾아가 대화하고, 회의실에 모여 회의합니다."></canvas>
+          <div class="mode-tag" id="modetag">근무일 모드</div>
+          <div class="clickhint">방을 클릭하면 콘텐츠 연관도가 열립니다</div>
 
-      <div class="orders">
-        <div class="orders-head">
-          <span class="eyebrow">지시 내리기</span>
-          <div class="controls">
-            <button class="ghost" id="auto" aria-pressed="true">자동 진행</button>
-            <button class="ghost" id="reset">비우기</button>
+          <div class="roomview" id="roomview" hidden>
+            <div class="rv-inner">
+              <div class="rv-head">
+                <span class="rv-dot"></span>
+                <h3 id="rv-title">방</h3>
+                <span class="rv-meta" id="rv-meta"></span>
+                <button class="rv-close" id="rv-close" aria-label="닫기">&#10005;</button>
+              </div>
+              <div class="rv-body">
+                <svg class="rv-graph" id="rv-graph" viewBox="0 0 800 420" preserveAspectRatio="xMidYMid meet" role="img" aria-label="이 방의 결과물 연관도"></svg>
+                <div class="rv-side" id="rv-side"></div>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="order-list" id="orderlist"></div>
-      </div>
-    </section>
 
+        <div class="orders">
+          <div class="orders-head">
+            <span class="eyebrow">지시 내리기</span>
+            <div class="controls">
+              <button class="ghost call" id="callmtg">회의 소집</button>
+              <button class="ghost" id="auto" aria-pressed="true">자동 진행</button>
+              <button class="ghost" id="reset">비우기</button>
+            </div>
+          </div>
+          <div class="order-list" id="orderlist"></div>
+        </div>
+      </section>
+
+      <div class="duo">
       <div class="card">
         <h2>~/agency/</h2>
         <div class="mirror-body">
           <div class="tree" id="tree"></div>
-          <p class="mirror-note">화면은 이 폴더를 비추는 거울입니다. 방에 물건이 하나 쌓이면 여기에 파일이 하나 생깁니다.</p>
+          <p class="mirror-note">화면은 이 폴더를 비추는 거울입니다. 방에 물건이 하나 쌓이면 여기에 파일이 하나 생기고, 회의가 끝나면 회의록이 하나 생깁니다.</p>
         </div>
+      </div>
+      <div class="card">
+        <h2>TOKENS <span class="n" id="tokday">오늘</span></h2>
+        <div class="tok-total"><b id="toknum">0</b><span>/ 200,000 tok</span></div>
+        <div class="tok-bar"><i id="tokbar" style="width:0%"></i></div>
+        <div class="tok-rows" id="tokrows"></div>
+        <p class="tok-note">지금은 작업·회의·이동에 붙인 <b>추정치</b>입니다. 실제 API 사용량을 붙이면 같은 자리에 그대로 들어갑니다.</p>
+      </div>
       </div>
     </div>
 
@@ -261,15 +311,25 @@ button{font:inherit;color:inherit;cursor:pointer}
       </div>
 
       <div class="card">
-        <h2>ROOMS</h2>
-        <div class="rooms" id="roomcards"></div>
+        <h2>TEAM</h2>
+        <div class="team" id="team"></div>
+      </div>
+
+      <div class="card">
+        <h2>부서 <span class="n">방끼리 붙여 만드는 시너지</span></h2>
+        <div class="depts" id="depts"></div>
+      </div>
+
+      <div class="card">
+        <h2>회의실 <span class="n" id="mtgcount">회의록 0건</span></h2>
+        <ul class="tx" id="tx"></ul>
+        <p class="empty" id="txempty">아직 회의가 없습니다. <b>회의 소집</b>을 누르면 직원들이 회의실로 모입니다.</p>
       </div>
 
       <div class="card">
         <h2>ACTIVITY</h2>
         <ul class="log" id="log"></ul>
       </div>
-
     </aside>
   </div>
 </div>
@@ -278,9 +338,6 @@ button{font:inherit;color:inherit;cursor:pointer}
 (function () {
   "use strict";
 
-  /* ============================================================
-     0. 기본 설정
-     ============================================================ */
   const W = 960, H = 600;
   const cv = document.getElementById("map");
   const ctx = cv.getContext("2d");
@@ -288,114 +345,140 @@ button{font:inherit;color:inherit;cursor:pointer}
 
   function shade(hex, amt) {
     const n = parseInt(hex.slice(1), 16);
-    let r = (n >> 16) + amt, g = ((n >> 8) & 255) + amt, b = (n & 255) + amt;
-    r = Math.max(0, Math.min(255, r)); g = Math.max(0, Math.min(255, g)); b = Math.max(0, Math.min(255, b));
+    const r = Math.max(0, Math.min(255, (n >> 16) + amt));
+    const g = Math.max(0, Math.min(255, ((n >> 8) & 255) + amt));
+    const b = Math.max(0, Math.min(255, (n & 255) + amt));
     return "rgb(" + r + "," + g + "," + b + ")";
   }
-  function pad(n) { return n < 10 ? "0" + n : "" + n; }
+  const pad = function (n) { return n < 10 ? "0" + n : "" + n; };
+  const fmt = function (n) { return Math.round(n).toLocaleString("en-US"); };
   function nowHM() { const d = new Date(); return pad(d.getHours()) + ":" + pad(d.getMinutes()); }
+  function today() { const d = new Date(); return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()); }
+  const px = Math.round;
 
   /* ============================================================
-     1. 방 정의 — 화면의 방 = ~/agency/rooms 의 폴더 하나
+     방 — 화면의 방 하나 = ~/agency 폴더 하나
      ============================================================ */
+  const TOPY = 210, BOTY = 398;
+  const HUB = { x: 400, y: 240, w: 160, h: 128 };
+  const HOME = { x: 480, y: 340 };
+  const BOSS = { x: 470, y: 300 };
+  const TABLE = { x: 740, y: 478, w: 140, h: 46 };
+  const SEATS = [
+    { x: 774, y: 482, face: "down" },
+    { x: 850, y: 482, face: "down" },
+    { x: 812, y: 546, face: "up" }
+  ];
+  const SEC_SEAT = { x: 722, y: 502, face: "right" };
+
   const ROOMS = [
     {
       key: "content", name: "장례 콘텐츠실", folder: "rooms/funeral-content",
       accent: "#E0A458", floor: "#33364A", wall: "#454A63", rug: "#3B3E55",
-      rect: { x: 60, y: 40, w: 250, h: 152 },
-      door: 185, stand: { x: 185, y: 162 },
-      staff: { x: 208, y: 112 }, desk: { x: 176, y: 108, w: 66, h: 24 },
-      shelf: { x: 78, y: 60, w: 78, h: 48 },
-      staffCoat: "#B8543F", staffHair: "#20191C",
-      role: "작가"
+      rect: { x: 40, y: 36, w: 250, h: 154 }, door: 165, side: "top",
+      stand: { x: 165, y: 166 }, work: { x: 182, y: 98 },
+      desk: { x: 150, y: 92, w: 66, h: 24 }, shelf: { x: 54, y: 50, w: 78, h: 46 },
+      j: [165, TOPY]
     },
     {
       key: "health", name: "건강관리실", folder: "rooms/health",
       accent: "#6FB89A", floor: "#2C4038", wall: "#3B564A", rug: "#33493F",
-      rect: { x: 650, y: 40, w: 250, h: 152 },
-      door: 775, stand: { x: 775, y: 162 },
-      staff: { x: 752, y: 112 }, desk: { x: 720, y: 108, w: 66, h: 24 },
-      shelf: { x: 806, y: 60, w: 78, h: 48 },
-      staffCoat: "#3F8E74", staffHair: "#181F1C",
-      role: "트레이너"
+      rect: { x: 670, y: 36, w: 250, h: 154 }, door: 795, side: "top",
+      stand: { x: 795, y: 166 }, work: { x: 794, y: 98 },
+      desk: { x: 762, y: 92, w: 66, h: 24 }, shelf: { x: 826, y: 50, w: 78, h: 46 },
+      j: [795, TOPY]
     },
     {
       key: "channel", name: "자기계발 채널실", folder: "rooms/channel",
       accent: "#9A87D4", floor: "#3A3049", wall: "#4C4062", rug: "#443856",
-      rect: { x: 356, y: 432, w: 250, h: 132 },
-      door: 480, stand: { x: 480, y: 470 },
-      staff: { x: 546, y: 522 }, desk: { x: 514, y: 524, w: 66, h: 24 },
-      shelf: { x: 372, y: 502, w: 78, h: 44 },
-      staffCoat: "#6C5AA8", staffHair: "#1C1826",
-      role: "PD"
+      rect: { x: 40, y: 424, w: 250, h: 152 }, door: 165, side: "bottom",
+      stand: { x: 165, y: 448 }, work: { x: 182, y: 532 },
+      desk: { x: 150, y: 526, w: 66, h: 24 }, shelf: { x: 54, y: 480, w: 78, h: 44 },
+      j: [165, BOTY]
+    },
+    {
+      key: "meeting", name: "회의실", folder: "meetings",
+      accent: "#8FB0D8", floor: "#2F3948", wall: "#41506A", rug: "#374355",
+      rect: { x: 620, y: 424, w: 300, h: 152 }, door: 680, side: "bottom",
+      stand: { x: 680, y: 448 }, work: { x: 680, y: 448 },
+      desk: null, shelf: { x: 632, y: 498, w: 78, h: 46 },
+      j: [680, BOTY], isMeeting: true
     }
   ];
   const R = {};
   ROOMS.forEach(function (r) {
-    R[r.key] = r;
-    r.items = [];      // 서가에 쌓인 결과물
-    r.queue = [];      // 하달받은 대기 작업
-    r.active = null;   // 작업 중
-    r.progress = 0;
-    r.pops = [];       // 완료 연출
-    r.lastFile = "—";
+    R[r.key] = r; r.items = []; r.queue = []; r.active = null; r.progress = 0;
+    r.pops = []; r.lastFile = "—";
   });
-
-  const HUB = { x: 400, y: 240, w: 160, h: 142 };
-  const HOME = { x: 480, y: 348 };
-  const BOSS = { x: 470, y: 296 };
-  const CORRIDOR_Y = 220;
-
-  const PATHS = {
-    content: [[480, 348], [480, CORRIDOR_Y], [185, CORRIDOR_Y], [185, 162]],
-    health: [[480, 348], [480, CORRIDOR_Y], [775, CORRIDOR_Y], [775, 162]],
-    channel: [[480, 348], [480, 470]]
-  };
+  const WORKROOMS = ROOMS.filter(function (r) { return !r.isMeeting; });
 
   /* ============================================================
-     2. 지시 프리셋 — 대표가 던지는 말 한마디
+     직원 — 각자 이름과 역할이 있는 캐릭터
+     ============================================================ */
+  const AGENTS = [
+    { key: "seojin", name: "서진", role: "콘텐츠 작가", room: "content", coat: "#B8543F", hair: "#20191C", skin: "#E4B489" },
+    { key: "hangyeol", name: "한결", role: "건강 코치", room: "health", coat: "#3F8E74", hair: "#181F1C", skin: "#DCAF83" },
+    { key: "daon", name: "다온", role: "채널 PD", room: "channel", coat: "#6C5AA8", hair: "#1C1826", skin: "#EFC095" }
+  ];
+  const AG = {};
+  AGENTS.forEach(function (a) { AG[a.key] = a; });
+  const SEC = { key: "sec", name: "비서", role: "에이전트 비서", coat: "#D9814A", hair: "#2A1F1B", skin: "#F0C9A0" };
+
+  /* ============================================================
+     지시 프리셋 — 결과물마다 태그가 붙는다 (연관도의 재료)
      ============================================================ */
   const PRESETS = [
-    { room: "content", title: "‘장례 준비 5단계’ 영상 기획", product: "대본 초안", file: "script-5steps", dur: 5 },
-    { room: "content", title: "PD 인터뷰 질문지 정리", product: "질문지", file: "pd-interview", dur: 4.5 },
-    { room: "health", title: "오늘 운동 기록 (1시간 20분)", product: "운동 로그", file: "workout-log", dur: 3 },
-    { room: "health", title: "이번 주 체중 추이 정리", product: "체중 리포트", file: "weight-trend", dur: 4 },
-    { room: "channel", title: "오늘 브리핑 영상 대본", product: "브리핑 카드", file: "daily-brief", dur: 4 },
-    { room: "channel", title: "사진 연습 과제 배정", product: "연습 과제", file: "photo-drill", dur: 3.5 }
+    { room: "content", title: "‘장례 준비 5단계’ 영상 기획", product: "대본 초안", file: "script-5steps", dur: 5, tok: 9200, tags: ["대본", "장례", "촬영"] },
+    { room: "content", title: "PD 인터뷰 질문지 정리", product: "질문지", file: "pd-interview", dur: 4.5, tok: 6400, tags: ["대본", "인터뷰", "촬영"] },
+    { room: "health", title: "오늘 운동 기록 (1시간 20분)", product: "운동 로그", file: "workout-log", dur: 3, tok: 2800, tags: ["운동", "기록"] },
+    { room: "health", title: "이번 주 체중 추이 정리", product: "체중 리포트", file: "weight-trend", dur: 4, tok: 5100, tags: ["체중", "기록", "리포트"] },
+    { room: "channel", title: "오늘 브리핑 영상 대본", product: "브리핑 카드", file: "daily-brief", dur: 4, tok: 7300, tags: ["대본", "촬영", "기록"] },
+    { room: "channel", title: "사진 연습 과제 배정", product: "연습 과제", file: "photo-drill", dur: 3.5, tok: 3900, tags: ["사진", "기록"] }
   ];
 
   /* ============================================================
-     3. 상태
+     부서 — 방을 붙여서 시너지 산출물을 만든다
      ============================================================ */
-  const state = {
-    mode: "work",            // work | off
-    auto: !reduceMotion,
-    autoTimer: 3.0,
-    log: [],
-    files: 0
-  };
-  const SPEED = { work: 1.0, off: 1.45 };   // 휴무일엔 일이 빨리 돈다
-
-  const sec = {                              // 비서 = 나(Claude)
-    x: HOME.x, y: HOME.y, facing: "up", walkT: 0,
-    mode: "idle",                            // idle | go | hand | back | report
-    path: null, seg: 0, t: 0, task: null, wait: 0, bubble: null
-  };
-
-  const boss = { bubble: null, bubbleT: 0 };
+  const DEPTS = [
+    {
+      key: "studio", name: "콘텐츠 제작국", rooms: ["content", "channel"], accent: "#E0A458",
+      need: { content: 1, channel: 1 }, product: "영상 패키지", file: "video-package",
+      line: "대본과 촬영 구성이 붙으면 영상 한 편이 완성됩니다.",
+      tags: ["대본", "촬영", "패키지"]
+    },
+    {
+      key: "growth", name: "자기관리국", rooms: ["health", "channel"], accent: "#6FB89A",
+      need: { health: 1, channel: 1 }, product: "성장 리포트", file: "growth-report",
+      line: "운동 기록과 채널 기록을 겹치면 성장 곡선이 보입니다.",
+      tags: ["기록", "체중", "리포트"]
+    },
+    {
+      key: "strategy", name: "전략실", rooms: ["content", "health", "channel"], accent: "#9A87D4",
+      need: { content: 2, health: 1, channel: 1 }, product: "주간 전략", file: "weekly-strategy",
+      line: "세 방의 결과물이 모두 모이면 다음 주 전략이 나옵니다.",
+      tags: ["전략", "리포트", "대본"]
+    }
+  ];
+  DEPTS.forEach(function (d) {
+    d.have = {}; d.rooms.forEach(function (r) { d.have[r] = 0; }); d.done = 0;
+  });
 
   /* ============================================================
-     4. 지시 → 비서 큐
+     상태 · 토큰
      ============================================================ */
-  const pending = [];
+  const state = { mode: "work", auto: !reduceMotion, autoTimer: 3, collabTimer: 16, mtgTimer: 52, log: [] };
+  const SPEED = { work: 1, off: 1.45 };
+  const TOK = { budget: 200000, total: 0, by: { sec: 0, seojin: 0, hangyeol: 0, daon: 0 } };
+  function spend(who, n) { TOK.total += n; TOK.by[who] = (TOK.by[who] || 0) + n; }
 
-  function issue(preset) {
-    pending.push(preset);
-    boss.bubble = preset.title;
-    boss.bubbleT = 2.6;
-    addLog("대표", "“" + preset.title + "”");
+  let transcript = [];
+  function pushTx(who, text) {
+    const name = who === "sec" ? SEC.name : AG[who].name;
+    const color = who === "sec" ? SEC.coat : AG[who].coat;
+    transcript.push({ name: name, color: color, text: text });
+    if (transcript.length > 40) transcript.shift();
+    renderTx();
   }
-
   function addLog(who, text) {
     state.log.unshift({ t: nowHM(), who: who, text: text });
     if (state.log.length > 40) state.log.pop();
@@ -403,232 +486,412 @@ button{font:inherit;color:inherit;cursor:pointer}
   }
 
   /* ============================================================
-     5. 비서 상태 기계
+     캐릭터 — 행동 큐로 움직인다
      ============================================================ */
-  function startDelivery(task) {
-    sec.task = task;
-    sec.path = PATHS[task.room];
-    sec.seg = 0; sec.t = 0;
-    sec.mode = "go";
-    sec.bubble = null;
+  function Actor(o) {
+    return Object.assign({
+      x: 0, y: 0, facing: "down", walkT: 0, queue: [], cur: null,
+      seg: 0, st: 0, bubble: null, bubbleT: 0, moving: false, status: "대기"
+    }, o);
   }
+  const act = {};
+  AGENTS.forEach(function (a) {
+    act[a.key] = Actor({ x: R[a.room].work.x, y: R[a.room].work.y, facing: "down", def: a });
+  });
+  const secA = Actor({ x: HOME.x, y: HOME.y, facing: "up", def: SEC });
+  act.sec = secA;
+  function allActors() { return [secA].concat(AGENTS.map(function (a) { return act[a.key]; })); }
+  function enq(a, action) { a.queue.push(action); }
+  function busy(a) { return !!a.cur || a.queue.length > 0; }
+  function speak(a, text, t) { a.bubble = text; a.bubbleT = t; }
 
-  function updateSec(dt) {
-    const spd = 152 * SPEED[state.mode];
-
-    if (sec.mode === "idle") {
-      sec.facing = "up";
-      if (pending.length) startDelivery(pending.shift());
-      return;
+  function updateActor(a, dt, spd) {
+    a.moving = false;
+    if (a.bubbleT > 0) { a.bubbleT -= dt; if (a.bubbleT <= 0) a.bubble = null; }
+    if (!a.cur) {
+      if (!a.queue.length) return;
+      a.cur = a.queue.shift();
+      if (a.cur.k === "walk") { a.seg = 0; a.st = 0; }
+      if (a.cur.k === "say") speak(a, a.cur.text, a.cur.t);
     }
-
-    if (sec.mode === "hand" || sec.mode === "report") {
-      sec.wait -= dt;
-      if (sec.wait <= 0) {
-        if (sec.mode === "hand") {
-          sec.mode = "back"; sec.seg = 0; sec.t = 0; sec.bubble = null;
-        } else {
-          sec.mode = "idle"; sec.bubble = null; sec.task = null;
-        }
+    const c = a.cur;
+    if (c.k === "walk") {
+      const pts = c.pts;
+      if (a.seg >= pts.length - 1) { a.cur = null; return; }
+      const A = pts[a.seg], B = pts[a.seg + 1];
+      const dx = B[0] - A[0], dy = B[1] - A[1], len = Math.hypot(dx, dy) || 1;
+      a.st += spd * dt / len;
+      a.moving = true;
+      if (a.st >= 1) {
+        a.st = 0; a.x = B[0]; a.y = B[1]; a.seg++;
+        if (a.seg >= pts.length - 1) a.cur = null;
+        return;
       }
-      return;
-    }
-
-    // 이동 중
-    const path = sec.path;
-    const fwd = sec.mode === "go";
-    const pts = fwd ? path : path.slice().reverse();
-    if (sec.seg >= pts.length - 1) { arrive(); return; }
-
-    const a = pts[sec.seg], b = pts[sec.seg + 1];
-    const dx = b[0] - a[0], dy = b[1] - a[1];
-    const len = Math.hypot(dx, dy);
-    sec.t += (spd * dt) / len;
-    if (sec.t >= 1) { sec.t = 0; sec.seg++; sec.x = b[0]; sec.y = b[1]; if (sec.seg >= pts.length - 1) arrive(); return; }
-
-    sec.x = a[0] + dx * sec.t;
-    sec.y = a[1] + dy * sec.t;
-    sec.facing = Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? "right" : "left") : (dy > 0 ? "down" : "up");
-    sec.walkT += dt * (spd / 26);
-  }
-
-  function arrive() {
-    if (sec.mode === "go") {
-      const room = R[sec.task.room];
-      room.queue.push(sec.task);
-      sec.mode = "hand"; sec.wait = 1.1; sec.facing = "up";
-      sec.bubble = room.name + "에 하달했습니다";
-      addLog("비서", "<em>" + room.name + "</em>에 하달 · " + sec.task.product);
-      if (!room.active) beginWork(room);
-    } else {
-      sec.x = HOME.x; sec.y = HOME.y; sec.facing = "up";
-      sec.mode = "report"; sec.wait = .85;
-      sec.bubble = "전달 완료했습니다";
-    }
+      a.x = A[0] + dx * a.st; a.y = A[1] + dy * a.st;
+      a.facing = Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? "right" : "left") : (dy > 0 ? "down" : "up");
+      a.walkT += dt * (spd / 26);
+    } else if (c.k === "say" || c.k === "wait") {
+      c.t -= dt; if (c.t <= 0) a.cur = null;
+    } else if (c.k === "do") { c.fn(); a.cur = null; }
+    else if (c.k === "face") { a.facing = c.d; a.cur = null; }
+    else if (c.k === "status") { a.status = c.s; a.cur = null; }
   }
 
   /* ============================================================
-     6. 직원 작업 → 결과물이 서가에 쌓인다
+     길찾기 — 복도 두 줄 + 대표실을 지나는 세로 통로
      ============================================================ */
-  function beginWork(room) {
-    room.active = room.queue.shift();
-    room.progress = 0;
+  function link(j1, j2) { return j1[1] === j2[1] ? [] : [[480, j1[1]], [480, j2[1]]]; }
+  function rev(p) { return p.slice().reverse(); }
+
+  function routeRoomToRoom(fromKey, toKey, tail) {
+    const f = R[fromKey], t = R[toKey];
+    return [[f.work.x, f.work.y], [f.stand.x, f.stand.y], f.j]
+      .concat(link(f.j, t.j))
+      .concat([t.j, [t.stand.x, t.stand.y]])
+      .concat(tail || []);
+  }
+  function routeHubToRoom(toKey, tail) {
+    const t = R[toKey];
+    const p = [[HOME.x, HOME.y], [480, t.j[1]]];
+    if (t.j[0] !== 480) p.push(t.j);
+    p.push([t.stand.x, t.stand.y]);
+    return p.concat(tail || []);
+  }
+
+  /* ============================================================
+     지시 → 비서가 배달 → 담당 직원이 작업 → 서가에 적재
+     ============================================================ */
+  const pending = [];
+  function issue(preset) {
+    pending.push(preset);
+    speak(secA, null, 0);
+    boss.bubble = preset.title; boss.bubbleT = 2.6;
+    addLog("대표", "“" + preset.title + "”");
+  }
+  const boss = { bubble: null, bubbleT: 0 };
+
+  function secLogic() {
+    if (ses.on || busy(secA) || !pending.length) return;
+    const task = pending.shift();
+    const room = R[task.room];
+    const ag = AGENTS.filter(function (a) { return a.room === task.room; })[0];
+    const path = routeHubToRoom(task.room, []);
+    enq(secA, { k: "status", s: "이동 중" });
+    enq(secA, { k: "walk", pts: path });
+    enq(secA, { k: "face", d: room.side === "top" ? "up" : "down" });
+    enq(secA, {
+      k: "do", fn: function () {
+        room.queue.push(task);
+        spend("sec", 700);
+        addLog("비서", "<em>" + ag.name + "</em>에게 하달 · " + task.product);
+      }
+    });
+    enq(secA, { k: "say", text: ag.name + " 님, " + task.product + " 부탁드립니다", t: 2.0 });
+    enq(secA, { k: "do", fn: function () { speak(act[ag.key], "네, 바로 하겠습니다", 1.9); } });
+    enq(secA, { k: "wait", t: 1.0 });
+    enq(secA, { k: "walk", pts: rev(path) });
+    enq(secA, { k: "face", d: "up" });
+    enq(secA, { k: "status", s: "대기" });
+  }
+
+  function atDesk(ag) {
+    const a = act[ag.key], w = R[ag.room].work;
+    return !busy(a) && Math.abs(a.x - w.x) < 3 && Math.abs(a.y - w.y) < 3;
+  }
+
+  function addItem(room, it) {
+    room.items.push(it);
+    room.pops.push({ life: 1.4, color: it.color });
+    room.lastFile = today() + "_" + it.file + ".md";
+    renderTree(); renderBrief(); renderDepts();
   }
 
   function updateRooms(dt) {
-    ROOMS.forEach(function (room) {
+    WORKROOMS.forEach(function (room) {
+      const ag = AGENTS.filter(function (a) { return a.room === room.key; })[0];
       for (let i = room.pops.length - 1; i >= 0; i--) {
-        room.pops[i].life -= dt;
-        if (room.pops[i].life <= 0) room.pops.splice(i, 1);
+        room.pops[i].life -= dt; if (room.pops[i].life <= 0) room.pops.splice(i, 1);
       }
-      if (!room.active) {
-        if (room.queue.length) beginWork(room);
-        return;
-      }
-      room.progress += dt / (room.active.dur / SPEED[state.mode]);
+      if (!room.active) { if (room.queue.length && atDesk(ag)) { room.active = room.queue.shift(); room.progress = 0; } return; }
+      if (!atDesk(ag)) return;                       // 자리를 비우면 작업도 멈춘다
+      const step = dt / (room.active.dur / SPEED[state.mode]);
+      room.progress += step;
+      spend(ag.key, room.active.tok * step);
       if (room.progress >= 1) {
         const done = room.active;
-        room.items.push(done.product);
         room.active = null; room.progress = 0;
-        room.pops.push({ life: 1.4 });
-        const d = new Date();
-        const stamp = d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate());
-        room.lastFile = stamp + "_" + done.file + ".md";
-        state.files++;
+        addItem(room, { label: done.product, file: done.file, tags: done.tags, color: room.accent, kind: "item" });
+        DEPTS.forEach(function (d) { if (d.rooms.indexOf(room.key) >= 0) d.have[room.key]++; });
         addLog(room.name, "<em>" + done.product + "</em> 완료 · 서가 " + room.items.length + "개");
-        renderRooms(); renderTree(); renderBrief();
+        renderDepts();
       }
     });
   }
 
   /* ============================================================
-     7. 그리기 — 픽셀 오피스
+     회의 · 시너지 — 모여서 이야기하고 결론을 남긴다
      ============================================================ */
-  function px(x) { return Math.round(x); }
+  const ses = { on: false, phase: null, who: [], script: [], i: 0, t: 0, onEnd: null, title: "" };
 
-  function drawFloorTiles(x, y, w, h, base, tile) {
-    ctx.fillStyle = base;
-    ctx.fillRect(px(x), px(y), px(w), px(h));
-    ctx.strokeStyle = tile;
-    ctx.lineWidth = 1;
-    ctx.beginPath();
+  function startSession(cfg) {
+    if (ses.on) return false;
+    ses.on = true; ses.phase = "gather"; ses.who = cfg.who; ses.script = cfg.script;
+    ses.i = 0; ses.t = 0; ses.onEnd = cfg.onEnd; ses.title = cfg.title;
+    transcript = [];
+    renderTx();
+    addLog("회의실", "<em>" + cfg.title + "</em> 소집 · " + cfg.who.length + "명");
+    const secPath = routeHubToRoom("meeting", [[SEC_SEAT.x, SEC_SEAT.y]]);
+    ses.secPath = secPath;
+    enq(secA, { k: "status", s: "회의 중" });
+    enq(secA, { k: "walk", pts: secPath });
+    enq(secA, { k: "face", d: SEC_SEAT.face });
+    ses.paths = {};
+    cfg.who.forEach(function (k, i) {
+      const ag = AG[k], seat = SEATS[i];
+      const p = routeRoomToRoom(ag.room, "meeting", [[seat.x, seat.y]]);
+      ses.paths[k] = p;
+      enq(act[k], { k: "status", s: "회의 중" });
+      enq(act[k], { k: "walk", pts: p });
+      enq(act[k], { k: "face", d: seat.face });
+    });
+    return true;
+  }
+
+  function updateSession(dt) {
+    if (!ses.on) return;
+    const settled = !busy(secA) && ses.who.every(function (k) { return !busy(act[k]); });
+    if (ses.phase === "gather") {
+      if (settled) { ses.phase = "talk"; ses.t = 0.5; }
+    } else if (ses.phase === "talk") {
+      ses.t -= dt;
+      if (ses.t > 0) return;
+      if (ses.i >= ses.script.length) { endSession(); return; }
+      const line = ses.script[ses.i++];
+      const who = line[0], text = line[1];
+      const a = who === "sec" ? secA : act[who];
+      allActors().forEach(function (x) { if (x !== a) { x.bubble = null; x.bubbleT = 0; } });
+      const hold = 2.1 + Math.min(2.8, text.length * 0.058);
+      speak(a, text, hold);
+      pushTx(who, text);
+      spend(who, 620 + text.length * 22);
+      ses.t = hold * 0.92;
+    } else if (ses.phase === "leave") {
+      if (settled) { ses.on = false; ses.phase = null; }
+    }
+  }
+
+  function endSession() {
+    allActors().forEach(function (x) { x.bubble = null; x.bubbleT = 0; });
+    if (ses.onEnd) ses.onEnd();
+    enq(secA, { k: "walk", pts: rev(ses.secPath) });
+    enq(secA, { k: "face", d: "up" });
+    enq(secA, { k: "status", s: "대기" });
+    ses.who.forEach(function (k) {
+      enq(act[k], { k: "walk", pts: rev(ses.paths[k]) });
+      enq(act[k], { k: "face", d: "down" });
+      enq(act[k], { k: "status", s: "대기" });
+    });
+    ses.phase = "leave";
+  }
+
+  const MID = [
+    [["daon", "브리핑 영상은 서진 님 대본이 있어야 붙습니다."], ["seojin", "오늘 안에 넘기겠습니다."]],
+    [["seojin", "인터뷰 질문지는 현장 톤으로 다시 다듬었습니다."], ["daon", "그러면 컷 편집이 훨씬 쉬워집니다."]],
+    [["hangyeol", "근무 주간엔 운동 강도를 낮게 잡았습니다."], ["daon", "그 기록 그대로 채널에 올리면 좋겠는데요."]]
+  ];
+  function meetingScript() {
+    const c = R.content.items.length, h = R.health.items.length, ch = R.channel.items.length;
+    const off = state.mode === "off";
+    const mid = MID[Math.floor(Math.random() * MID.length)];
+    return [
+      ["sec", off ? "휴무일 회의 시작하겠습니다. 밀린 것부터 봅니다." : "주간 회의 시작하겠습니다. 짧게 갑니다."]
+    ].concat([
+      ["seojin", "장례 콘텐츠는 지금까지 " + c + "건 나왔습니다."]
+    ], mid, [
+      ["hangyeol", "건강 쪽은 " + h + "건 정리했습니다."],
+      ["daon", "채널 쪽은 " + ch + "건, 사진 과제가 밀려 있습니다."],
+      ["sec", "대표님 스케줄이 불규칙하니 촬영은 휴무일로 몰겠습니다."],
+      ["sec", "정리합니다 — 대본 우선, 촬영은 휴무일, 기록은 매일."]
+    ]);
+  }
+
+  function callMeeting() {
+    const ok = startSession({
+      title: "주간 회의",
+      who: ["seojin", "hangyeol", "daon"],
+      script: meetingScript(),
+      onEnd: function () {
+        addItem(R.meeting, {
+          label: "회의록", file: "minutes-" + (R.meeting.items.length + 1),
+          tags: ["회의", "전략", "기록"], color: R.meeting.accent, kind: "minutes"
+        });
+        addLog("회의실", "<em>회의록</em> 정리 완료");
+        const follow = PRESETS[Math.floor(Math.random() * PRESETS.length)];
+        pending.push(follow);
+        addLog("비서", "회의 후속 · " + follow.product + " 배정");
+        renderMtg();
+      }
+    });
+    return ok;
+  }
+
+  function synergyScript(d) {
+    const names = d.rooms.map(function (r) { return R[r].name; }).join(" + ");
+    const lines = [["sec", d.name + " 붙이겠습니다. " + names + "."]];
+    d.rooms.forEach(function (rk) {
+      const ag = AGENTS.filter(function (a) { return a.room === rk; })[0];
+      const last = R[rk].items[R[rk].items.length - 1];
+      lines.push([ag.key, R[rk].name + " 쪽은 " + (last ? last.label : "자료") + " 준비됐습니다."]);
+    });
+    lines.push([AGENTS.filter(function (a) { return a.room === d.rooms[d.rooms.length - 1]; })[0].key, d.line]);
+    lines.push(["sec", "합쳐서 " + d.product + " 하나로 내겠습니다."]);
+    return lines;
+  }
+
+  function runSynergy(d) {
+    if (!deptReady(d)) return;
+    const who = AGENTS.filter(function (a) { return d.rooms.indexOf(a.room) >= 0; }).map(function (a) { return a.key; });
+    startSession({
+      title: d.name + " 시너지",
+      who: who,
+      script: synergyScript(d),
+      onEnd: function () {
+        d.rooms.forEach(function (r) { d.have[r] -= d.need[r]; });
+        d.done++;
+        addItem(R.meeting, {
+          label: d.product, file: d.file + "-" + d.done,
+          tags: d.tags.concat(d.rooms.map(function (r) { return R[r].name; })),
+          color: d.accent, kind: "dept", dept: d.key
+        });
+        addLog(d.name, "<em>" + d.product + "</em> 산출 · 시너지 " + d.done + "회");
+        renderMtg(); renderDepts();
+      }
+    });
+  }
+  function deptReady(d) {
+    return !ses.on && d.rooms.every(function (r) { return d.have[r] >= d.need[r]; });
+  }
+
+  /* ============================================================
+     복도 대화 — 직원끼리 찾아가서 이야기한다
+     ============================================================ */
+  const CHATS = [
+    { a: "대본 언제쯤 넘겨주실 수 있을까요?", b: "오늘 안에 초안 드리겠습니다." },
+    { a: "이번 주 촬영은 어느 날이 좋을까요?", b: "휴무일에 몰아서 하시죠." },
+    { a: "이 기록, 그래프로 뽑아도 될까요?", b: "네, 주 단위로 묶으면 보기 좋습니다." },
+    { a: "사진 과제가 자꾸 밀리는데요.", b: "짧은 것부터 하나씩 붙이겠습니다." },
+    { a: "톤을 좀 더 차분하게 갈까요?", b: "그게 채널 색이랑 맞습니다." }
+  ];
+  function startChat() {
+    if (ses.on) return;
+    const pool = AGENTS.filter(function (a) { return !busy(act[a.key]) && !R[a.room].active; });
+    if (pool.length < 2) return;
+    const i = Math.floor(Math.random() * pool.length);
+    let j = Math.floor(Math.random() * (pool.length - 1)); if (j >= i) j++;
+    const X = pool[i], Y = pool[j], A = act[X.key], B = act[Y.key];
+    const c = CHATS[Math.floor(Math.random() * CHATS.length)];
+    const path = routeRoomToRoom(X.room, Y.room, []);
+    enq(A, { k: "status", s: "이동 중" });
+    enq(A, { k: "walk", pts: path });
+    enq(A, { k: "face", d: R[Y.room].side === "top" ? "up" : "down" });
+    enq(A, { k: "say", text: c.a, t: 2.6 });
+    enq(A, {
+      k: "do", fn: function () {
+        speak(B, c.b, 2.6);
+        pushTx(X.key, c.a); pushTx(Y.key, c.b);
+        spend(X.key, 900); spend(Y.key, 900);
+        addLog("복도", "<em>" + X.name + " → " + Y.name + "</em> 대화");
+      }
+    });
+    enq(A, { k: "wait", t: 2.8 });
+    enq(A, { k: "walk", pts: rev(path) });
+    enq(A, { k: "face", d: "down" });
+    enq(A, { k: "status", s: "대기" });
+  }
+
+  /* ============================================================
+     그리기
+     ============================================================ */
+  function tiles(x, y, w, h, base, grid) {
+    ctx.fillStyle = base; ctx.fillRect(px(x), px(y), px(w), px(h));
+    ctx.strokeStyle = grid; ctx.lineWidth = 1; ctx.beginPath();
     for (let gx = x + 16; gx < x + w; gx += 16) { ctx.moveTo(px(gx) + .5, y); ctx.lineTo(px(gx) + .5, y + h); }
     for (let gy = y + 16; gy < y + h; gy += 16) { ctx.moveTo(x, px(gy) + .5); ctx.lineTo(x + w, px(gy) + .5); }
     ctx.stroke();
   }
 
-  function drawRoomShell(room) {
+  function roomShell(room) {
     const r = room.rect;
-    // 벽 (테두리 4px)
-    ctx.fillStyle = room.wall;
-    ctx.fillRect(r.x - 4, r.y - 4, r.w + 8, r.h + 8);
-    ctx.fillStyle = shade(room.wall, -22);
-    ctx.fillRect(r.x - 4, r.y + r.h, r.w + 8, 4);
-    // 바닥
-    drawFloorTiles(r.x, r.y, r.w, r.h, room.floor, "rgba(0,0,0,.14)");
-    // 러그
-    ctx.fillStyle = room.rug;
-    ctx.fillRect(px(r.x + r.w / 2 - 44), px(r.y + r.h - 52), 88, 34);
-    ctx.strokeStyle = "rgba(255,255,255,.05)";
-    ctx.strokeRect(px(r.x + r.w / 2 - 44) + .5, px(r.y + r.h - 52) + .5, 87, 33);
-    // 문 (아래쪽 벽 뚫기)
-    ctx.fillStyle = "#1A1D26";
-    if (room.key === "channel") ctx.fillRect(px(room.door - 11), r.y - 4, 22, 4);
-    else ctx.fillRect(px(room.door - 11), r.y + r.h, 22, 4);
+    ctx.fillStyle = room.wall; ctx.fillRect(r.x - 4, r.y - 4, r.w + 8, r.h + 8);
+    ctx.fillStyle = shade(room.wall, -22); ctx.fillRect(r.x - 4, r.y + r.h, r.w + 8, 4);
+    tiles(r.x, r.y, r.w, r.h, room.floor, "rgba(0,0,0,.14)");
+    if (!room.isMeeting) {
+      ctx.fillStyle = room.rug;
+      ctx.fillRect(px(r.x + r.w / 2 - 44), px(room.side === "top" ? r.y + r.h - 50 : r.y + 20), 88, 32);
+    }
+    ctx.fillStyle = "#171A22";
+    if (room.side === "top") ctx.fillRect(px(room.door - 11), r.y + r.h, 22, 4);
+    else ctx.fillRect(px(room.door - 11), r.y - 4, 22, 4);
   }
 
-  function drawShelf(room) {
+  function shelf(room) {
     const s = room.shelf;
-    ctx.fillStyle = "#241E1A";
-    ctx.fillRect(px(s.x), px(s.y), px(s.w), px(s.h));
-    ctx.fillStyle = "#332A23";
-    ctx.fillRect(px(s.x) + 2, px(s.y) + 2, px(s.w) - 4, px(s.h) - 4);
+    ctx.fillStyle = "#241E1A"; ctx.fillRect(px(s.x), px(s.y), px(s.w), px(s.h));
+    ctx.fillStyle = "#332A23"; ctx.fillRect(px(s.x) + 2, px(s.y) + 2, px(s.w) - 4, px(s.h) - 4);
     const rows = 3, rowH = (s.h - 4) / rows;
     ctx.fillStyle = "#241E1A";
     for (let i = 1; i < rows; i++) ctx.fillRect(px(s.x) + 2, px(s.y + 2 + rowH * i), px(s.w) - 4, 2);
-
-    // 쌓인 결과물
-    const perRow = 6, cap = rows * perRow;
-    const n = Math.min(room.items.length, cap);
+    const perRow = 6, cap = rows * perRow, n = Math.min(room.items.length, cap);
     for (let i = 0; i < n; i++) {
-      const row = rows - 1 - Math.floor(i / perRow);
-      const col = i % perRow;
-      const bx = s.x + 5 + col * 11;
-      const by = s.y + 2 + rowH * row + rowH - 15;
+      const it = room.items[i];
+      const row = rows - 1 - Math.floor(i / perRow), col = i % perRow;
+      const bx = s.x + 5 + col * 11, by = s.y + 2 + rowH * row + rowH - 15;
       const hh = 11 + ((i * 7) % 3);
-      ctx.fillStyle = i % 3 === 0 ? room.accent : shade(room.accent, -55);
+      ctx.fillStyle = it.kind === "dept" ? it.color : (i % 3 === 0 ? it.color : shade(it.color, -55));
       ctx.fillRect(px(bx), px(by + (11 - hh)), 8, hh);
-      ctx.fillStyle = "rgba(255,255,255,.18)";
-      ctx.fillRect(px(bx), px(by + (11 - hh)), 8, 2);
+      ctx.fillStyle = "rgba(255,255,255,.18)"; ctx.fillRect(px(bx), px(by + (11 - hh)), 8, 2);
     }
     if (room.items.length > cap) {
-      ctx.fillStyle = room.accent;
-      ctx.font = '700 10px "Silkscreen", monospace';
-      ctx.textAlign = "right";
-      ctx.fillText("+" + (room.items.length - cap), px(s.x + s.w), px(s.y + s.h + 11));
-      ctx.textAlign = "left";
+      ctx.fillStyle = room.accent; ctx.font = '700 10px "Silkscreen", monospace'; ctx.textAlign = "right";
+      ctx.fillText("+" + (room.items.length - cap), px(s.x + s.w), px(s.y + s.h + 11)); ctx.textAlign = "left";
     }
   }
 
-  function drawDesk(d, accent, prop) {
-    ctx.fillStyle = "#2A2119";
-    ctx.fillRect(px(d.x), px(d.y), px(d.w), px(d.h));
-    ctx.fillStyle = "#3B2E22";
-    ctx.fillRect(px(d.x), px(d.y), px(d.w), px(d.h) - 5);
-    ctx.fillStyle = "rgba(255,255,255,.07)";
-    ctx.fillRect(px(d.x), px(d.y), px(d.w), 2);
+  function desk(d, accent, prop) {
+    ctx.fillStyle = "#2A2119"; ctx.fillRect(px(d.x), px(d.y), px(d.w), px(d.h));
+    ctx.fillStyle = "#3B2E22"; ctx.fillRect(px(d.x), px(d.y), px(d.w), px(d.h) - 5);
+    ctx.fillStyle = "rgba(255,255,255,.07)"; ctx.fillRect(px(d.x), px(d.y), px(d.w), 2);
     if (prop === "lamp") {
-      // 서류 더미 + 스탠드
-      ctx.fillStyle = "#E4DCC6";
-      ctx.fillRect(px(d.x + 7), px(d.y + 4), 14, 10);
-      ctx.fillStyle = "#C3B999";
-      ctx.fillRect(px(d.x + 7), px(d.y + 4), 14, 2);
-      ctx.fillStyle = "#2A2F3C";
-      ctx.fillRect(px(d.x + d.w - 16), px(d.y - 12), 3, 16);
-      ctx.fillStyle = accent;
-      ctx.fillRect(px(d.x + d.w - 21), px(d.y - 17), 13, 6);
+      ctx.fillStyle = "#E4DCC6"; ctx.fillRect(px(d.x + 7), px(d.y + 4), 14, 10);
+      ctx.fillStyle = "#C3B999"; ctx.fillRect(px(d.x + 7), px(d.y + 4), 14, 2);
+      ctx.fillStyle = "#2A2F3C"; ctx.fillRect(px(d.x + d.w - 16), px(d.y - 12), 3, 16);
+      ctx.fillStyle = accent; ctx.fillRect(px(d.x + d.w - 21), px(d.y - 17), 13, 6);
       return;
     }
-    // 모니터
-    ctx.fillStyle = "#181C24";
-    ctx.fillRect(px(d.x + d.w / 2 - 13), px(d.y - 13), 26, 14);
-    ctx.fillStyle = accent;
-    ctx.globalAlpha = .55;
-    ctx.fillRect(px(d.x + d.w / 2 - 11), px(d.y - 11), 22, 10);
-    ctx.globalAlpha = 1;
+    ctx.fillStyle = "#181C24"; ctx.fillRect(px(d.x + d.w / 2 - 13), px(d.y - 13), 26, 14);
+    ctx.globalAlpha = .55; ctx.fillStyle = accent;
+    ctx.fillRect(px(d.x + d.w / 2 - 11), px(d.y - 11), 22, 10); ctx.globalAlpha = 1;
   }
 
-  function drawPerson(x, y, o) {
+  function person(x, y, o) {
     const coat = o.coat, hair = o.hair || "#221B1E", skin = o.skin || "#E4B489";
     const facing = o.facing || "down";
-    const stepping = o.stepping ? (Math.floor(o.walkT) % 2) : 0;
-    const bob = o.working ? Math.round(Math.sin(o.tick * 6) * 1) : 0;
-
+    const step = o.stepping ? (Math.floor(o.walkT) % 2) : 0;
+    const bob = o.working ? Math.round(Math.sin(o.tick * 6)) : 0;
     ctx.fillStyle = "rgba(0,0,0,.30)";
-    ctx.beginPath();
-    ctx.ellipse(px(x), px(y) + 1, 7, 3, 0, 0, Math.PI * 2);
-    ctx.fill();
-
+    ctx.beginPath(); ctx.ellipse(px(x), px(y) + 1, 7, 3, 0, 0, Math.PI * 2); ctx.fill();
     const yy = y + bob;
-    // 다리
     ctx.fillStyle = "#252A36";
-    ctx.fillRect(px(x - 4), px(yy - 6 - (stepping ? 1 : 0)), 3, 6 + (stepping ? 1 : 0));
-    ctx.fillRect(px(x + 1), px(yy - 6 - (stepping ? 0 : 1)), 3, 6 + (stepping ? 0 : 1));
-    // 몸
-    ctx.fillStyle = coat;
-    ctx.fillRect(px(x - 5), px(yy - 17), 10, 12);
+    ctx.fillRect(px(x - 4), px(yy - 6 - (step ? 1 : 0)), 3, 6 + (step ? 1 : 0));
+    ctx.fillRect(px(x + 1), px(yy - 6 - (step ? 0 : 1)), 3, 6 + (step ? 0 : 1));
+    ctx.fillStyle = coat; ctx.fillRect(px(x - 5), px(yy - 17), 10, 12);
     ctx.fillStyle = shade(coat, -26);
-    ctx.fillRect(px(x - 7), px(yy - 16), 2, 9);
-    ctx.fillRect(px(x + 5), px(yy - 16), 2, 9);
-    ctx.fillStyle = "rgba(255,255,255,.10)";
-    ctx.fillRect(px(x - 5), px(yy - 17), 10, 2);
-    // 머리
-    ctx.fillStyle = skin;
-    ctx.fillRect(px(x - 4), px(yy - 25), 8, 8);
+    ctx.fillRect(px(x - 7), px(yy - 16), 2, 9); ctx.fillRect(px(x + 5), px(yy - 16), 2, 9);
+    ctx.fillStyle = "rgba(255,255,255,.10)"; ctx.fillRect(px(x - 5), px(yy - 17), 10, 2);
+    ctx.fillStyle = skin; ctx.fillRect(px(x - 4), px(yy - 25), 8, 8);
     ctx.fillStyle = hair;
-    if (facing === "up") {
-      ctx.fillRect(px(x - 5), px(yy - 26), 10, 8);
-    } else {
+    if (facing === "up") ctx.fillRect(px(x - 5), px(yy - 26), 10, 8);
+    else {
       ctx.fillRect(px(x - 5), px(yy - 26), 10, 4);
       ctx.fillRect(px(x - 5), px(yy - 26), 2, 7);
       ctx.fillRect(px(x + 3), px(yy - 26), 2, 7);
@@ -637,105 +900,110 @@ button{font:inherit;color:inherit;cursor:pointer}
       else if (facing === "left") ctx.fillRect(px(x - 3), px(yy - 21), 2, 2);
       else ctx.fillRect(px(x + 2), px(yy - 21), 2, 2);
     }
-    // 손에 든 지시서
     if (o.carry) {
       const hx = facing === "left" ? x - 11 : x + 6;
-      ctx.fillStyle = "#F0E9D8";
-      ctx.fillRect(px(hx), px(yy - 13), 6, 8);
-      ctx.fillStyle = "#C0B69C";
-      ctx.fillRect(px(hx), px(yy - 13), 6, 2);
+      ctx.fillStyle = "#F0E9D8"; ctx.fillRect(px(hx), px(yy - 13), 6, 8);
+      ctx.fillStyle = "#C0B69C"; ctx.fillRect(px(hx), px(yy - 13), 6, 2);
     }
+  }
+
+  function plant(x, y) {
+    ctx.fillStyle = "#5A4230"; ctx.fillRect(px(x - 5), px(y), 10, 9);
+    ctx.fillStyle = "#6C5038"; ctx.fillRect(px(x - 5), px(y), 10, 2);
+    ctx.fillStyle = "#3E6B4E"; ctx.fillRect(px(x - 6), px(y - 9), 12, 9); ctx.fillRect(px(x - 3), px(y - 14), 6, 6);
+    ctx.fillStyle = "#4E845E"; ctx.fillRect(px(x - 4), px(y - 8), 4, 4);
+  }
+
+  function props(room) {
+    const r = room.rect;
+    if (room.key === "content") {
+      ctx.fillStyle = "#2B2620"; ctx.fillRect(px(r.x + 214), px(r.y + 100), 12, 26);
+      ctx.fillStyle = "#E9E4D8"; ctx.fillRect(px(r.x + 217), px(r.y + 88), 6, 14);
+      ctx.fillStyle = "#F0C070"; ctx.fillRect(px(r.x + 219), px(r.y + 82), 2, 6);
+      ctx.fillStyle = "#22262F"; ctx.fillRect(px(r.x + 32), px(r.y + 112), 3, 24);
+      ctx.fillRect(px(r.x + 26), px(r.y + 100), 16, 12);
+      ctx.fillStyle = "#4A5262"; ctx.fillRect(px(r.x + 40), px(r.y + 103), 5, 6);
+    } else if (room.key === "health") {
+      ctx.fillStyle = "#232E2A"; ctx.fillRect(px(r.x + 20), px(r.y + 92), 42, 46);
+      ctx.fillStyle = "#1A2320"; ctx.fillRect(px(r.x + 24), px(r.y + 100), 34, 34);
+      ctx.fillStyle = "#43604F"; ctx.fillRect(px(r.x + 20), px(r.y + 88), 42, 5);
+      ctx.fillStyle = "#2E4038"; ctx.fillRect(px(r.x + 22), px(r.y + 146), 22, 14);
+      ctx.fillStyle = room.accent; ctx.fillRect(px(r.x + 29), px(r.y + 150), 8, 3);
+    } else if (room.key === "channel") {
+      ctx.fillStyle = "#2B2438"; ctx.fillRect(px(r.x + 170), px(r.y + 14), 62, 8);
+      ctx.strokeStyle = room.accent; ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.arc(px(r.x + 200), px(r.y + 66), 15, 0, Math.PI * 2); ctx.stroke();
+      ctx.fillStyle = "#22262F"; ctx.fillRect(px(r.x + 199), px(r.y + 80), 3, 22);
+      ctx.fillStyle = "#1E2229"; ctx.fillRect(px(r.x + 116), px(r.y + 60), 20, 13);
+      ctx.fillStyle = "#4A5262"; ctx.fillRect(px(r.x + 136), px(r.y + 63), 5, 7);
+    } else {
+      // 회의실 — 화이트보드
+      ctx.fillStyle = "#20242E"; ctx.fillRect(px(r.x + 122), px(r.y + 30), 124, 12);
+      ctx.fillStyle = "#D8D2C2"; ctx.fillRect(px(r.x + 124), px(r.y + 32), 120, 8);
+      ctx.fillStyle = room.accent; ctx.fillRect(px(r.x + 130), px(r.y + 35), 30, 2);
+      ctx.fillStyle = "#C9564A"; ctx.fillRect(px(r.x + 166), px(r.y + 35), 18, 2);
+      ctx.fillStyle = "#6FB89A"; ctx.fillRect(px(r.x + 190), px(r.y + 35), 24, 2);
+    }
+  }
+
+  function table() {
+    ctx.fillStyle = "#2A2119"; ctx.fillRect(px(TABLE.x), px(TABLE.y), px(TABLE.w), px(TABLE.h));
+    ctx.fillStyle = "#3F3226"; ctx.fillRect(px(TABLE.x), px(TABLE.y), px(TABLE.w), px(TABLE.h) - 6);
+    ctx.fillStyle = "rgba(255,255,255,.08)"; ctx.fillRect(px(TABLE.x), px(TABLE.y), px(TABLE.w), 2);
+    ctx.fillStyle = "#E4DCC6";
+    ctx.fillRect(px(TABLE.x + 22), px(TABLE.y + 12), 13, 9);
+    ctx.fillRect(px(TABLE.x + 62), px(TABLE.y + 20), 13, 9);
+    ctx.fillRect(px(TABLE.x + 104), px(TABLE.y + 10), 13, 9);
+    ctx.fillStyle = "#8FB0D8"; ctx.fillRect(px(TABLE.x + 44), px(TABLE.y + 22), 9, 6);
+  }
+
+  function label(text, x, y, color, font) {
+    ctx.font = font || '600 11px "IBM Plex Sans KR", sans-serif';
+    ctx.textAlign = "center";
+    const w = ctx.measureText(text).width + 14;
+    ctx.fillStyle = "rgba(10,12,17,.6)";
+    ctx.fillRect(px(x - w / 2), px(y - 11), px(w), 16);
+    ctx.fillStyle = color; ctx.fillText(text, px(x), px(y));
+    ctx.textAlign = "left";
+  }
+
+  function nameplate(a) {
+    const d = a.def;
+    ctx.font = '600 9.5px "IBM Plex Sans KR", sans-serif';
+    ctx.textAlign = "center";
+    const w = ctx.measureText(d.name).width + 10;
+    ctx.fillStyle = "rgba(10,12,17,.7)";
+    ctx.fillRect(px(a.x - w / 2), px(a.y + 3), px(w), 12);
+    ctx.fillStyle = d.coat === SEC.coat ? "#F2C89A" : shade(d.coat, 62);
+    ctx.fillText(d.name, px(a.x), px(a.y + 12));
+    ctx.textAlign = "left";
   }
 
   function bubble(x, y, text, accent) {
     ctx.font = '500 12px "IBM Plex Sans KR", sans-serif';
-    const w = Math.min(230, ctx.measureText(text).width + 20);
-    const h = 24;
-    const bx = Math.max(8, Math.min(W - w - 8, x - w / 2));
-    const by = y - h - 8;
-    ctx.fillStyle = "rgba(14,16,22,.92)";
-    ctx.strokeStyle = accent;
-    ctx.lineWidth = 1;
+    const w = Math.min(250, ctx.measureText(text).width + 20), h = 24;
+    const bx = Math.max(8, Math.min(W - w - 8, x - w / 2)), by = y - h - 8;
+    ctx.fillStyle = "rgba(14,16,22,.93)";
     ctx.fillRect(px(bx), px(by), px(w), h);
+    ctx.strokeStyle = accent; ctx.lineWidth = 1;
     ctx.strokeRect(px(bx) + .5, px(by) + .5, px(w) - 1, h - 1);
     ctx.beginPath();
-    ctx.moveTo(px(x) - 4, px(by + h));
-    ctx.lineTo(px(x) + 4, px(by + h));
-    ctx.lineTo(px(x), px(by + h) + 6);
-    ctx.closePath();
-    ctx.fillStyle = "rgba(14,16,22,.92)";
-    ctx.fill();
-    ctx.fillStyle = "#E9E4D8";
-    ctx.textAlign = "center";
-    ctx.fillText(text, px(bx + w / 2), px(by + 16));
-    ctx.textAlign = "left";
+    ctx.moveTo(px(x) - 4, px(by + h)); ctx.lineTo(px(x) + 4, px(by + h)); ctx.lineTo(px(x), px(by + h) + 6);
+    ctx.closePath(); ctx.fillStyle = "rgba(14,16,22,.93)"; ctx.fill();
+    ctx.fillStyle = "#E9E4D8"; ctx.textAlign = "center";
+    ctx.fillText(text, px(bx + w / 2), px(by + 16)); ctx.textAlign = "left";
   }
 
-  function drawRoomProps(room) {
-    const r = room.rect;
-    if (room.key === "content") {
-      // 촛대
-      ctx.fillStyle = "#2B2620"; ctx.fillRect(px(r.x + 218), px(r.y + 104), 12, 26);
-      ctx.fillStyle = "#E9E4D8"; ctx.fillRect(px(r.x + 221), px(r.y + 92), 6, 14);
-      ctx.fillStyle = "#F0C070"; ctx.fillRect(px(r.x + 223), px(r.y + 86), 2, 6);
-      // 카메라 삼각대
-      ctx.fillStyle = "#22262F"; ctx.fillRect(px(r.x + 34), px(r.y + 108), 3, 24);
-      ctx.fillRect(px(r.x + 28), px(r.y + 96), 16, 12);
-      ctx.fillStyle = "#4A5262"; ctx.fillRect(px(r.x + 42), px(r.y + 99), 5, 6);
-    } else if (room.key === "health") {
-      // 러닝머신
-      ctx.fillStyle = "#232E2A"; ctx.fillRect(px(r.x + 22), px(r.y + 92), 42, 46);
-      ctx.fillStyle = "#1A2320"; ctx.fillRect(px(r.x + 26), px(r.y + 100), 34, 34);
-      ctx.fillStyle = "#43604F"; ctx.fillRect(px(r.x + 22), px(r.y + 88), 42, 5);
-      // 체중계
-      ctx.fillStyle = "#2E4038"; ctx.fillRect(px(r.x + 24), px(r.y + 150), 22, 14);
-      ctx.fillStyle = room.accent; ctx.fillRect(px(r.x + 31), px(r.y + 154), 8, 3);
-    } else {
-      // 링라이트 + 배경지
-      ctx.fillStyle = "#2B2438"; ctx.fillRect(px(r.x + 168), px(r.y + 16), 62, 8);
-      ctx.strokeStyle = room.accent; ctx.lineWidth = 3;
-      ctx.beginPath(); ctx.arc(px(r.x + 62), px(r.y + 44), 15, 0, Math.PI * 2); ctx.stroke();
-      ctx.fillStyle = "#22262F"; ctx.fillRect(px(r.x + 61), px(r.y + 58), 3, 22);
-      // 카메라
-      ctx.fillStyle = "#1E2229"; ctx.fillRect(px(r.x + 108), px(r.y + 34), 20, 13);
-      ctx.fillStyle = "#4A5262"; ctx.fillRect(px(r.x + 128), px(r.y + 37), 5, 7);
-    }
-  }
-
-  function drawPlant(x, y) {
-    ctx.fillStyle = "#5A4230";
-    ctx.fillRect(px(x - 5), px(y), 10, 9);
-    ctx.fillStyle = "#6C5038";
-    ctx.fillRect(px(x - 5), px(y), 10, 2);
-    ctx.fillStyle = "#3E6B4E";
-    ctx.fillRect(px(x - 6), px(y - 9), 12, 9);
-    ctx.fillRect(px(x - 3), px(y - 14), 6, 6);
-    ctx.fillStyle = "#4E845E";
-    ctx.fillRect(px(x - 4), px(y - 8), 4, 4);
-  }
-
-  function drawLabel(text, x, y, color) {
-    ctx.font = '600 11px "IBM Plex Sans KR", sans-serif';
-    ctx.textAlign = "center";
-    ctx.fillStyle = "rgba(10,12,17,.55)";
-    const w = ctx.measureText(text).width + 14;
-    ctx.fillRect(px(x - w / 2), px(y - 11), px(w), 16);
-    ctx.fillStyle = color;
-    ctx.fillText(text, px(x), px(y));
-    ctx.textAlign = "left";
-  }
-
-  // 조명 레이어 (multiply) — 근무일은 어둡게, 휴무일은 환하게
-  let lightMap = null, lightMapMode = null;
-  function buildLightMap(mode) {
-    const off = document.createElement("canvas");
-    off.width = W; off.height = H;
+  let lightMap = null, lightMode = null;
+  function buildLight(mode) {
+    const off = document.createElement("canvas"); off.width = W; off.height = H;
     const c = off.getContext("2d");
     c.fillStyle = mode === "work" ? "#7C8098" : "#C3C7D4";
     c.fillRect(0, 0, W, H);
     const lamps = [
-      [185, 120, 150], [775, 120, 150], [480, 500, 140],
-      [470, 292, 110], [480, 340, 120], [480, 220, 125], [280, 220, 110], [680, 220, 110], [480, 408, 90]
+      [165, 100, 150], [795, 100, 150], [165, 500, 145], [790, 500, 165],
+      [470, 292, 110], [480, 340, 120], [480, 210, 120], [280, 210, 110],
+      [680, 210, 110], [300, 398, 110], [620, 398, 110]
     ];
     c.globalCompositeOperation = "lighter";
     lamps.forEach(function (l) {
@@ -743,206 +1011,439 @@ button{font:inherit;color:inherit;cursor:pointer}
       g.addColorStop(0, "rgba(255,246,225,.95)");
       g.addColorStop(.55, "rgba(255,240,210,.35)");
       g.addColorStop(1, "rgba(0,0,0,0)");
-      c.fillStyle = g;
-      c.beginPath(); c.arc(l[0], l[1], l[2], 0, Math.PI * 2); c.fill();
+      c.fillStyle = g; c.beginPath(); c.arc(l[0], l[1], l[2], 0, Math.PI * 2); c.fill();
     });
     return off;
   }
 
+  function inRect(a, r) { return a.x > r.x - 6 && a.x < r.x + r.w + 6 && a.y > r.y - 6 && a.y < r.y + r.h + 10; }
+
   let tick = 0;
   function draw(dt) {
     tick += dt;
-
-    // 배경
-    ctx.fillStyle = "#0B0D13";
-    ctx.fillRect(0, 0, W, H);
-    ctx.strokeStyle = "rgba(255,255,255,.022)";
-    ctx.lineWidth = 1;
-    ctx.beginPath();
+    ctx.fillStyle = "#0B0D13"; ctx.fillRect(0, 0, W, H);
+    ctx.strokeStyle = "rgba(255,255,255,.022)"; ctx.lineWidth = 1; ctx.beginPath();
     for (let x = 0; x <= W; x += 24) { ctx.moveTo(x + .5, 0); ctx.lineTo(x + .5, H); }
     for (let y = 0; y <= H; y += 24) { ctx.moveTo(0, y + .5); ctx.lineTo(W, y + .5); }
     ctx.stroke();
 
     // 복도
-    ctx.fillStyle = "#1B1F29";
-    ctx.fillRect(168, CORRIDOR_Y - 16, 624, 32);
-    ctx.fillRect(169, 192, 32, 30);
-    ctx.fillRect(759, 192, 32, 30);
-    ctx.fillRect(464, 380, 32, 54);
-    drawFloorTiles(168, CORRIDOR_Y - 16, 624, 32, "#222735", "rgba(0,0,0,.16)");
-    drawFloorTiles(169, 192, 32, 30, "#222735", "rgba(0,0,0,.16)");
-    drawFloorTiles(759, 192, 32, 30, "#222735", "rgba(0,0,0,.16)");
-    drawFloorTiles(464, 380, 32, 54, "#222735", "rgba(0,0,0,.16)");
+    tiles(150, TOPY - 14, 660, 28, "#222735", "rgba(0,0,0,.16)");
+    tiles(150, BOTY - 14, 650, 28, "#222735", "rgba(0,0,0,.16)");
+    tiles(154, 190, 22, 6, "#222735", "rgba(0,0,0,.16)");
+    tiles(784, 190, 22, 6, "#222735", "rgba(0,0,0,.16)");
+    tiles(154, 412, 22, 12, "#222735", "rgba(0,0,0,.16)");
+    tiles(669, 412, 22, 12, "#222735", "rgba(0,0,0,.16)");
+    tiles(469, TOPY + 14, 22, 16, "#222735", "rgba(0,0,0,.16)");
+    tiles(469, 368, 22, 16, "#222735", "rgba(0,0,0,.16)");
 
-    // 허브 (대표실)
-    ctx.fillStyle = "#4B4438";
-    ctx.fillRect(HUB.x - 4, HUB.y - 4, HUB.w + 8, HUB.h + 8);
-    drawFloorTiles(HUB.x, HUB.y, HUB.w, HUB.h, "#3D3A31", "rgba(0,0,0,.15)");
-    ctx.fillStyle = "#1A1D26";
-    ctx.fillRect(464, HUB.y - 4, 32, 4);
-    ctx.fillRect(464, HUB.y + HUB.h, 32, 4);
-    ctx.fillStyle = "#514534";
-    ctx.fillRect(HUB.x + 22, HUB.y + 108, 116, 30);
-    ctx.strokeStyle = "rgba(224,164,88,.22)";
-    ctx.lineWidth = 1;
-    ctx.strokeRect(HUB.x + 25.5, HUB.y + 111.5, 109, 23);
-    drawPlant(HUB.x + 14, HUB.y + 30);
-    drawPlant(HUB.x + HUB.w - 14, HUB.y + 30);
+    // 대표실
+    ctx.fillStyle = "#4B4438"; ctx.fillRect(HUB.x - 4, HUB.y - 4, HUB.w + 8, HUB.h + 8);
+    tiles(HUB.x, HUB.y, HUB.w, HUB.h, "#3D3A31", "rgba(0,0,0,.15)");
+    ctx.fillStyle = "#171A22";
+    ctx.fillRect(469, HUB.y - 4, 22, 4); ctx.fillRect(469, HUB.y + HUB.h, 22, 4);
+    ctx.fillStyle = "#514534"; ctx.fillRect(HUB.x + 22, HUB.y + 96, 116, 26);
+    ctx.strokeStyle = "rgba(224,164,88,.22)"; ctx.lineWidth = 1;
+    ctx.strokeRect(HUB.x + 25.5, HUB.y + 99.5, 109, 19);
+    plant(HUB.x + 14, HUB.y + 34); plant(HUB.x + HUB.w - 14, HUB.y + 34);
 
-    // 방
-    ROOMS.forEach(drawRoomShell);
-    ROOMS.forEach(drawRoomProps);
-    ROOMS.forEach(drawShelf);
+    ROOMS.forEach(roomShell);
+    ROOMS.forEach(props);
+    ROOMS.forEach(shelf);
 
     // 대표
-    drawPerson(BOSS.x, BOSS.y, { coat: "#4C5670", hair: "#191A22", facing: "down", tick: tick });
-    drawDesk({ x: 444, y: 298, w: 72, h: 26 }, "#E0A458", "lamp");
+    person(BOSS.x, BOSS.y, { coat: "#4C5670", hair: "#191A22", facing: "down", tick: tick });
+    desk({ x: 444, y: 302, w: 72, h: 26 }, "#E0A458", "lamp");
 
-    // 직원
-    ROOMS.forEach(function (room) {
-      drawPerson(room.staff.x, room.staff.y, {
-        coat: room.staffCoat, hair: room.staffHair,
-        facing: room.key === "channel" ? "left" : "down",
-        working: !!room.active, tick: tick
+    const drawn = [];
+    function drawActor(a) {
+      drawn.push(a);
+      person(a.x, a.y, {
+        coat: a.def.coat, hair: a.def.hair, skin: a.def.skin, facing: a.facing,
+        stepping: a.moving, walkT: a.walkT, tick: tick,
+        working: a.def !== SEC && !!R[a.def.room] && !!R[a.def.room].active && !a.moving,
+        carry: a === secA && a.status === "이동 중"
       });
-      drawDesk(room.desk, room.accent);
+    }
 
-      // 진행률
+    // 작업실: 사람 먼저, 책상 나중 (앉아 있는 것처럼)
+    WORKROOMS.forEach(function (room) {
+      allActors().forEach(function (a) { if (drawn.indexOf(a) < 0 && inRect(a, room.rect)) drawActor(a); });
+      desk(room.desk, room.accent);
       if (room.active) {
         const bx = room.desk.x, by = room.desk.y - 32;
-        ctx.fillStyle = "rgba(10,12,17,.7)";
-        ctx.fillRect(px(bx), px(by), px(room.desk.w), 5);
+        ctx.fillStyle = "rgba(10,12,17,.7)"; ctx.fillRect(px(bx), px(by), px(room.desk.w), 5);
         ctx.fillStyle = room.accent;
         ctx.fillRect(px(bx) + 1, px(by) + 1, Math.max(1, (room.desk.w - 2) * Math.min(1, room.progress)), 3);
       }
-      // 완료 팝
       room.pops.forEach(function (p) {
         const k = 1 - p.life / 1.4;
-        ctx.globalAlpha = Math.max(0, 1 - k);
-        ctx.fillStyle = room.accent;
-        ctx.fillRect(px(room.staff.x - 4), px(room.staff.y - 34 - k * 22), 8, 10);
+        ctx.globalAlpha = Math.max(0, 1 - k); ctx.fillStyle = p.color;
+        ctx.fillRect(px(room.work.x - 4), px(room.work.y - 34 - k * 22), 8, 10);
         ctx.globalAlpha = 1;
       });
     });
 
-    // 비서
-    drawPerson(sec.x, sec.y, {
-      coat: "#D9814A", hair: "#2A1F1B", skin: "#F0C9A0",
-      facing: sec.facing, stepping: sec.mode === "go" || sec.mode === "back",
-      walkT: sec.walkT, carry: sec.mode === "go", tick: tick
+    // 회의실: 테이블 기준 앞뒤 정렬
+    const inMtg = allActors().filter(function (a) { return drawn.indexOf(a) < 0 && inRect(a, R.meeting.rect); });
+    inMtg.filter(function (a) { return a.y <= TABLE.y + 8; }).forEach(drawActor);
+    table();
+    inMtg.filter(function (a) { return a.y > TABLE.y + 8; }).forEach(drawActor);
+    R.meeting.pops.forEach(function (p) {
+      const k = 1 - p.life / 1.4;
+      ctx.globalAlpha = Math.max(0, 1 - k); ctx.fillStyle = p.color;
+      ctx.fillRect(px(TABLE.x + TABLE.w / 2 - 4), px(TABLE.y - 20 - k * 22), 8, 10);
+      ctx.globalAlpha = 1;
     });
+    for (let i = R.meeting.pops.length - 1; i >= 0; i--) {
+      R.meeting.pops[i].life -= dt; if (R.meeting.pops[i].life <= 0) R.meeting.pops.splice(i, 1);
+    }
+
+    // 복도에 있는 사람들
+    allActors().forEach(function (a) { if (drawn.indexOf(a) < 0) drawActor(a); });
 
     // 조명
-    if (lightMapMode !== state.mode) { lightMap = buildLightMap(state.mode); lightMapMode = state.mode; }
+    if (lightMode !== state.mode) { lightMap = buildLight(state.mode); lightMode = state.mode; }
     ctx.globalCompositeOperation = "multiply";
     ctx.drawImage(lightMap, 0, 0);
     ctx.globalCompositeOperation = "source-over";
 
-    // 방 이름표 (조명 위)
+    // 이름표 · 방 이름
     ROOMS.forEach(function (room) {
-      drawLabel(room.name, room.rect.x + room.rect.w / 2, room.rect.y + 16, room.accent);
+      label(room.name, room.rect.x + room.rect.w / 2, room.rect.y + (room.side === "top" ? 16 : 16), room.accent);
     });
-    drawLabel("대표실", HUB.x + HUB.w / 2, HUB.y + 15, "#E9E4D8");
+    label("대표실", HUB.x + HUB.w / 2, HUB.y + 15, "#E9E4D8");
+    label("대표", BOSS.x, BOSS.y + 12, "#C6CBDA", '600 9.5px "IBM Plex Sans KR", sans-serif');
+    allActors().forEach(nameplate);
 
     // 말풍선
-    if (boss.bubbleT > 0) {
-      boss.bubbleT -= dt;
-      bubble(BOSS.x + 10, BOSS.y - 26, boss.bubble, "#E0A458");
-    }
-    if (sec.bubble) bubble(sec.x, sec.y - 30, sec.bubble, "#D9814A");
+    if (boss.bubbleT > 0) { boss.bubbleT -= dt; bubble(BOSS.x + 10, BOSS.y - 26, boss.bubble, "#E0A458"); }
+    allActors().forEach(function (a) { if (a.bubble) bubble(a.x, a.y - 30, a.bubble, a.def.coat); });
+
+    // 토큰 HUD
+    ctx.font = '400 11px "Silkscreen", monospace';
+    ctx.textAlign = "right";
+    ctx.fillStyle = "rgba(11,13,19,.8)";
+    const tt = "TOK " + fmt(TOK.total);
+    const tw = ctx.measureText(tt).width + 18;
+    ctx.fillRect(px(W - 12 - tw), 12, px(tw), 22);
+    ctx.strokeStyle = "#2A2F3B"; ctx.lineWidth = 1;
+    ctx.strokeRect(px(W - 12 - tw) + .5, 12.5, px(tw) - 1, 21);
+    ctx.fillStyle = "#E0A458"; ctx.fillText(tt, W - 21, 27);
+    ctx.textAlign = "left";
   }
 
   /* ============================================================
-     8. 콘솔(오른쪽 레일) 렌더
+     오른쪽 콘솔
      ============================================================ */
   const elLog = document.getElementById("log");
-  const elRooms = document.getElementById("roomcards");
+  const elTeam = document.getElementById("team");
   const elTree = document.getElementById("tree");
   const elBrief = document.getElementById("brief");
+  const elTx = document.getElementById("tx");
+  const elTxEmpty = document.getElementById("txempty");
+  const elDepts = document.getElementById("depts");
+  const elMtg = document.getElementById("mtgcount");
 
   function renderLog() {
     elLog.innerHTML = state.log.map(function (l) {
       return "<li><time>" + l.t + "</time><p><em>" + l.who + "</em> " + l.text + "</p></li>";
     }).join("");
   }
-
-  function renderRooms() {
-    elRooms.innerHTML = ROOMS.map(function (r) {
-      const busy = !!r.active;
-      const waiting = r.queue.length;
-      const status = busy ? "작업 중 · " + r.active.product
-        : waiting ? "대기 " + waiting + "건"
-          : r.items.length ? "정리 완료" : "비어 있음";
-      const pct = busy ? Math.round(r.progress * 100) : 0;
-      return '<div class="room" style="color:' + r.accent + '">' +
-        '<div class="room-top">' +
-        '<span class="room-swatch" style="background:' + r.accent + '"></span>' +
-        '<span class="room-name" style="color:var(--paper)">' + r.name + '</span>' +
-        '<span class="room-count">' + r.items.length + '<span>개</span></span>' +
-        '</div>' +
-        '<div class="room-status">' +
-        '<span class="status-txt' + (busy ? " on" : "") + '" style="color:' + (busy ? r.accent : "") + '">' + status + '</span>' +
-        '<span class="bar"><i style="width:' + pct + '%"></i></span>' +
-        '</div>' +
-        '<div class="room-last">최근 · ' + r.lastFile + '</div>' +
+  function renderTx() {
+    elTxEmpty.hidden = transcript.length > 0;
+    elTx.innerHTML = transcript.map(function (l) {
+      return '<li><b style="color:' + shade(l.color, 55) + '">' + l.name + '</b>' + l.text + "</li>";
+    }).join("");
+    elTx.scrollTop = elTx.scrollHeight;
+  }
+  function statusOf(a) {
+    if (ses.on && (a === secA || ses.who.indexOf(a.def.key) >= 0)) return { s: "회의 중", c: "#E0A458" };
+    if (a.moving || (a.cur && a.cur.k === "walk")) return { s: "이동 중", c: "#98A0B0" };
+    if (a.def !== SEC && R[a.def.room].active) return { s: "작업 중", c: R[a.def.room].accent };
+    if (a === secA && pending.length) return { s: "배달 준비", c: "#98A0B0" };
+    return { s: "대기", c: "#697184" };
+  }
+  function renderTeam() {
+    const rows = [secA].concat(AGENTS.map(function (a) { return act[a.key]; }));
+    elTeam.innerHTML = rows.map(function (a) {
+      const d = a.def, st = statusOf(a);
+      const sub = d === SEC
+        ? "대표실 · 하달 대기 " + pending.length + "건"
+        : R[d.room].name + " · 결과물 " + R[d.room].items.length + "개";
+      return '<div class="member">' +
+        '<span class="avatar" style="background:' + d.coat + '"><i></i></span>' +
+        '<span class="m-main"><span class="m-name">' + d.name +
+        '<span>' + d.role + '</span></span><div class="m-sub">' + sub + '</div></span>' +
+        '<span class="m-state" style="color:' + st.c + '">' + st.s + '</span>' +
         '</div>';
     }).join("");
   }
-
+  let deptSig = "";
+  function renderDepts() {
+    const sig = DEPTS.map(function (d) {
+      return d.rooms.map(function (r) { return d.have[r]; }).join(",") + ":" + d.done;
+    }).join("|") + (ses.on ? "|s" : "");
+    if (sig === deptSig) return;
+    deptSig = sig;
+    elDepts.innerHTML = DEPTS.map(function (d) {
+      const ready = d.rooms.every(function (r) { return d.have[r] >= d.need[r]; });
+      const prog = d.rooms.map(function (r) { return Math.min(d.have[r], d.need[r]) + "/" + d.need[r]; }).join("  ");
+      const swatches = d.rooms.map(function (r) { return '<i style="background:' + R[r].accent + '"></i>'; }).join("");
+      return '<div class="dept' + (ready ? " ready" : "") + '" style="--dc:' + d.accent + '">' +
+        '<div class="dept-top"><span class="dept-name">' + d.name + '</span>' +
+        '<span class="dept-rooms">' + swatches + '</span></div>' +
+        '<div class="dept-line">' + d.line + '</div>' +
+        '<div class="dept-foot"><span class="dept-prog">' + prog +
+        (d.done ? ' · 산출 ' + d.done + '회' : '') + '</span>' +
+        '<button class="syn" data-d="' + d.key + '"' + (ready && !ses.on ? "" : " disabled") + '>' +
+        (ready ? d.product + " 만들기" : "재료 모으는 중") + '</button></div></div>';
+    }).join("");
+  }
+  function renderMtg() {
+    const m = R.meeting.items.filter(function (i) { return i.kind === "minutes"; }).length;
+    const dp = R.meeting.items.filter(function (i) { return i.kind === "dept"; }).length;
+    elMtg.textContent = "회의록 " + m + "건 · 시너지 " + dp + "건";
+  }
   let prevCounts = {};
   function renderTree() {
-    elTree.innerHTML =
-      '<div><span class="path">~/agency/</span></div>' +
-      ROOMS.map(function (r, i) {
-        const branch = i === ROOMS.length - 1 ? "&#9492;&#9472;" : "&#9500;&#9472;";
-        const fresh = prevCounts[r.key] !== undefined && prevCounts[r.key] !== r.items.length ? " fresh" : "";
-        prevCounts[r.key] = r.items.length;
-        return '<div class="' + fresh.trim() + '">' + branch +
-          ' <span class="path" style="color:' + r.accent + '">' + r.folder + '/</span>' +
-          '<span class="n">' + r.items.length + '</span></div>';
+    const m = R.meeting.items.filter(function (i) { return i.kind === "minutes"; }).length;
+    const dp = R.meeting.items.filter(function (i) { return i.kind === "dept"; }).length;
+    const rows = WORKROOMS.map(function (r) { return { p: r.folder + "/", n: r.items.length, c: r.accent, k: r.key }; });
+    rows.push({ p: "meetings/", n: m, c: R.meeting.accent, k: "meetings" });
+    rows.push({ p: "depts/", n: dp, c: "#C9564A", k: "depts" });
+    elTree.innerHTML = '<div><span class="path">~/agency/</span></div>' +
+      rows.map(function (r, i) {
+        const br = i === rows.length - 1 ? "&#9492;&#9472;" : "&#9500;&#9472;";
+        const fresh = prevCounts[r.k] !== undefined && prevCounts[r.k] !== r.n ? " fresh" : "";
+        prevCounts[r.k] = r.n;
+        return '<div class="' + fresh.trim() + '">' + br + ' <span class="path" style="color:' + r.c + '">' +
+          r.p + '</span><span class="n">' + r.n + '</span></div>';
       }).join("") +
-      '<div>&nbsp;&nbsp; <span class="path">daily/' + new Date().toISOString().slice(0, 10) + '.md</span><span class="n">1</span></div>';
+      '<div>&nbsp;&nbsp; <span class="path">daily/' + today() + '.md</span><span class="n">1</span></div>';
   }
-
   function renderBrief() {
-    const working = ROOMS.filter(function (r) { return r.active; }).length;
-    const waiting = ROOMS.reduce(function (a, r) { return a + r.queue.length; }, 0) + pending.length;
-    const total = ROOMS.reduce(function (a, r) { return a + r.items.length; }, 0);
+    const working = WORKROOMS.filter(function (r) { return r.active; }).length;
+    const waiting = WORKROOMS.reduce(function (a, r) { return a + r.queue.length; }, 0) + pending.length;
+    const total = WORKROOMS.reduce(function (a, r) { return a + r.items.length; }, 0);
     const head = state.mode === "work"
       ? "대표님, 오늘은 <b>근무일</b>입니다. 무리한 일정은 넣지 않았습니다."
       : "대표님, 오늘은 <b>휴무일</b>입니다. 밀린 작업을 몰아서 돌리고 있습니다.";
-    const body = total === 0 && working === 0
-      ? " 아직 지시하신 내용이 없어 사무실은 조용합니다."
-      : " 진행 중 <b>" + working + "</b>건, 대기 <b>" + waiting + "</b>건, 오늘 정리한 결과물 <b>" + total + "</b>개.";
+    const body = ses.on
+      ? " 지금 <b>" + ses.title + "</b> 진행 중입니다."
+      : (total === 0 && working === 0
+        ? " 아직 지시하신 내용이 없어 사무실은 조용합니다."
+        : " 진행 중 <b>" + working + "</b>건, 대기 <b>" + waiting + "</b>건, 오늘 정리한 결과물 <b>" + total + "</b>개.");
     elBrief.innerHTML = head + body;
+  }
+  const elTokNum = document.getElementById("toknum");
+  const elTokBar = document.getElementById("tokbar");
+  const elTokRows = document.getElementById("tokrows");
+  function renderTokens() {
+    elTokNum.textContent = fmt(TOK.total);
+    elTokBar.style.width = Math.min(100, TOK.total / TOK.budget * 100) + "%";
+    const rows = [{ n: SEC.name, k: "sec", c: SEC.coat }].concat(AGENTS.map(function (a) {
+      return { n: a.name, k: a.key, c: a.coat };
+    }));
+    const max = Math.max(1, ...rows.map(function (r) { return TOK.by[r.k] || 0; }));
+    elTokRows.innerHTML = rows.map(function (r) {
+      const v = TOK.by[r.k] || 0;
+      return '<div class="tok-row" style="color:' + r.c + '">' +
+        '<span class="who">' + r.n + '</span>' +
+        '<span class="track"><i style="width:' + (v / max * 100) + '%"></i></span>' +
+        '<span class="num">' + fmt(v) + '</span></div>';
+    }).join("");
   }
 
   /* ============================================================
-     9. 컨트롤
+     방 상세 — 콘텐츠 연관도
+     ============================================================ */
+  const rv = document.getElementById("roomview");
+  const rvTitle = document.getElementById("rv-title");
+  const rvMeta = document.getElementById("rv-meta");
+  const rvGraph = document.getElementById("rv-graph");
+  const rvSide = document.getElementById("rv-side");
+  let rvRoom = null;
+
+  function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+
+  function openRoom(key) {
+    rvRoom = key;
+    const room = R[key];
+    rv.hidden = false;
+    rv.style.setProperty("--rvc", room.accent);
+    rvTitle.textContent = room.name;
+    rvMeta.textContent = room.folder + "/ · " + room.items.length + "개";
+    drawGraph(room);
+    document.getElementById("rv-close").focus();
+  }
+  function closeRoom() { rv.hidden = true; rvRoom = null; }
+
+  function drawGraph(room) {
+    const CX = 400, CY = 210;
+    const items = room.items.slice(-10);
+    const parts = [];
+    const nodes = [];
+
+    // 다른 방의 연관 결과물 (태그가 겹치는 것)
+    const ext = [];
+    ROOMS.forEach(function (o) {
+      if (o === room) return;
+      o.items.forEach(function (it) {
+        if (ext.length >= 6) return;
+        const hit = it.tags.some(function (t) { return items.some(function (m) { return m.tags.indexOf(t) >= 0; }); });
+        if (hit) ext.push({ it: it, room: o });
+      });
+    });
+
+    items.forEach(function (it, i) {
+      const ang = -Math.PI / 2 + i * (Math.PI * 2 / Math.max(3, items.length));
+      nodes.push({ x: CX + Math.cos(ang) * 108, y: CY + Math.sin(ang) * 108, it: it, color: it.color, main: true });
+    });
+    ext.forEach(function (e, i) {
+      const ang = -Math.PI / 2 + 0.42 + i * (Math.PI * 2 / Math.max(4, ext.length));
+      nodes.push({ x: CX + Math.cos(ang) * 178, y: CY + Math.sin(ang) * 178, it: e.it, color: e.room.accent, main: false, room: e.room });
+    });
+
+    // 중심 ↔ 결과물
+    nodes.filter(function (n) { return n.main; }).forEach(function (n) {
+      parts.push('<line x1="' + CX + '" y1="' + CY + '" x2="' + n.x.toFixed(1) + '" y2="' + n.y.toFixed(1) +
+        '" stroke="' + room.accent + '" stroke-opacity=".35" stroke-width="1.5"/>');
+    });
+    // 결과물 ↔ 결과물 (태그 공유)
+    const mains = nodes.filter(function (n) { return n.main; });
+    for (let i = 0; i < mains.length; i++) {
+      for (let j = i + 1; j < mains.length; j++) {
+        const shared = mains[i].it.tags.filter(function (t) { return mains[j].it.tags.indexOf(t) >= 0; });
+        if (!shared.length) continue;
+        parts.push('<line x1="' + mains[i].x.toFixed(1) + '" y1="' + mains[i].y.toFixed(1) +
+          '" x2="' + mains[j].x.toFixed(1) + '" y2="' + mains[j].y.toFixed(1) +
+          '" stroke="#98A0B0" stroke-opacity=".28" stroke-width="1"/>');
+      }
+    }
+    // 바깥 방 ↔ 가장 가까운 결과물 (점선)
+    nodes.filter(function (n) { return !n.main; }).forEach(function (n) {
+      let best = null;
+      mains.forEach(function (m) {
+        const sh = m.it.tags.filter(function (t) { return n.it.tags.indexOf(t) >= 0; }).length;
+        if (sh && (!best || sh > best.sh)) best = { m: m, sh: sh };
+      });
+      const tx = best ? best.m.x : CX, ty = best ? best.m.y : CY;
+      parts.push('<line x1="' + n.x.toFixed(1) + '" y1="' + n.y.toFixed(1) + '" x2="' + tx.toFixed(1) +
+        '" y2="' + ty.toFixed(1) + '" stroke="' + n.color + '" stroke-opacity=".4" stroke-width="1" stroke-dasharray="3 3"/>');
+    });
+
+    // 노드
+    nodes.forEach(function (n) {
+      const r = n.main ? 28 : 22;
+      parts.push('<circle cx="' + n.x.toFixed(1) + '" cy="' + n.y.toFixed(1) + '" r="' + r +
+        '" fill="#171A22" stroke="' + n.color + '" stroke-width="' + (n.main ? 2 : 1) + '"' +
+        (n.main ? "" : ' stroke-dasharray="3 2"') + '/>');
+      const lim = n.main ? 5 : 4;
+      const t = n.it.label.length > lim ? n.it.label.slice(0, lim) : n.it.label;
+      parts.push('<text x="' + n.x.toFixed(1) + '" y="' + (n.y + 3.5).toFixed(1) +
+        '" text-anchor="middle" font-family="IBM Plex Sans KR, sans-serif" font-size="' + (n.main ? 10 : 9) +
+        '" fill="' + (n.main ? "#E9E4D8" : "#98A0B0") + '">' + esc(t) + "</text>");
+      if (!n.main) {
+        parts.push('<text x="' + n.x.toFixed(1) + '" y="' + (n.y + 34).toFixed(1) +
+          '" text-anchor="middle" font-family="Silkscreen, monospace" font-size="7.5" fill="' + n.color +
+          '" opacity=".8">' + esc(n.room.name) + "</text>");
+      }
+    });
+
+    // 중심
+    parts.push('<circle cx="' + CX + '" cy="' + CY + '" r="38" fill="' + room.accent + '" fill-opacity=".14" stroke="' + room.accent + '" stroke-width="2"/>');
+    parts.push('<text x="' + CX + '" y="' + (CY - 2) + '" text-anchor="middle" font-family="Gothic A1, sans-serif" font-weight="800" font-size="12" fill="' + room.accent + '">' + esc(room.name.replace(/실$/, "")) + "</text>");
+    parts.push('<text x="' + CX + '" y="' + (CY + 13) + '" text-anchor="middle" font-family="Silkscreen, monospace" font-size="9" fill="#98A0B0">' + room.items.length + " ITEMS</text>");
+
+    if (!items.length) {
+      parts.push('<text x="' + CX + '" y="' + (CY + 78) + '" text-anchor="middle" font-family="IBM Plex Sans KR, sans-serif" font-size="11.5" fill="#697184">아직 결과물이 없습니다. 지시를 하나 내려보세요.</text>');
+    }
+    rvGraph.innerHTML = parts.join("");
+
+    // 옆 패널
+    const tagCount = {};
+    room.items.forEach(function (it) { it.tags.forEach(function (t) { tagCount[t] = (tagCount[t] || 0) + 1; }); });
+    const topTags = Object.keys(tagCount).sort(function (a, b) { return tagCount[b] - tagCount[a]; }).slice(0, 6);
+    const myDepts = DEPTS.filter(function (d) { return d.rooms.indexOf(room.key) >= 0; });
+    let html = "<h4>결과물</h4><ul>";
+    html += room.items.length
+      ? room.items.slice().reverse().slice(0, 8).map(function (it) {
+        return "<li><b>" + esc(it.label) + "</b><span style=\"color:" + it.color + "\" class=\"rv-tag\">" + esc(it.tags[0]) + "</span></li>";
+      }).join("")
+      : '<li style="color:var(--paper-faint)">없음</li>';
+    html += "</ul><h4>많이 쓰인 태그</h4><ul>";
+    html += topTags.length
+      ? topTags.map(function (t) { return "<li><b>#" + esc(t) + "</b> " + tagCount[t] + "회</li>"; }).join("")
+      : '<li style="color:var(--paper-faint)">없음</li>';
+    html += "</ul>";
+    if (myDepts.length) {
+      html += "<h4>소속 부서</h4><ul>" + myDepts.map(function (d) {
+        return '<li><b style="color:' + d.accent + '">' + esc(d.name) + "</b> " + d.product + "</li>";
+      }).join("") + "</ul>";
+    }
+    html += '<p class="rv-hint">실선은 이 방 안에서 태그가 겹치는 결과물, 점선은 다른 방에 있는 관련 결과물입니다.</p>';
+    rvSide.innerHTML = html;
+  }
+
+  document.getElementById("rv-close").addEventListener("click", closeRoom);
+  rv.addEventListener("click", function (e) { if (e.target === rv) closeRoom(); });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !rv.hidden) closeRoom(); });
+
+  function hitRoom(lx, ly) {
+    for (let i = 0; i < ROOMS.length; i++) {
+      const r = ROOMS[i].rect;
+      if (lx >= r.x && lx <= r.x + r.w && ly >= r.y && ly <= r.y + r.h) return ROOMS[i].key;
+    }
+    return null;
+  }
+  function toLogical(e) {
+    const b = cv.getBoundingClientRect();
+    return [(e.clientX - b.left) / b.width * W, (e.clientY - b.top) / b.height * H];
+  }
+  cv.addEventListener("click", function (e) {
+    const p = toLogical(e), k = hitRoom(p[0], p[1]);
+    if (k) openRoom(k);
+  });
+  cv.addEventListener("mousemove", function (e) {
+    const p = toLogical(e);
+    cv.style.cursor = hitRoom(p[0], p[1]) ? "pointer" : "default";
+  });
+
+  /* ============================================================
+     컨트롤
      ============================================================ */
   const elOrders = document.getElementById("orderlist");
   elOrders.innerHTML = PRESETS.map(function (p, i) {
     return '<button class="order" data-i="' + i + '" style="--rc:' + R[p.room].accent + '">' +
-      '<span class="rc-dot"></span>' + p.title + '</button>';
+      '<span class="rc-dot"></span>' + p.title + "</button>";
   }).join("");
   elOrders.addEventListener("click", function (e) {
-    const b = e.target.closest(".order");
-    if (b) issue(PRESETS[+b.dataset.i]);
+    const b = e.target.closest(".order"); if (b) issue(PRESETS[+b.dataset.i]);
   });
+  elDepts.addEventListener("click", function (e) {
+    const b = e.target.closest(".syn"); if (!b || b.disabled) return;
+    const d = DEPTS.filter(function (x) { return x.key === b.dataset.d; })[0];
+    if (d) runSynergy(d);
+  });
+
+  const btnMtg = document.getElementById("callmtg");
+  btnMtg.addEventListener("click", function () { callMeeting(); });
 
   const btnAuto = document.getElementById("auto");
   btnAuto.setAttribute("aria-pressed", String(state.auto));
   btnAuto.addEventListener("click", function () {
-    state.auto = !state.auto;
-    btnAuto.setAttribute("aria-pressed", String(state.auto));
+    state.auto = !state.auto; btnAuto.setAttribute("aria-pressed", String(state.auto));
   });
 
   document.getElementById("reset").addEventListener("click", function () {
     ROOMS.forEach(function (r) { r.items = []; r.queue = []; r.active = null; r.progress = 0; r.lastFile = "—"; });
-    pending.length = 0;
-    state.log = [];
-    addLog("시스템", "서가를 비웠습니다");
-    renderRooms(); renderTree(); renderBrief();
+    DEPTS.forEach(function (d) { d.rooms.forEach(function (r) { d.have[r] = 0; }); d.done = 0; });
+    pending.length = 0; state.log = []; transcript = [];
+    TOK.total = 0; Object.keys(TOK.by).forEach(function (k) { TOK.by[k] = 0; });
+    addLog("시스템", "서가와 사용량을 비웠습니다");
+    renderTree(); renderBrief(); renderDepts(); renderMtg(); renderTx(); renderTokens();
+    if (!rv.hidden && rvRoom) drawGraph(R[rvRoom]);
   });
 
   const mWork = document.getElementById("m-work"), mOff = document.getElementById("m-off");
@@ -952,67 +1453,75 @@ button{font:inherit;color:inherit;cursor:pointer}
     mWork.setAttribute("aria-pressed", String(m === "work"));
     mOff.setAttribute("aria-pressed", String(m === "off"));
     tag.textContent = (m === "work" ? "근무일" : "휴무일") + " 모드";
-    addLog("시스템", m === "work" ? "근무일 모드 — 브리핑은 짧게, 요구는 줄입니다" : "휴무일 모드 — 밀린 작업을 몰아서 처리합니다");
+    addLog("시스템", m === "work" ? "근무일 — 브리핑은 짧게, 요구는 줄입니다" : "휴무일 — 밀린 작업을 몰아서 처리합니다");
     renderBrief();
   }
   mWork.addEventListener("click", function () { setMode("work"); });
   mOff.addEventListener("click", function () { setMode("off"); });
 
   /* ============================================================
-     10. 루프
+     루프
      ============================================================ */
-  function fitCanvas() {
-    const rect = cv.getBoundingClientRect();
+  function fit() {
+    const b = cv.getBoundingClientRect();
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    const s = (rect.width / W) * dpr;
-    cv.width = Math.round(W * s);
-    cv.height = Math.round(H * s);
+    const s = (b.width / W) * dpr;
+    cv.width = Math.round(W * s); cv.height = Math.round(H * s);
     ctx.setTransform(s, 0, 0, s, 0, 0);
     ctx.imageSmoothingEnabled = false;
   }
-  window.addEventListener("resize", fitCanvas);
+  window.addEventListener("resize", fit);
 
-  let last = performance.now();
+  let last = performance.now(), railT = 0, prevItems = 0;
   function loop(now) {
-    const dt = Math.min(.05, (now - last) / 1000);
-    last = now;
+    const dt = Math.min(.05, (now - last) / 1000); last = now;
+    const spd = 152 * SPEED[state.mode];
 
     if (state.auto) {
       state.autoTimer -= dt;
-      if (state.autoTimer <= 0) {
+      if (state.autoTimer <= 0 && pending.length < 4) {
         issue(PRESETS[Math.floor(Math.random() * PRESETS.length)]);
         state.autoTimer = (state.mode === "work" ? 7 : 4.2) + Math.random() * 3;
       }
+      state.collabTimer -= dt;
+      if (state.collabTimer <= 0) { startChat(); state.collabTimer = 18 + Math.random() * 14; }
+      state.mtgTimer -= dt;
+      if (state.mtgTimer <= 0) {
+        const ready = DEPTS.filter(deptReady);
+        if (ready.length) runSynergy(ready[0]); else callMeeting();
+        state.mtgTimer = 46 + Math.random() * 22;
+      }
     }
-    updateSec(dt);
+
+    secLogic();
+    allActors().forEach(function (a) { updateActor(a, dt, spd); });
+    updateSession(dt);
     updateRooms(dt);
     draw(dt);
-    renderRoomsThrottled(dt);
+
+    railT += dt;
+    if (railT > .25) {
+      railT = 0;
+      renderTeam(); renderBrief(); renderTokens(); renderDepts();
+      const total = ROOMS.reduce(function (a, r) { return a + r.items.length; }, 0);
+      if (total !== prevItems) { prevItems = total; renderDepts(); if (!rv.hidden && rvRoom) drawGraph(R[rvRoom]); }
+    }
     requestAnimationFrame(loop);
   }
 
-  let rrT = 0;
-  function renderRoomsThrottled(dt) {
-    rrT += dt;
-    if (rrT > .25) { rrT = 0; renderRooms(); renderBrief(); }
-  }
-
-  // 시계
-  function tickClock() {
+  function clock() {
     const d = new Date();
     document.getElementById("clock").textContent = pad(d.getHours()) + ":" + pad(d.getMinutes());
     document.getElementById("datestr").textContent =
-      d.getFullYear() + "." + pad(d.getMonth() + 1) + "." + pad(d.getDate()) +
-      " " + ["일", "월", "화", "수", "목", "금", "토"][d.getDay()] + "요일";
+      d.getFullYear() + "." + pad(d.getMonth() + 1) + "." + pad(d.getDate()) + " " +
+      ["일", "월", "화", "수", "목", "금", "토"][d.getDay()] + "요일";
   }
-  tickClock();
-  setInterval(tickClock, 20000);
+  clock(); setInterval(clock, 20000);
 
-  renderRooms(); renderTree(); renderBrief();
+  renderTeam(); renderTree(); renderBrief(); renderDepts(); renderMtg(); renderTx(); renderTokens(); renderLog();
   addLog("시스템", "사무실 문을 열었습니다");
-  fitCanvas();
-
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitCanvas);
+  fit();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
   requestAnimationFrame(function (t) { last = t; loop(t); });
 })();
 </script>
