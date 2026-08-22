@@ -228,6 +228,62 @@ button{font:inherit;color:inherit;cursor:pointer}
 .rv-hint{font-size:11px;color:var(--paper-faint);line-height:1.6;margin:0}
 .screen .clickhint{position:absolute;bottom:12px;right:12px;font-size:11px;color:var(--paper-faint);background:rgba(11,13,19,.78);border:1px solid var(--line);border-radius:2px;padding:5px 9px}
 
+/* org chart */
+.org{font-size:12.5px;line-height:1.75}
+.org .lv0{font-family:var(--f-display);font-weight:700;color:var(--paper)}
+.org .row{display:flex;gap:7px;align-items:baseline;white-space:nowrap;overflow:hidden}
+.org .tw{font-family:var(--f-data);font-size:10px;color:var(--line);flex:none;letter-spacing:-.05em}
+.org .nm{font-weight:600;color:var(--paper)}
+.org .rk{font-size:10.5px;padding:0 5px;border-radius:2px;border:1px solid currentColor;opacity:.85;flex:none}
+.org .rl{font-size:11px;color:var(--paper-faint);overflow:hidden;text-overflow:ellipsis}
+.org .roomrow{margin-top:7px}
+.org .roomrow .nm{font-family:var(--f-display)}
+.org .motto{font-size:11px;color:var(--paper-faint);padding-left:26px;font-style:normal}
+
+/* derivation panel */
+.rv-side .back{background:transparent;border:1px solid var(--line);border-radius:2px;padding:3px 8px;font-size:11px;color:var(--paper-dim);margin-bottom:9px}
+.rv-side .back:hover{border-color:#3C4354;color:var(--paper)}
+.deriv{display:flex;flex-direction:column;gap:6px;margin:0 0 12px;padding:0}
+.deriv li{list-style:none;border:0;padding:0}
+.deriv button{
+  width:100%;text-align:left;background:#20242F;border:1px solid var(--line);
+  border-left:3px solid var(--dvc);border-radius:3px;padding:7px 9px;font-size:11.5px;
+  display:flex;flex-direction:column;gap:2px;transition:background .14s ease;
+}
+.deriv button:hover:not(:disabled){background:#282D3A}
+.deriv button:disabled{opacity:.4;cursor:not-allowed}
+.deriv .to{font-size:10px;color:var(--paper-faint)}
+.deriv .to b{color:var(--dvc);font-weight:500}
+.rv-graph circle[data-node]{cursor:pointer}
+.idcard{border-left:2px solid var(--rvc);padding-left:9px;margin:0 0 12px;font-size:11.5px;line-height:1.6;color:var(--paper-dim)}
+.idcard b{display:block;font-family:var(--f-display);font-size:12.5px;color:var(--rvc);margin-bottom:2px}
+.idcard .no{color:var(--paper-faint);font-size:11px;margin-top:3px;display:block}
+
+/* command input */
+.cmdrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.cmdrow input[type=text]{
+  flex:1;min-width:220px;background:#12151D;border:1px solid var(--line);border-radius:3px;
+  padding:9px 12px;font:inherit;font-size:13px;color:var(--paper);
+}
+.cmdrow input[type=text]::placeholder{color:var(--paper-faint)}
+.cmdrow input[type=text]:focus{outline:none;border-color:var(--brass)}
+.cmdrow select,.staffform select,.staffform input{
+  background:#12151D;border:1px solid var(--line);border-radius:3px;
+  padding:8px 10px;font:inherit;font-size:12.5px;color:var(--paper);
+}
+.cmdrow select:focus,.staffform select:focus,.staffform input:focus{outline:none;border-color:var(--brass)}
+.ghost.send{border-color:var(--brass);color:var(--brass);background:#241F17;padding:8px 16px}
+.ghost.send:hover{background:#2E2718}
+
+/* add staff */
+.addstaff{width:100%;margin-top:10px;border-style:dashed}
+.staffform{display:flex;flex-direction:column;gap:7px;margin-top:10px;padding-top:11px;border-top:1px solid var(--line-soft)}
+.staffform[hidden]{display:none}
+.staffform .two{display:grid;grid-template-columns:84px 1fr;gap:7px}
+.sf-actions{display:flex;gap:7px}
+.sf-actions .ghost{flex:1;padding:7px}
+.sf-err{font-size:11.5px;color:#D9814A;margin:0}
+
 @media (prefers-reduced-motion:reduce){
   *{animation-duration:.001s !important;transition-duration:.001s !important}
 }
@@ -275,9 +331,14 @@ button{font:inherit;color:inherit;cursor:pointer}
             <div class="controls">
               <button class="ghost call" id="callmtg">회의 소집</button>
               <button class="ghost" id="auto" aria-pressed="true">자동 진행</button>
-              <button class="ghost" id="reset">비우기</button>
+              <button class="ghost" id="reset">초기화</button>
             </div>
           </div>
+          <form class="cmdrow" id="cmdform">
+            <input type="text" id="cmdtext" autocomplete="off" placeholder="대표님 말씀을 그대로 적으세요 — 예) 오늘 2시간 운동했고 체중 78.4kg" aria-label="지시 내용">
+            <select id="cmdroom" aria-label="보낼 방"><option value="auto">자동 판단</option></select>
+            <button type="submit" class="ghost send">지시</button>
+          </form>
           <div class="order-list" id="orderlist"></div>
         </div>
       </section>
@@ -313,6 +374,20 @@ button{font:inherit;color:inherit;cursor:pointer}
       <div class="card">
         <h2>TEAM</h2>
         <div class="team" id="team"></div>
+        <button class="ghost addstaff" id="addstaff">+ 직원 추가</button>
+        <form class="staffform" id="staffform" hidden>
+          <div class="two"><input id="sf-name" placeholder="이름" maxlength="6" required><input id="sf-role" placeholder="역할 — 예) 재무 담당" maxlength="16" required></div>
+          <select id="sf-room" aria-label="배치할 방"></select>
+          <input id="sf-newroom" placeholder="새 방 이름 — 예) 인생설계실" maxlength="12" hidden>
+          <input id="sf-principle" placeholder="이 방의 원칙 — 예) 10년 뒤에도 유효한 것만 적는다" maxlength="40" hidden>
+          <p class="sf-err" id="sf-err" hidden></p>
+          <div class="sf-actions"><button type="submit" class="ghost">추가</button><button type="button" class="ghost" id="sf-cancel">취소</button></div>
+        </form>
+      </div>
+
+      <div class="card">
+        <h2>조직도 <span class="n">지시는 위에서 아래로</span></h2>
+        <div class="org" id="org"></div>
       </div>
 
       <div class="card">
@@ -406,11 +481,73 @@ button{font:inherit;color:inherit;cursor:pointer}
     }
   ];
   const R = {};
-  ROOMS.forEach(function (r) {
-    R[r.key] = r; r.items = []; r.queue = []; r.active = null; r.progress = 0;
-    r.pops = []; r.lastFile = "—";
-  });
-  const WORKROOMS = ROOMS.filter(function (r) { return !r.isMeeting; });
+  function initRoom(r) {
+    R[r.key] = r; r.items = []; r.queue = []; r.pops = []; r.lastFile = "—";
+  }
+  ROOMS.forEach(initRoom);
+
+  // 한 방에 최대 2자리
+  R.content.slots = [
+    { desk: { x: 150, y: 92, w: 66, h: 24 }, work: { x: 182, y: 98 } },
+    { desk: { x: 196, y: 146, w: 66, h: 24 }, work: { x: 228, y: 152 } },
+    { desk: { x: 60, y: 146, w: 66, h: 24 }, work: { x: 92, y: 152 } }];
+  R.health.slots = [
+    { desk: { x: 762, y: 92, w: 66, h: 24 }, work: { x: 794, y: 98 } },
+    { desk: { x: 826, y: 146, w: 66, h: 24 }, work: { x: 858, y: 152 } },
+    { desk: { x: 686, y: 146, w: 66, h: 24 }, work: { x: 718, y: 152 } }];
+  R.channel.slots = [
+    { desk: { x: 150, y: 526, w: 66, h: 24 }, work: { x: 182, y: 532 } },
+    { desk: { x: 74, y: 540, w: 66, h: 24 }, work: { x: 106, y: 546 } },
+    { desk: { x: 220, y: 546, w: 66, h: 24 }, work: { x: 252, y: 552 } }];
+  R.meeting.slots = [];
+
+  // 방마다 고유한 성향 — 협업이 들어와도 이 선은 지킨다
+  R.content.identity = {
+    motto: "정보보다 태도",
+    principle: "유가족이 지금 당장 쓸 수 있는 말만 남긴다.",
+    refuse: ["자극적인 제목", "통계 나열", "과장된 감정 연출"],
+    voice: "담담하고 낮은 톤"
+  };
+  R.health.identity = {
+    motto: "기록이 먼저",
+    principle: "의욕이 아니라 숫자로 말한다. 못 지킨 날도 그대로 남긴다.",
+    refuse: ["무리한 목표", "남과 비교", "정신력 타령"],
+    voice: "짧고 사실 위주"
+  };
+  R.channel.identity = {
+    motto: "오늘 하나",
+    principle: "거창한 성장 대신 오늘 실제로 한 것 하나를 보여준다.",
+    refuse: ["성공 서사", "안 한 걸 한 척"],
+    voice: "솔직하고 가벼운 톤"
+  };
+  R.meeting.identity = {
+    motto: "결론만",
+    principle: "말한 것 말고 정한 것만 남긴다.",
+    refuse: ["결론 없는 논의"], voice: "건조하게"
+  };
+
+  // 비어 있는 확장 자리 — 새 방은 여기에 들어간다
+  const ROOM_SLOTS = [
+    {
+      rect: { x: 40, y: 236, w: 250, h: 140 }, door: 165, side: "bottom",
+      stand: { x: 165, y: 258 }, shelf: { x: 54, y: 320, w: 78, h: 44 }, j: [165, TOPY],
+      slots: [{ desk: { x: 150, y: 292, w: 66, h: 24 }, work: { x: 182, y: 298 } },
+              { desk: { x: 196, y: 344, w: 66, h: 24 }, work: { x: 228, y: 350 } },
+              { desk: { x: 60, y: 344, w: 66, h: 24 }, work: { x: 92, y: 350 } }]
+    },
+    {
+      rect: { x: 670, y: 236, w: 250, h: 140 }, door: 795, side: "bottom",
+      stand: { x: 795, y: 258 }, shelf: { x: 826, y: 320, w: 78, h: 44 }, j: [795, TOPY],
+      slots: [{ desk: { x: 762, y: 292, w: 66, h: 24 }, work: { x: 794, y: 298 } },
+              { desk: { x: 826, y: 344, w: 66, h: 24 }, work: { x: 858, y: 350 } },
+              { desk: { x: 686, y: 344, w: 66, h: 24 }, work: { x: 718, y: 350 } }]
+    }
+  ];
+  const NEW_PALETTE = [
+    { accent: "#D98BA8", floor: "#43323A", wall: "#5B4450", rug: "#4C3A43" },
+    { accent: "#7FC4C9", floor: "#2C3D40", wall: "#3D5457", rug: "#354A4D" }
+  ];
+  function workRooms() { return ROOMS.filter(function (r) { return !r.isMeeting; }); }
 
   /* ============================================================
      직원 — 각자 이름과 역할이 있는 캐릭터
@@ -421,7 +558,11 @@ button{font:inherit;color:inherit;cursor:pointer}
     { key: "daon", name: "다온", role: "채널 PD", room: "channel", coat: "#6C5AA8", hair: "#1C1826", skin: "#EFC095" }
   ];
   const AG = {};
-  AGENTS.forEach(function (a) { AG[a.key] = a; });
+  const RANKS = ["실장", "과장", "대리"];
+  AGENTS.forEach(function (a) { AG[a.key] = a; a.slotIndex = 0; a.rank = RANKS[0]; a.active = null; a.progress = 0; });
+  function roomAgents(k) { return AGENTS.filter(function (a) { return a.room === k; }); }
+  function slotOf(ag) { const sl = R[ag.room].slots; return sl[ag.slotIndex] || sl[0]; }
+  function headOf(k) { const a = roomAgents(k); return a.length ? a[0] : null; }
   const SEC = { key: "sec", name: "비서", role: "에이전트 비서", coat: "#D9814A", hair: "#2A1F1B", skin: "#F0C9A0" };
 
   /* ============================================================
@@ -495,12 +636,15 @@ button{font:inherit;color:inherit;cursor:pointer}
     }, o);
   }
   const act = {};
-  AGENTS.forEach(function (a) {
-    act[a.key] = Actor({ x: R[a.room].work.x, y: R[a.room].work.y, facing: "down", def: a });
-  });
+  function spawnActor(a) {
+    const w = slotOf(a).work;
+    act[a.key] = Actor({ x: w.x, y: w.y, facing: "down", def: a });
+  }
+  AGENTS.forEach(spawnActor);
   const secA = Actor({ x: HOME.x, y: HOME.y, facing: "up", def: SEC });
   act.sec = secA;
   function allActors() { return [secA].concat(AGENTS.map(function (a) { return act[a.key]; })); }
+  function anyActive(roomKey) { return roomAgents(roomKey).some(function (a) { return !!a.active; }); }
   function enq(a, action) { a.queue.push(action); }
   function busy(a) { return !!a.cur || a.queue.length > 0; }
   function speak(a, text, t) { a.bubble = text; a.bubbleT = t; }
@@ -543,9 +687,10 @@ button{font:inherit;color:inherit;cursor:pointer}
   function link(j1, j2) { return j1[1] === j2[1] ? [] : [[480, j1[1]], [480, j2[1]]]; }
   function rev(p) { return p.slice().reverse(); }
 
-  function routeRoomToRoom(fromKey, toKey, tail) {
+  function routeRoomToRoom(fromKey, toKey, tail, fromAgent) {
     const f = R[fromKey], t = R[toKey];
-    return [[f.work.x, f.work.y], [f.stand.x, f.stand.y], f.j]
+    const start = fromAgent ? slotOf(fromAgent).work : f.stand;
+    return [[start.x, start.y], [f.stand.x, f.stand.y], f.j]
       .concat(link(f.j, t.j))
       .concat([t.j, [t.stand.x, t.stand.y]])
       .concat(tail || []);
@@ -574,8 +719,10 @@ button{font:inherit;color:inherit;cursor:pointer}
     if (ses.on || busy(secA) || !pending.length) return;
     const task = pending.shift();
     const room = R[task.room];
-    const ag = AGENTS.filter(function (a) { return a.room === task.room; })[0];
-    const path = routeHubToRoom(task.room, []);
+    const ag = headOf(task.room);
+    if (!ag) { addLog("비서", "<em>" + room.name + "</em>에 담당자가 없습니다"); return; }
+    const hw = slotOf(ag).work;
+    const path = routeHubToRoom(task.room, [[hw.x, hw.y + 26]]);
     enq(secA, { k: "status", s: "이동 중" });
     enq(secA, { k: "walk", pts: path });
     enq(secA, { k: "face", d: room.side === "top" ? "up" : "down" });
@@ -583,10 +730,10 @@ button{font:inherit;color:inherit;cursor:pointer}
       k: "do", fn: function () {
         room.queue.push(task);
         spend("sec", 700);
-        addLog("비서", "<em>" + ag.name + "</em>에게 하달 · " + task.product);
+        addLog("비서", "<em>" + ag.name + " " + ag.rank + "</em>에게 하달 · " + task.product);
       }
     });
-    enq(secA, { k: "say", text: ag.name + " 님, " + task.product + " 부탁드립니다", t: 2.0 });
+    enq(secA, { k: "say", text: ag.name + " " + ag.rank + "님, " + task.product + " 부탁드립니다", t: 2.0 });
     enq(secA, { k: "do", fn: function () { speak(act[ag.key], "네, 바로 하겠습니다", 1.9); } });
     enq(secA, { k: "wait", t: 1.0 });
     enq(secA, { k: "walk", pts: rev(path) });
@@ -595,34 +742,72 @@ button{font:inherit;color:inherit;cursor:pointer}
   }
 
   function atDesk(ag) {
-    const a = act[ag.key], w = R[ag.room].work;
+    const a = act[ag.key], w = slotOf(ag).work;
     return !busy(a) && Math.abs(a.x - w.x) < 3 && Math.abs(a.y - w.y) < 3;
   }
 
+  let itemSeq = 0;
   function addItem(room, it) {
+    it.id = ++itemSeq; it.room = room.key;
     room.items.push(it);
     room.pops.push({ life: 1.4, color: it.color });
     room.lastFile = today() + "_" + it.file + ".md";
     renderTree(); renderBrief(); renderDepts();
   }
 
+  // 실장이 받아서, 자기가 하거나 아래로 넘긴다
+  function assignInRoom(room, task) {
+    const head = headOf(room.key);
+    if (!head) return null;
+    const subs = roomAgents(room.key).slice(1).filter(function (a) { return !a.active && !busy(act[a.key]); });
+    if (!subs.length) {
+      if (!head.active) { head.active = task; head.progress = 0; return head; }
+      return null;
+    }
+    const sub = subs[0], h = act[head.key];
+    const hw = slotOf(head).work, sw = slotOf(sub).work;
+    enq(h, { k: "walk", pts: [[hw.x, hw.y], [sw.x, sw.y + 22]] });
+    enq(h, { k: "say", text: sub.name + " " + sub.rank + ", " + task.product + " 맡아주세요", t: 2.2 });
+    enq(h, {
+      k: "do", fn: function () {
+        sub.active = task; sub.progress = 0;
+        speak(act[sub.key], "네, 맡겠습니다", 2.0);
+        addLog(room.name, "<em>" + head.name + " → " + sub.name + "</em> 위임 · " + task.product);
+        spend(head.key, 480);
+      }
+    });
+    enq(h, { k: "walk", pts: [[sw.x, sw.y + 22], [hw.x, hw.y]] });
+    enq(h, { k: "face", d: "down" });
+    return sub;
+  }
+
   function updateRooms(dt) {
-    WORKROOMS.forEach(function (room) {
-      const ag = AGENTS.filter(function (a) { return a.room === room.key; })[0];
+    workRooms().forEach(function (room) {
       for (let i = room.pops.length - 1; i >= 0; i--) {
         room.pops[i].life -= dt; if (room.pops[i].life <= 0) room.pops.splice(i, 1);
       }
-      if (!room.active) { if (room.queue.length && atDesk(ag)) { room.active = room.queue.shift(); room.progress = 0; } return; }
+      if (!room.queue.length) return;
+      const head = headOf(room.key);
+      if (!head || !atDesk(head)) return;
+      if (assignInRoom(room, room.queue[0])) room.queue.shift();
+    });
+    AGENTS.forEach(function (ag) {
+      const room = R[ag.room];
+      if (!room || room.isMeeting) return;
+      if (!ag.active) return;
       if (!atDesk(ag)) return;                       // 자리를 비우면 작업도 멈춘다
-      const step = dt / (room.active.dur / SPEED[state.mode]);
-      room.progress += step;
-      spend(ag.key, room.active.tok * step);
-      if (room.progress >= 1) {
-        const done = room.active;
-        room.active = null; room.progress = 0;
-        addItem(room, { label: done.product, file: done.file, tags: done.tags, color: room.accent, kind: "item" });
+      const step = dt / (ag.active.dur / SPEED[state.mode]);
+      ag.progress += step;
+      spend(ag.key, ag.active.tok * step);
+      if (ag.progress >= 1) {
+        const done = ag.active;
+        ag.active = null; ag.progress = 0;
+        addItem(room, {
+          label: done.product, file: done.file, tags: done.tags, color: room.accent, kind: "item",
+          parent: done.parent || null, constraints: done.constraints || null, by: ag.name + " " + ag.rank
+        });
         DEPTS.forEach(function (d) { if (d.rooms.indexOf(room.key) >= 0) d.have[room.key]++; });
-        addLog(room.name, "<em>" + done.product + "</em> 완료 · 서가 " + room.items.length + "개");
+        addLog(room.name, "<em>" + ag.name + "</em> · " + done.product + " 완료 (서가 " + room.items.length + "개)");
         renderDepts();
       }
     });
@@ -648,7 +833,7 @@ button{font:inherit;color:inherit;cursor:pointer}
     ses.paths = {};
     cfg.who.forEach(function (k, i) {
       const ag = AG[k], seat = SEATS[i];
-      const p = routeRoomToRoom(ag.room, "meeting", [[seat.x, seat.y]]);
+      const p = routeRoomToRoom(ag.room, "meeting", [[seat.x, seat.y]], ag);
       ses.paths[k] = p;
       enq(act[k], { k: "status", s: "회의 중" });
       enq(act[k], { k: "walk", pts: p });
@@ -738,19 +923,30 @@ button{font:inherit;color:inherit;cursor:pointer}
   function synergyScript(d) {
     const names = d.rooms.map(function (r) { return R[r].name; }).join(" + ");
     const lines = [["sec", d.name + " 붙이겠습니다. " + names + "."]];
+    const kept = [];
     d.rooms.forEach(function (rk) {
-      const ag = AGENTS.filter(function (a) { return a.room === rk; })[0];
+      const ag = headOf(rk); if (!ag) return;
       const last = R[rk].items[R[rk].items.length - 1];
+      const id = R[rk].identity;
       lines.push([ag.key, R[rk].name + " 쪽은 " + (last ? last.label : "자료") + " 준비됐습니다."]);
+      if (id && id.refuse.length) {
+        lines.push([ag.key, "다만 저희는 “" + id.motto + "”입니다. " + id.refuse[0] + "는 빼주세요."]);
+        kept.push(id.refuse[0] + " 제외");
+      }
     });
-    lines.push([AGENTS.filter(function (a) { return a.room === d.rooms[d.rooms.length - 1]; })[0].key, d.line]);
-    lines.push(["sec", "합쳐서 " + d.product + " 하나로 내겠습니다."]);
+    const closer = headOf(d.rooms[d.rooms.length - 1]);
+    if (closer) lines.push([closer.key, d.line]);
+    lines.push(["sec", kept.length ? "조율됐습니다 — " + kept.join(", ") + ". " + d.product + "로 냅니다."
+      : "합쳐서 " + d.product + " 하나로 내겠습니다."]);
+    lines.kept = kept;
     return lines;
   }
 
   function runSynergy(d) {
     if (!deptReady(d)) return;
-    const who = AGENTS.filter(function (a) { return d.rooms.indexOf(a.room) >= 0; }).map(function (a) { return a.key; });
+    const who = d.rooms.map(function (rk) { return roomAgents(rk)[0]; })
+      .filter(Boolean).slice(0, 3).map(function (a) { return a.key; });
+    if (!who.length) return;
     startSession({
       title: d.name + " 시너지",
       who: who,
@@ -761,7 +957,12 @@ button{font:inherit;color:inherit;cursor:pointer}
         addItem(R.meeting, {
           label: d.product, file: d.file + "-" + d.done,
           tags: d.tags.concat(d.rooms.map(function (r) { return R[r].name; })),
-          color: d.accent, kind: "dept", dept: d.key
+          color: d.accent, kind: "dept", dept: d.key,
+          constraints: d.rooms.map(function (rk) {
+            const id = R[rk].identity;
+            return id && id.refuse.length ? R[rk].name + ": " + id.refuse[0] + " 제외" : null;
+          }).filter(Boolean),
+          by: d.name
         });
         addLog(d.name, "<em>" + d.product + "</em> 산출 · 시너지 " + d.done + "회");
         renderMtg(); renderDepts();
@@ -784,13 +985,14 @@ button{font:inherit;color:inherit;cursor:pointer}
   ];
   function startChat() {
     if (ses.on) return;
-    const pool = AGENTS.filter(function (a) { return !busy(act[a.key]) && !R[a.room].active; });
+    const pool = AGENTS.filter(function (a) { return !busy(act[a.key]) && !a.active; });
     if (pool.length < 2) return;
     const i = Math.floor(Math.random() * pool.length);
     let j = Math.floor(Math.random() * (pool.length - 1)); if (j >= i) j++;
     const X = pool[i], Y = pool[j], A = act[X.key], B = act[Y.key];
     const c = CHATS[Math.floor(Math.random() * CHATS.length)];
-    const path = routeRoomToRoom(X.room, Y.room, []);
+    if (X.room === Y.room) return;
+    const path = routeRoomToRoom(X.room, Y.room, [], X);
     enq(A, { k: "status", s: "이동 중" });
     enq(A, { k: "walk", pts: path });
     enq(A, { k: "face", d: R[Y.room].side === "top" ? "up" : "down" });
@@ -825,9 +1027,9 @@ button{font:inherit;color:inherit;cursor:pointer}
     ctx.fillStyle = room.wall; ctx.fillRect(r.x - 4, r.y - 4, r.w + 8, r.h + 8);
     ctx.fillStyle = shade(room.wall, -22); ctx.fillRect(r.x - 4, r.y + r.h, r.w + 8, 4);
     tiles(r.x, r.y, r.w, r.h, room.floor, "rgba(0,0,0,.14)");
-    if (!room.isMeeting) {
+    if (!room.isMeeting) {   // 문 앞 매트
       ctx.fillStyle = room.rug;
-      ctx.fillRect(px(r.x + r.w / 2 - 44), px(room.side === "top" ? r.y + r.h - 50 : r.y + 20), 88, 32);
+      ctx.fillRect(px(room.door - 22), px(room.side === "top" ? r.y + r.h - 16 : r.y + 4), 44, 12);
     }
     ctx.fillStyle = "#171A22";
     if (room.side === "top") ctx.fillRect(px(room.door - 11), r.y + r.h, 22, 4);
@@ -917,18 +1119,18 @@ button{font:inherit;color:inherit;cursor:pointer}
   function props(room) {
     const r = room.rect;
     if (room.key === "content") {
-      ctx.fillStyle = "#2B2620"; ctx.fillRect(px(r.x + 214), px(r.y + 100), 12, 26);
-      ctx.fillStyle = "#E9E4D8"; ctx.fillRect(px(r.x + 217), px(r.y + 88), 6, 14);
-      ctx.fillStyle = "#F0C070"; ctx.fillRect(px(r.x + 219), px(r.y + 82), 2, 6);
-      ctx.fillStyle = "#22262F"; ctx.fillRect(px(r.x + 32), px(r.y + 112), 3, 24);
-      ctx.fillRect(px(r.x + 26), px(r.y + 100), 16, 12);
-      ctx.fillStyle = "#4A5262"; ctx.fillRect(px(r.x + 40), px(r.y + 103), 5, 6);
+      ctx.fillStyle = "#2B2620"; ctx.fillRect(px(r.x + 228), px(r.y + 96), 12, 26);
+      ctx.fillStyle = "#E9E4D8"; ctx.fillRect(px(r.x + 231), px(r.y + 84), 6, 14);
+      ctx.fillStyle = "#F0C070"; ctx.fillRect(px(r.x + 233), px(r.y + 78), 2, 6);
+      ctx.fillStyle = "#22262F"; ctx.fillRect(px(r.x + 212), px(r.y + 30), 3, 22);
+      ctx.fillRect(px(r.x + 206), px(r.y + 18), 16, 12);
+      ctx.fillStyle = "#4A5262"; ctx.fillRect(px(r.x + 220), px(r.y + 21), 5, 6);
     } else if (room.key === "health") {
-      ctx.fillStyle = "#232E2A"; ctx.fillRect(px(r.x + 20), px(r.y + 92), 42, 46);
-      ctx.fillStyle = "#1A2320"; ctx.fillRect(px(r.x + 24), px(r.y + 100), 34, 34);
-      ctx.fillStyle = "#43604F"; ctx.fillRect(px(r.x + 20), px(r.y + 88), 42, 5);
-      ctx.fillStyle = "#2E4038"; ctx.fillRect(px(r.x + 22), px(r.y + 146), 22, 14);
-      ctx.fillStyle = room.accent; ctx.fillRect(px(r.x + 29), px(r.y + 150), 8, 3);
+      ctx.fillStyle = "#232E2A"; ctx.fillRect(px(r.x + 20), px(r.y + 18), 42, 46);
+      ctx.fillStyle = "#1A2320"; ctx.fillRect(px(r.x + 24), px(r.y + 26), 34, 34);
+      ctx.fillStyle = "#43604F"; ctx.fillRect(px(r.x + 20), px(r.y + 14), 42, 5);
+      ctx.fillStyle = "#2E4038"; ctx.fillRect(px(r.x + 74), px(r.y + 22), 22, 14);
+      ctx.fillStyle = room.accent; ctx.fillRect(px(r.x + 81), px(r.y + 26), 8, 3);
     } else if (room.key === "channel") {
       ctx.fillStyle = "#2B2438"; ctx.fillRect(px(r.x + 170), px(r.y + 14), 62, 8);
       ctx.strokeStyle = room.accent; ctx.lineWidth = 3;
@@ -943,6 +1145,12 @@ button{font:inherit;color:inherit;cursor:pointer}
       ctx.fillStyle = room.accent; ctx.fillRect(px(r.x + 130), px(r.y + 35), 30, 2);
       ctx.fillStyle = "#C9564A"; ctx.fillRect(px(r.x + 166), px(r.y + 35), 18, 2);
       ctx.fillStyle = "#6FB89A"; ctx.fillRect(px(r.x + 190), px(r.y + 35), 24, 2);
+    }
+    if (room.custom) {   // 새로 만든 방
+      ctx.fillStyle = "#24202C"; ctx.fillRect(px(r.x + r.w - 104), px(r.y + 16), 88, 12);
+      ctx.fillStyle = room.accent; ctx.globalAlpha = .5;
+      ctx.fillRect(px(r.x + r.w - 100), px(r.y + 19), 42, 6); ctx.globalAlpha = 1;
+      plant(r.x + 24, r.y + r.h - 12);
     }
   }
 
@@ -979,19 +1187,39 @@ button{font:inherit;color:inherit;cursor:pointer}
     ctx.textAlign = "left";
   }
 
+  function wrapText(text, maxW) {
+    const words = String(text).split(" ");
+    const lines = []; let cur = "";
+    words.forEach(function (w) {
+      const t = cur ? cur + " " + w : w;
+      if (ctx.measureText(t).width > maxW && cur) { lines.push(cur); cur = w; } else cur = t;
+    });
+    if (cur) lines.push(cur);
+    if (lines.length > 2) { lines.length = 2; lines[1] += "…"; }
+    return lines.map(function (l) {
+      while (ctx.measureText(l).width > maxW && l.length > 2) l = l.slice(0, -2) + "…";
+      return l;
+    });
+  }
+
   function bubble(x, y, text, accent) {
     ctx.font = '500 12px "IBM Plex Sans KR", sans-serif';
-    const w = Math.min(250, ctx.measureText(text).width + 20), h = 24;
+    const lines = wrapText(text, 292);
+    let tw = 0;
+    lines.forEach(function (l) { tw = Math.max(tw, ctx.measureText(l).width); });
+    const w = tw + 20, h = 10 + lines.length * 15;
     const bx = Math.max(8, Math.min(W - w - 8, x - w / 2)), by = y - h - 8;
     ctx.fillStyle = "rgba(14,16,22,.93)";
-    ctx.fillRect(px(bx), px(by), px(w), h);
+    ctx.fillRect(px(bx), px(by), px(w), px(h));
     ctx.strokeStyle = accent; ctx.lineWidth = 1;
-    ctx.strokeRect(px(bx) + .5, px(by) + .5, px(w) - 1, h - 1);
+    ctx.strokeRect(px(bx) + .5, px(by) + .5, px(w) - 1, px(h) - 1);
+    const tipX = Math.max(bx + 8, Math.min(bx + w - 8, x));
     ctx.beginPath();
-    ctx.moveTo(px(x) - 4, px(by + h)); ctx.lineTo(px(x) + 4, px(by + h)); ctx.lineTo(px(x), px(by + h) + 6);
+    ctx.moveTo(px(tipX) - 4, px(by + h)); ctx.lineTo(px(tipX) + 4, px(by + h)); ctx.lineTo(px(tipX), px(by + h) + 6);
     ctx.closePath(); ctx.fillStyle = "rgba(14,16,22,.93)"; ctx.fill();
     ctx.fillStyle = "#E9E4D8"; ctx.textAlign = "center";
-    ctx.fillText(text, px(bx + w / 2), px(by + 16)); ctx.textAlign = "left";
+    lines.forEach(function (l, i) { ctx.fillText(l, px(bx + w / 2), px(by + 16 + i * 15)); });
+    ctx.textAlign = "left";
   }
 
   let lightMap = null, lightMode = null;
@@ -1030,10 +1258,12 @@ button{font:inherit;color:inherit;cursor:pointer}
     // 복도
     tiles(150, TOPY - 14, 660, 28, "#222735", "rgba(0,0,0,.16)");
     tiles(150, BOTY - 14, 650, 28, "#222735", "rgba(0,0,0,.16)");
-    tiles(154, 190, 22, 6, "#222735", "rgba(0,0,0,.16)");
-    tiles(784, 190, 22, 6, "#222735", "rgba(0,0,0,.16)");
-    tiles(154, 412, 22, 12, "#222735", "rgba(0,0,0,.16)");
-    tiles(669, 412, 22, 12, "#222735", "rgba(0,0,0,.16)");
+    ROOMS.forEach(function (rm) {
+      const cy = rm.j[1];
+      const y1 = rm.side === "top" ? rm.rect.y + rm.rect.h : cy + 14;
+      const y2 = rm.side === "top" ? cy - 14 : rm.rect.y;
+      tiles(rm.door - 11, Math.min(y1, y2), 22, Math.abs(y2 - y1), "#222735", "rgba(0,0,0,.16)");
+    });
     tiles(469, TOPY + 14, 22, 16, "#222735", "rgba(0,0,0,.16)");
     tiles(469, 368, 22, 16, "#222735", "rgba(0,0,0,.16)");
 
@@ -1061,25 +1291,29 @@ button{font:inherit;color:inherit;cursor:pointer}
       person(a.x, a.y, {
         coat: a.def.coat, hair: a.def.hair, skin: a.def.skin, facing: a.facing,
         stepping: a.moving, walkT: a.walkT, tick: tick,
-        working: a.def !== SEC && !!R[a.def.room] && !!R[a.def.room].active && !a.moving,
+        working: a.def !== SEC && !!a.def.active && !a.moving,
         carry: a === secA && a.status === "이동 중"
       });
     }
 
     // 작업실: 사람 먼저, 책상 나중 (앉아 있는 것처럼)
-    WORKROOMS.forEach(function (room) {
+    workRooms().forEach(function (room) {
       allActors().forEach(function (a) { if (drawn.indexOf(a) < 0 && inRect(a, room.rect)) drawActor(a); });
-      desk(room.desk, room.accent);
-      if (room.active) {
-        const bx = room.desk.x, by = room.desk.y - 32;
-        ctx.fillStyle = "rgba(10,12,17,.7)"; ctx.fillRect(px(bx), px(by), px(room.desk.w), 5);
-        ctx.fillStyle = room.accent;
-        ctx.fillRect(px(bx) + 1, px(by) + 1, Math.max(1, (room.desk.w - 2) * Math.min(1, room.progress)), 3);
-      }
+      roomAgents(room.key).forEach(function (ag) {
+        const sl = slotOf(ag);
+        desk(sl.desk, room.accent);
+        if (ag.active) {
+          const bx = sl.desk.x, by = sl.desk.y - 32;
+          ctx.fillStyle = "rgba(10,12,17,.7)"; ctx.fillRect(px(bx), px(by), px(sl.desk.w), 5);
+          ctx.fillStyle = room.accent;
+          ctx.fillRect(px(bx) + 1, px(by) + 1, Math.max(1, (sl.desk.w - 2) * Math.min(1, ag.progress)), 3);
+        }
+      });
+      const anchor = (roomAgents(room.key)[0] && slotOf(roomAgents(room.key)[0]).work) || room.stand;
       room.pops.forEach(function (p) {
         const k = 1 - p.life / 1.4;
         ctx.globalAlpha = Math.max(0, 1 - k); ctx.fillStyle = p.color;
-        ctx.fillRect(px(room.work.x - 4), px(room.work.y - 34 - k * 22), 8, 10);
+        ctx.fillRect(px(anchor.x - 4), px(anchor.y - 34 - k * 22), 8, 10);
         ctx.globalAlpha = 1;
       });
     });
@@ -1160,7 +1394,7 @@ button{font:inherit;color:inherit;cursor:pointer}
   function statusOf(a) {
     if (ses.on && (a === secA || ses.who.indexOf(a.def.key) >= 0)) return { s: "회의 중", c: "#E0A458" };
     if (a.moving || (a.cur && a.cur.k === "walk")) return { s: "이동 중", c: "#98A0B0" };
-    if (a.def !== SEC && R[a.def.room].active) return { s: "작업 중", c: R[a.def.room].accent };
+    if (a.def !== SEC && a.def.active) return { s: "작업 중", c: R[a.def.room].accent };
     if (a === secA && pending.length) return { s: "배달 준비", c: "#98A0B0" };
     return { s: "대기", c: "#697184" };
   }
@@ -1174,12 +1408,40 @@ button{font:inherit;color:inherit;cursor:pointer}
       return '<div class="member">' +
         '<span class="avatar" style="background:' + d.coat + '"><i></i></span>' +
         '<span class="m-main"><span class="m-name">' + d.name +
-        '<span>' + d.role + '</span></span><div class="m-sub">' + sub + '</div></span>' +
+        '<span>' + (d.rank ? d.rank + " · " : "") + d.role + '</span></span><div class="m-sub">' + sub + '</div></span>' +
         '<span class="m-state" style="color:' + st.c + '">' + st.s + '</span>' +
         '</div>';
     }).join("");
   }
   let deptSig = "";
+  const elOrg = document.getElementById("org");
+  function renderOrg() {
+    let h = '<div class="lv0">대표</div>';
+    h += '<div class="row"><span class="tw">└─</span><span class="nm" style="color:' + SEC.coat + '">' +
+      SEC.name + '</span><span class="rl">' + SEC.role + '</span></div>';
+    workRooms().forEach(function (r, ri, arr) {
+      const last = ri === arr.length - 1;
+      h += '<div class="row roomrow"><span class="tw">' + (last ? "   └─" : "   ├─") +
+        '</span><span class="nm" style="color:' + r.accent + '">' + r.name + '</span>' +
+        '<span class="rl">' + roomAgents(r.key).length + '명</span></div>';
+      const mates = roomAgents(r.key);
+      if (!mates.length) {
+        h += '<div class="row"><span class="tw">' + (last ? "      " : "   │  ") +
+          '</span><span class="rl">비어 있음</span></div>';
+      }
+      mates.forEach(function (a, i) {
+        const lastm = i === mates.length - 1;
+        h += '<div class="row"><span class="tw">' + (last ? "      " : "   │  ") +
+          (lastm ? "└─" : "├─") + '</span>' +
+          '<span class="nm">' + a.name + '</span>' +
+          '<span class="rk" style="color:' + r.accent + '">' + a.rank + '</span>' +
+          '<span class="rl">' + a.role + '</span></div>';
+      });
+      if (r.identity) h += '<div class="motto">' + (last ? "" : "│ ") + "“" + r.identity.motto + "” — " + r.identity.principle + "</div>";
+    });
+    elOrg.innerHTML = h;
+  }
+
   function renderDepts() {
     const sig = DEPTS.map(function (d) {
       return d.rooms.map(function (r) { return d.have[r]; }).join(",") + ":" + d.done;
@@ -1209,7 +1471,7 @@ button{font:inherit;color:inherit;cursor:pointer}
   function renderTree() {
     const m = R.meeting.items.filter(function (i) { return i.kind === "minutes"; }).length;
     const dp = R.meeting.items.filter(function (i) { return i.kind === "dept"; }).length;
-    const rows = WORKROOMS.map(function (r) { return { p: r.folder + "/", n: r.items.length, c: r.accent, k: r.key }; });
+    const rows = workRooms().map(function (r) { return { p: r.folder + "/", n: r.items.length, c: r.accent, k: r.key }; });
     rows.push({ p: "meetings/", n: m, c: R.meeting.accent, k: "meetings" });
     rows.push({ p: "depts/", n: dp, c: "#C9564A", k: "depts" });
     elTree.innerHTML = '<div><span class="path">~/agency/</span></div>' +
@@ -1223,9 +1485,9 @@ button{font:inherit;color:inherit;cursor:pointer}
       '<div>&nbsp;&nbsp; <span class="path">daily/' + today() + '.md</span><span class="n">1</span></div>';
   }
   function renderBrief() {
-    const working = WORKROOMS.filter(function (r) { return r.active; }).length;
-    const waiting = WORKROOMS.reduce(function (a, r) { return a + r.queue.length; }, 0) + pending.length;
-    const total = WORKROOMS.reduce(function (a, r) { return a + r.items.length; }, 0);
+    const working = AGENTS.filter(function (a) { return a.active; }).length;
+    const waiting = workRooms().reduce(function (a, r) { return a + r.queue.length; }, 0) + pending.length;
+    const total = workRooms().reduce(function (a, r) { return a + r.items.length; }, 0);
     const head = state.mode === "work"
       ? "대표님, 오늘은 <b>근무일</b>입니다. 무리한 일정은 넣지 않았습니다."
       : "대표님, 오늘은 <b>휴무일</b>입니다. 밀린 작업을 몰아서 돌리고 있습니다.";
@@ -1245,7 +1507,7 @@ button{font:inherit;color:inherit;cursor:pointer}
     const rows = [{ n: SEC.name, k: "sec", c: SEC.coat }].concat(AGENTS.map(function (a) {
       return { n: a.name, k: a.key, c: a.coat };
     }));
-    const max = Math.max(1, ...rows.map(function (r) { return TOK.by[r.k] || 0; }));
+    const max = Math.max.apply(null, [1].concat(rows.map(function (r) { return TOK.by[r.k] || 0; })));
     elTokRows.innerHTML = rows.map(function (r) {
       const v = TOK.by[r.k] || 0;
       return '<div class="tok-row" style="color:' + r.c + '">' +
@@ -1273,26 +1535,140 @@ button{font:inherit;color:inherit;cursor:pointer}
     rv.hidden = false;
     rv.style.setProperty("--rvc", room.accent);
     rvTitle.textContent = room.name;
-    rvMeta.textContent = room.folder + "/ · " + room.items.length + "개";
+    rvMeta.textContent = room.folder + "/ · " + room.items.length + "개 · " + roomAgents(key).length + "명";
+    rvMode = "summary"; rvPick = null;
     drawGraph(room);
     document.getElementById("rv-close").focus();
   }
   function closeRoom() { rv.hidden = true; rvRoom = null; }
 
+  /* ---- 파생 규칙: 이 결과물에서 무엇이 나올 수 있나 ---- */
+  const DERIVE = {
+    "대본": [{ label: "촬영 컷 리스트", room: "content" }, { label: "숏폼 3컷 요약", room: "channel" }, { label: "섬네일 문구 5개", room: "channel" }],
+    "장례": [{ label: "유가족 체크리스트", room: "content" }, { label: "용어 풀이 카드", room: "content" }],
+    "인터뷰": [{ label: "추가 질문 10개", room: "content" }, { label: "인터뷰 하이라이트", room: "channel" }],
+    "촬영": [{ label: "촬영 일정표", room: "content" }, { label: "장비 준비 목록", room: "channel" }],
+    "운동": [{ label: "주간 루틴 조정", room: "health" }, { label: "운동 브이로그 소재", room: "channel" }],
+    "체중": [{ label: "4주 추이 그래프", room: "health" }, { label: "식단 메모 정리", room: "health" }],
+    "기록": [{ label: "주간 요약 리포트", room: "health" }, { label: "기록 공개용 카드", room: "channel" }],
+    "사진": [{ label: "다음 연습 과제", room: "channel" }, { label: "베스트 컷 선별", room: "channel" }],
+    "브리핑": [{ label: "내일 브리핑 초안", room: "channel" }, { label: "브리핑 대본 보강", room: "content" }],
+    "회의": [{ label: "결정사항 실행안", room: "content" }],
+    "전략": [{ label: "다음 주 우선순위", room: "channel" }, { label: "분기 점검표", room: "health" }],
+    "리포트": [{ label: "리포트 요약 1장", room: "channel" }],
+    "패키지": [{ label: "공개 일정 잡기", room: "channel" }]
+  };
+  function derivationsFor(item) {
+    const out = [], seen = {};
+    (item.tags || []).forEach(function (t) {
+      (DERIVE[t] || []).forEach(function (d) {
+        if (seen[d.label]) return;
+        if (!R[d.room] || R[d.room].isMeeting || !roomAgents(d.room).length) return;
+        seen[d.label] = 1; out.push(d);
+      });
+    });
+    const own = R[item.room] && !R[item.room].isMeeting ? item.room : null;
+    if (own && roomAgents(own).length) {
+      [item.label + " 후속", item.label + " 체크리스트"].forEach(function (l) {
+        if (!seen[l] && out.length < 6) { seen[l] = 1; out.push({ label: l, room: own }); }
+      });
+    }
+    return out.slice(0, 5);
+  }
+
+  function runDerivation(item, d) {
+    const src = R[item.room], dst = R[d.room];
+    customSeq++;
+    const task = {
+      room: d.room, title: item.label + " → " + d.label, product: d.label,
+      file: "derive-" + customSeq, dur: 3.5 + Math.min(2.5, d.label.length / 5),
+      tok: 3600 + d.label.length * 280,
+      tags: (item.tags || []).slice(0, 2).concat(["파생"]),
+      parent: item.id, constraints: null
+    };
+    if (!src || !dst || src.key === dst.key || src.isMeeting) {
+      pending.push(task);
+      addLog(dst.name, "<em>" + item.label + "</em>에서 파생 · " + d.label);
+      return true;
+    }
+    return negotiate(src, dst, item, task);
+  }
+
+  /* ---- 다른 방 일이면 두 실장이 먼저 조율한다 ---- */
+  function negotiate(src, dst, item, task) {
+    const a = headOf(src.key), b = headOf(dst.key);
+    if (!a || !b) { pending.push(task); return true; }
+    if (ses.on) { addLog("비서", "회의 중이라 <em>" + d2(task.product) + "</em> 조율은 잠시 뒤에"); return false; }
+    const A = src.identity || { motto: src.name, refuse: [] };
+    const B = dst.identity || { motto: dst.name, principle: "", refuse: [] };
+    const keep = [];
+    const script = [
+      ["sec", src.name + " → " + dst.name + " 협업 건입니다."],
+      [a.key, "“" + item.label + "”에서 나온 겁니다. " + task.product + " 부탁드립니다."],
+      [b.key, "받겠습니다. 저희 원칙은 “" + B.motto + "” — " + (B.principle || "").slice(0, 26)]
+    ];
+    if (A.refuse.length) {
+      script.push([a.key, "저희는 " + A.refuse[0] + "는 안 됩니다. 그 선만 지켜주세요."]);
+      script.push([b.key, A.refuse[0] + " 빼고, “" + B.motto + "” 기준으로 만들겠습니다."]);
+      keep.push(src.name + ": " + A.refuse[0] + " 제외");
+    } else {
+      script.push([b.key, "“" + B.motto + "” 기준으로 만들겠습니다."]);
+    }
+    keep.push(dst.name + ": " + B.motto + " 유지");
+    script.push(["sec", "양쪽 원칙 다 붙여서 남기겠습니다."]);
+    task.constraints = keep;
+    startSession({
+      title: src.name + " ↔ " + dst.name + " 조율",
+      who: [a.key, b.key],
+      script: script,
+      onEnd: function () {
+        dst.queue.push(task);
+        addLog(dst.name, "조율 완료 · <em>" + task.product + "</em> 착수 (" + keep.length + "개 원칙 반영)");
+      }
+    });
+    return true;
+  }
+  function d2(x) { return x; }
+
+  /* ---- 연관도 ---- */
+  let rvNodes = [], rvMode = "summary", rvPick = null;
+
+  function allItems() {
+    const out = [];
+    ROOMS.forEach(function (r) { r.items.forEach(function (it) { out.push(it); }); });
+    return out;
+  }
+  function itemById(id) {
+    const all = allItems();
+    for (let i = 0; i < all.length; i++) if (all[i].id === id) return all[i];
+    return null;
+  }
+
   function drawGraph(room) {
     const CX = 400, CY = 210;
     const items = room.items.slice(-10);
-    const parts = [];
-    const nodes = [];
+    const parts = [], nodes = [];
+    const mine = {};
+    items.forEach(function (it) { mine[it.id] = true; });
 
-    // 다른 방의 연관 결과물 (태그가 겹치는 것)
-    const ext = [];
+    // 바깥 노드: ① 내 결과물의 부모/자식 ② 태그가 겹치는 것
+    const ext = [], extSeen = {};
+    function addExt(it, o, why) {
+      if (o === room || extSeen[it.id] || ext.length >= 6) return;
+      extSeen[it.id] = 1; ext.push({ it: it, room: o, why: why });
+    }
     ROOMS.forEach(function (o) {
       if (o === room) return;
       o.items.forEach(function (it) {
-        if (ext.length >= 6) return;
+        if (it.parent && mine[it.parent]) addExt(it, o, "child");
+        else if (items.some(function (m) { return m.parent === it.id; })) addExt(it, o, "parent");
+      });
+    });
+    ROOMS.forEach(function (o) {
+      if (o === room) return;
+      o.items.forEach(function (it) {
         const hit = it.tags.some(function (t) { return items.some(function (m) { return m.tags.indexOf(t) >= 0; }); });
-        if (hit) ext.push({ it: it, room: o });
+        if (hit) addExt(it, o, "tag");
       });
     });
 
@@ -1302,27 +1678,32 @@ button{font:inherit;color:inherit;cursor:pointer}
     });
     ext.forEach(function (e, i) {
       const ang = -Math.PI / 2 + 0.42 + i * (Math.PI * 2 / Math.max(4, ext.length));
-      nodes.push({ x: CX + Math.cos(ang) * 178, y: CY + Math.sin(ang) * 178, it: e.it, color: e.room.accent, main: false, room: e.room });
+      nodes.push({ x: CX + Math.cos(ang) * 178, y: CY + Math.sin(ang) * 178, it: e.it, color: e.room.accent, main: false, room: e.room, why: e.why });
     });
+    rvNodes = nodes;
+
+    function pos(id) {
+      for (let i = 0; i < nodes.length; i++) if (nodes[i].it.id === id) return nodes[i];
+      return null;
+    }
+    const mains = nodes.filter(function (n) { return n.main; });
 
     // 중심 ↔ 결과물
-    nodes.filter(function (n) { return n.main; }).forEach(function (n) {
+    mains.forEach(function (n) {
       parts.push('<line x1="' + CX + '" y1="' + CY + '" x2="' + n.x.toFixed(1) + '" y2="' + n.y.toFixed(1) +
-        '" stroke="' + room.accent + '" stroke-opacity=".35" stroke-width="1.5"/>');
+        '" stroke="' + room.accent + '" stroke-opacity=".28" stroke-width="1.2"/>');
     });
-    // 결과물 ↔ 결과물 (태그 공유)
-    const mains = nodes.filter(function (n) { return n.main; });
+    // 태그가 겹치는 결과물끼리 (가는 실선)
     for (let i = 0; i < mains.length; i++) {
       for (let j = i + 1; j < mains.length; j++) {
-        const shared = mains[i].it.tags.filter(function (t) { return mains[j].it.tags.indexOf(t) >= 0; });
-        if (!shared.length) continue;
+        if (!mains[i].it.tags.some(function (t) { return mains[j].it.tags.indexOf(t) >= 0; })) continue;
         parts.push('<line x1="' + mains[i].x.toFixed(1) + '" y1="' + mains[i].y.toFixed(1) +
           '" x2="' + mains[j].x.toFixed(1) + '" y2="' + mains[j].y.toFixed(1) +
-          '" stroke="#98A0B0" stroke-opacity=".28" stroke-width="1"/>');
+          '" stroke="#98A0B0" stroke-opacity=".22" stroke-width="1"/>');
       }
     }
-    // 바깥 방 ↔ 가장 가까운 결과물 (점선)
-    nodes.filter(function (n) { return !n.main; }).forEach(function (n) {
+    // 다른 방 (점선)
+    nodes.filter(function (n) { return !n.main && n.why === "tag"; }).forEach(function (n) {
       let best = null;
       mains.forEach(function (m) {
         const sh = m.it.tags.filter(function (t) { return n.it.tags.indexOf(t) >= 0; }).length;
@@ -1330,61 +1711,143 @@ button{font:inherit;color:inherit;cursor:pointer}
       });
       const tx = best ? best.m.x : CX, ty = best ? best.m.y : CY;
       parts.push('<line x1="' + n.x.toFixed(1) + '" y1="' + n.y.toFixed(1) + '" x2="' + tx.toFixed(1) +
-        '" y2="' + ty.toFixed(1) + '" stroke="' + n.color + '" stroke-opacity=".4" stroke-width="1" stroke-dasharray="3 3"/>');
+        '" y2="' + ty.toFixed(1) + '" stroke="' + n.color + '" stroke-opacity=".35" stroke-width="1" stroke-dasharray="3 3"/>');
+    });
+    // 파생 계보 (굵은 화살표)
+    parts.push('<defs><marker id="ah" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">' +
+      '<path d="M0,0 L7,3.5 L0,7 z" fill="#E9E4D8" fill-opacity=".75"/></marker></defs>');
+    let lineage = 0;
+    nodes.forEach(function (n) {
+      if (!n.it.parent) return;
+      const pn = pos(n.it.parent);
+      if (!pn) return;
+      lineage++;
+      const dx = n.x - pn.x, dy = n.y - pn.y, L = Math.hypot(dx, dy) || 1;
+      const sx = pn.x + dx / L * 30, sy = pn.y + dy / L * 30;
+      const exx = n.x - dx / L * 34, eyy = n.y - dy / L * 34;
+      parts.push('<line x1="' + sx.toFixed(1) + '" y1="' + sy.toFixed(1) + '" x2="' + exx.toFixed(1) +
+        '" y2="' + eyy.toFixed(1) + '" stroke="#E9E4D8" stroke-opacity=".7" stroke-width="2.2" marker-end="url(#ah)"/>');
     });
 
-    // 노드
-    nodes.forEach(function (n) {
+    nodes.forEach(function (n, i) {
       const r = n.main ? 28 : 22;
-      parts.push('<circle cx="' + n.x.toFixed(1) + '" cy="' + n.y.toFixed(1) + '" r="' + r +
-        '" fill="#171A22" stroke="' + n.color + '" stroke-width="' + (n.main ? 2 : 1) + '"' +
+      const picked = rvPick && rvPick.id === n.it.id;
+      parts.push('<circle data-node="' + i + '" cx="' + n.x.toFixed(1) + '" cy="' + n.y.toFixed(1) + '" r="' + r +
+        '" fill="' + (picked ? "#26262E" : "#171A22") + '" stroke="' + n.color + '" stroke-width="' + (picked ? 3 : (n.main ? 2 : 1)) + '"' +
         (n.main ? "" : ' stroke-dasharray="3 2"') + '/>');
       const lim = n.main ? 5 : 4;
       const t = n.it.label.length > lim ? n.it.label.slice(0, lim) : n.it.label;
       parts.push('<text x="' + n.x.toFixed(1) + '" y="' + (n.y + 3.5).toFixed(1) +
-        '" text-anchor="middle" font-family="IBM Plex Sans KR, sans-serif" font-size="' + (n.main ? 10 : 9) +
+        '" text-anchor="middle" pointer-events="none" font-family="IBM Plex Sans KR, sans-serif" font-size="' + (n.main ? 10 : 9) +
         '" fill="' + (n.main ? "#E9E4D8" : "#98A0B0") + '">' + esc(t) + "</text>");
       if (!n.main) {
         parts.push('<text x="' + n.x.toFixed(1) + '" y="' + (n.y + 34).toFixed(1) +
-          '" text-anchor="middle" font-family="Silkscreen, monospace" font-size="7.5" fill="' + n.color +
+          '" text-anchor="middle" pointer-events="none" font-family="Silkscreen, monospace" font-size="7.5" fill="' + n.color +
           '" opacity=".8">' + esc(n.room.name) + "</text>");
       }
     });
 
-    // 중심
     parts.push('<circle cx="' + CX + '" cy="' + CY + '" r="38" fill="' + room.accent + '" fill-opacity=".14" stroke="' + room.accent + '" stroke-width="2"/>');
-    parts.push('<text x="' + CX + '" y="' + (CY - 2) + '" text-anchor="middle" font-family="Gothic A1, sans-serif" font-weight="800" font-size="12" fill="' + room.accent + '">' + esc(room.name.replace(/실$/, "")) + "</text>");
-    parts.push('<text x="' + CX + '" y="' + (CY + 13) + '" text-anchor="middle" font-family="Silkscreen, monospace" font-size="9" fill="#98A0B0">' + room.items.length + " ITEMS</text>");
+    parts.push('<text x="' + CX + '" y="' + (CY - 2) + '" text-anchor="middle" pointer-events="none" font-family="Gothic A1, sans-serif" font-weight="800" font-size="12" fill="' + room.accent + '">' + esc(room.name.replace(/실$/, "")) + "</text>");
+    parts.push('<text x="' + CX + '" y="' + (CY + 13) + '" text-anchor="middle" pointer-events="none" font-family="Silkscreen, monospace" font-size="9" fill="#98A0B0">' + room.items.length + " ITEMS</text>");
 
     if (!items.length) {
-      parts.push('<text x="' + CX + '" y="' + (CY + 78) + '" text-anchor="middle" font-family="IBM Plex Sans KR, sans-serif" font-size="11.5" fill="#697184">아직 결과물이 없습니다. 지시를 하나 내려보세요.</text>');
+      parts.push('<text x="' + CX + '" y="' + (CY + 82) + '" text-anchor="middle" font-family="IBM Plex Sans KR, sans-serif" font-size="11.5" fill="#697184">아직 결과물이 없습니다. 지시를 하나 내려보세요.</text>');
+    } else {
+      parts.push('<text x="14" y="' + (420 - 14) + '" font-family="IBM Plex Sans KR, sans-serif" font-size="10.5" fill="#697184">동그라미를 누르면 여기서 파생할 수 있는 일이 나옵니다' +
+        (lineage ? " · 굵은 화살표 " + lineage + "개가 실제 파생 계보" : "") + "</text>");
     }
     rvGraph.innerHTML = parts.join("");
+    renderSide(room);
+  }
 
-    // 옆 패널
+  function renderSide(room) {
+    if (rvMode === "node" && rvPick) return renderNodeSide(room);
     const tagCount = {};
     room.items.forEach(function (it) { it.tags.forEach(function (t) { tagCount[t] = (tagCount[t] || 0) + 1; }); });
-    const topTags = Object.keys(tagCount).sort(function (a, b) { return tagCount[b] - tagCount[a]; }).slice(0, 6);
+    const topTags = Object.keys(tagCount).sort(function (a, b) { return tagCount[b] - tagCount[a]; }).slice(0, 5);
     const myDepts = DEPTS.filter(function (d) { return d.rooms.indexOf(room.key) >= 0; });
-    let html = "<h4>결과물</h4><ul>";
+    const id = room.identity;
+    let html = "";
+    if (id) {
+      html += '<div class="idcard"><b>“' + esc(id.motto) + '”</b>' + esc(id.principle) +
+        (id.refuse.length ? '<span class="no">안 하는 것 · ' + esc(id.refuse.join(", ")) + "</span>" : "") + "</div>";
+    }
+    const mates = roomAgents(room.key);
+    html += "<h4>사람</h4><ul>";
+    html += mates.length ? mates.map(function (a) {
+      return "<li><b>" + esc(a.name) + "</b><span class=\"rv-tag\" style=\"color:" + room.accent + "\">" + esc(a.rank) + "</span> " + esc(a.role) + "</li>";
+    }).join("") : '<li style="color:var(--paper-faint)">없음</li>';
+    html += "</ul><h4>결과물</h4><ul>";
     html += room.items.length
-      ? room.items.slice().reverse().slice(0, 8).map(function (it) {
+      ? room.items.slice().reverse().slice(0, 6).map(function (it) {
         return "<li><b>" + esc(it.label) + "</b><span style=\"color:" + it.color + "\" class=\"rv-tag\">" + esc(it.tags[0]) + "</span></li>";
       }).join("")
       : '<li style="color:var(--paper-faint)">없음</li>';
-    html += "</ul><h4>많이 쓰인 태그</h4><ul>";
-    html += topTags.length
-      ? topTags.map(function (t) { return "<li><b>#" + esc(t) + "</b> " + tagCount[t] + "회</li>"; }).join("")
-      : '<li style="color:var(--paper-faint)">없음</li>';
     html += "</ul>";
+    if (topTags.length) {
+      html += "<h4>많이 쓰인 태그</h4><ul>" + topTags.map(function (t) {
+        return "<li><b>#" + esc(t) + "</b> " + tagCount[t] + "회</li>";
+      }).join("") + "</ul>";
+    }
     if (myDepts.length) {
       html += "<h4>소속 부서</h4><ul>" + myDepts.map(function (d) {
         return '<li><b style="color:' + d.accent + '">' + esc(d.name) + "</b> " + d.product + "</li>";
       }).join("") + "</ul>";
     }
-    html += '<p class="rv-hint">실선은 이 방 안에서 태그가 겹치는 결과물, 점선은 다른 방에 있는 관련 결과물입니다.</p>';
+    html += '<p class="rv-hint">굵은 화살표는 실제 파생 계보, 가는 선은 태그가 겹치는 것, 점선은 다른 방의 관련 결과물입니다.</p>';
     rvSide.innerHTML = html;
   }
+
+  function renderNodeSide(room) {
+    const it = rvPick;
+    const ders = derivationsFor(it);
+    let html = '<button class="back" id="rv-back">← 방 전체 보기</button>';
+    html += "<h4>고른 결과물</h4><ul><li><b>" + esc(it.label) + "</b></li>";
+    html += "<li>" + it.tags.map(function (t) { return "#" + esc(t); }).join(" ") + "</li>";
+    if (it.by) html += "<li style=\"color:var(--paper-faint)\">작성 " + esc(it.by) + "</li>";
+    const par = it.parent ? itemById(it.parent) : null;
+    if (par) html += "<li style=\"color:var(--paper-faint)\">출처 ← " + esc(par.label) + "</li>";
+    if (it.constraints && it.constraints.length) {
+      html += "</ul><h4>조율된 원칙</h4><ul>" + it.constraints.map(function (c) {
+        return "<li>" + esc(c) + "</li>";
+      }).join("");
+    }
+    html += "</ul><h4>여기서 파생할 수 있는 일</h4>";
+    if (!ders.length) {
+      html += '<p class="rv-hint">아직 파생 규칙이 없는 결과물입니다.</p>';
+    } else {
+      html += '<ul class="deriv">' + ders.map(function (d, i) {
+        const cross = d.room !== it.room;
+        return '<li><button data-der="' + i + '" style="--dvc:' + R[d.room].accent + '">' +
+          esc(d.label) +
+          '<span class="to">' + (cross ? "협의 필요 → <b>" + esc(R[d.room].name) + "</b>" : "<b>" + esc(R[d.room].name) + "</b> 자체 진행") + "</span></button></li>";
+      }).join("") + "</ul>";
+      html += '<p class="rv-hint">누르면 실제로 지시가 나갑니다. 다른 방 일이면 두 실장이 회의실에서 먼저 조율합니다.</p>';
+    }
+    rvSide.innerHTML = html;
+    rvSide.__ders = ders;
+  }
+
+  rvGraph.addEventListener("click", function (e) {
+    const c = e.target.closest("circle[data-node]");
+    if (!c) return;
+    const n = rvNodes[+c.dataset.node];
+    if (!n) return;
+    rvPick = n.it; rvMode = "node";
+    drawGraph(R[rvRoom]);
+  });
+  rvSide.addEventListener("click", function (e) {
+    if (e.target.closest("#rv-back")) { rvMode = "summary"; rvPick = null; drawGraph(R[rvRoom]); return; }
+    const b = e.target.closest("button[data-der]");
+    if (!b) return;
+    const d = (rvSide.__ders || [])[+b.dataset.der];
+    if (!d || !rvPick) return;
+    if (runDerivation(rvPick, d)) {
+      b.disabled = true;
+      b.insertAdjacentHTML("beforeend", '<span class="to">보냈습니다</span>');
+    }
+  });
 
   document.getElementById("rv-close").addEventListener("click", closeRoom);
   rv.addEventListener("click", function (e) { if (e.target === rv) closeRoom(); });
@@ -1410,6 +1873,170 @@ button{font:inherit;color:inherit;cursor:pointer}
     cv.style.cursor = hitRoom(p[0], p[1]) ? "pointer" : "default";
   });
 
+
+  /* ============================================================
+     대표 지시 직접 입력 · 직원/방 추가
+     ============================================================ */
+  const ROUTE_WORDS = {
+    content: ["장례", "빈소", "조문", "상조", "대본", "영상", "기획", "인터뷰", "촬영", "편집", "유튜브", "콘텐츠", "발인", "장지"],
+    health: ["운동", "체중", "몸무게", "헬스", "러닝", "근력", "식단", "수면", "컨디션", "건강", "스트레칭", "kg", "칼로리"],
+    channel: ["브리핑", "사진", "채널", "자기계발", "습관", "독서", "공부", "루틴", "성장", "카메라", "구독", "썸네일"]
+  };
+  function routeText(text) {
+    const t = text.toLowerCase();
+    let best = null, bestScore = 0;
+    workRooms().forEach(function (r) {
+      const words = (ROUTE_WORDS[r.key] || []).concat(r.name.replace(/실$/, "").split(/\s+/));
+      let score = 0;
+      words.forEach(function (w) { if (w && t.indexOf(w.toLowerCase()) >= 0) score++; });
+      if (score > bestScore) { bestScore = score; best = r; }
+    });
+    if (best) return { room: best.key, sure: true, words: bestScore };
+    // 근거가 없으면 가장 한가한 방
+    const idle = workRooms().filter(function (r) { return roomAgents(r.key).length; })
+      .sort(function (a, b) {
+        return (roomAgents(a.key).filter(function (x) { return x.active; }).length + a.queue.length)
+             - (roomAgents(b.key).filter(function (x) { return x.active; }).length + b.queue.length);
+      })[0];
+    return idle ? { room: idle.key, sure: false, words: 0 } : null;
+  }
+
+  let customSeq = 0;
+  function submitCommand(text, choice) {
+    text = text.trim();
+    if (!text) return;
+    let roomKey = choice, sure = true;
+    if (choice === "auto") {
+      const r = routeText(text);
+      if (!r) { speak(secA, "보낼 방이 없습니다", 2.4); return; }
+      roomKey = r.room; sure = r.sure;
+    }
+    if (!roomAgents(roomKey).length) {
+      speak(secA, R[roomKey].name + "에 담당자가 없습니다", 2.6);
+      addLog("비서", "<em>" + R[roomKey].name + "</em>에 담당자가 없어 대기시켰습니다");
+      return;
+    }
+    customSeq++;
+    const short = text.length > 11 ? text.slice(0, 11) + "…" : text;
+    const tags = [];
+    Object.keys(ROUTE_WORDS).forEach(function (k) {
+      ROUTE_WORDS[k].forEach(function (w) { if (text.indexOf(w) >= 0 && tags.indexOf(w) < 0 && tags.length < 3) tags.push(w); });
+    });
+    if (!tags.length) tags.push("지시");
+    issue({
+      room: roomKey, title: text, product: short, file: "order-" + customSeq,
+      dur: 3 + Math.min(6, text.length / 11), tok: 2200 + text.length * 190, tags: tags
+    });
+    if (!sure) addLog("비서", "방을 못 정해서 <em>" + R[roomKey].name + "</em>으로 보냅니다");
+  }
+
+  const STAFF_COLORS = ["#C9784A", "#4E8FBF", "#B25C86", "#5EA36B", "#8A6FC4", "#C0A046"];
+  const HAIRS = ["#20191C", "#181F1C", "#1C1826", "#241C22"];
+
+  function createRoom(name, principle) {
+    const used = ROOMS.filter(function (r) { return r.custom; }).length;
+    if (used >= ROOM_SLOTS.length) return null;
+    const g = ROOM_SLOTS[used], pal = NEW_PALETTE[used];
+    const key = "room" + (used + 1);
+    const room = Object.assign({
+      key: key, name: name, folder: "rooms/" + key, custom: true,
+      accent: pal.accent, floor: pal.floor, wall: pal.wall, rug: pal.rug
+    }, g);
+    room.identity = {
+      motto: name.replace(/실$/, ""),
+      principle: principle || "아직 정하지 않았습니다.",
+      refuse: [], voice: "기본"
+    };
+    initRoom(room);
+    ROOMS.push(room);
+    renderRoomSelects(); renderTree(); renderOrg();
+    addLog("시스템", "<em>" + name + "</em> 개설 · 원칙: " + room.identity.principle);
+    return room;
+  }
+
+  function addStaff(name, role, roomKey) {
+    const room = R[roomKey];
+    if (!room || room.isMeeting) return { err: "방을 고르세요" };
+    if (roomAgents(roomKey).length >= room.slots.length) return { err: room.name + "은 자리가 찼습니다 (최대 " + room.slots.length + "명)" };
+    if (AGENTS.some(function (a) { return a.name === name; })) return { err: "같은 이름이 이미 있습니다" };
+    const key = "staff" + (AGENTS.length + 1) + "_" + Date.now().toString(36).slice(-4);
+    const ag = {
+      key: key, name: name, role: role, room: roomKey, custom: true,
+      coat: STAFF_COLORS[AGENTS.length % STAFF_COLORS.length],
+      hair: HAIRS[AGENTS.length % HAIRS.length], skin: "#E4B489",
+      slotIndex: roomAgents(roomKey).length, active: null, progress: 0,
+      rank: RANKS[Math.min(roomAgents(roomKey).length, RANKS.length - 1)]
+    };
+    AGENTS.push(ag); AG[key] = ag; TOK.by[key] = 0;
+    spawnActor(ag);
+    addLog("시스템", "<em>" + name + " " + ag.rank + "</em>(" + role + ") 입사 · " + room.name);
+    renderOrg();
+    speak(act[key], "잘 부탁드립니다", 2.6);
+    saveRoster(); renderTeam(); renderTokens();
+    return { ok: true };
+  }
+
+  /* 저장 — 추가한 직원과 방만 이 브라우저에 기억시킨다 */
+  const STORE = "agency.roster.v1";
+  function saveRoster() {
+    try {
+      localStorage.setItem(STORE, JSON.stringify({
+        rooms: ROOMS.filter(function (r) { return r.custom; }).map(function (r) {
+          return { name: r.name, principle: r.identity ? r.identity.principle : "" };
+        }),
+        agents: AGENTS.filter(function (a) { return a.custom; }).map(function (a) {
+          return { name: a.name, role: a.role, room: a.room };
+        })
+      }));
+    } catch (e) { /* 저장이 막힌 브라우저면 이번 세션만 유지 */ }
+  }
+  function loadRoster() {
+    let raw = null;
+    try { raw = localStorage.getItem(STORE); } catch (e) { return; }
+    if (!raw) return;
+    let data;
+    try { data = JSON.parse(raw); } catch (e) { return; }
+    (data.rooms || []).forEach(function (r) {
+      if (r && r.name) createRoom(String(r.name).slice(0, 12), String(r.principle || "").slice(0, 40));
+    });
+    (data.agents || []).forEach(function (a) {
+      if (a && a.name && a.role && R[a.room]) addStaff(String(a.name).slice(0, 6), String(a.role).slice(0, 16), a.room);
+    });
+  }
+
+  /* 초기화 — 화면 안의 데모 상태만 되돌린다 (맥의 파일은 건드리지 않음) */
+  function abortAll() {
+    ses.on = false; ses.phase = null; ses.who = [];
+    allActors().forEach(function (a) {
+      a.queue.length = 0; a.cur = null; a.bubble = null; a.bubbleT = 0; a.status = "대기"; a.moving = false;
+    });
+    secA.x = HOME.x; secA.y = HOME.y; secA.facing = "up";
+    AGENTS.forEach(function (ag) {
+      const w = slotOf(ag).work, a = act[ag.key];
+      a.x = w.x; a.y = w.y; a.facing = "down";
+      ag.active = null; ag.progress = 0;
+    });
+    boss.bubble = null; boss.bubbleT = 0;
+  }
+
+  function renderRoomSelects() {
+    const opts = workRooms().map(function (r) {
+      return '<option value="' + r.key + '">' + r.name + "</option>";
+    }).join("");
+    const cr = document.getElementById("cmdroom");
+    const keep = cr.value;
+    cr.innerHTML = '<option value="auto">자동 판단</option>' + opts;
+    if (keep) cr.value = keep;
+    const sr = document.getElementById("sf-room");
+    const room = workRooms().map(function (r) {
+      const full = roomAgents(r.key).length >= r.slots.length;
+      return '<option value="' + r.key + '"' + (full ? " disabled" : "") + '>' +
+        r.name + (full ? " (자리 참)" : " (" + roomAgents(r.key).length + "/" + r.slots.length + ")") + "</option>";
+    }).join("");
+    const canNew = ROOMS.filter(function (r) { return r.custom; }).length < ROOM_SLOTS.length;
+    sr.innerHTML = room + (canNew ? '<option value="__new__">+ 새 방 만들기</option>' : "");
+  }
+
   /* ============================================================
      컨트롤
      ============================================================ */
@@ -1427,6 +2054,51 @@ button{font:inherit;color:inherit;cursor:pointer}
     if (d) runSynergy(d);
   });
 
+  document.getElementById("cmdform").addEventListener("submit", function (e) {
+    e.preventDefault();
+    const inp = document.getElementById("cmdtext");
+    submitCommand(inp.value, document.getElementById("cmdroom").value);
+    inp.value = "";
+  });
+
+  const sfForm = document.getElementById("staffform");
+  const sfRoom = document.getElementById("sf-room");
+  const sfNew = document.getElementById("sf-newroom");
+  const sfErr = document.getElementById("sf-err");
+  document.getElementById("addstaff").addEventListener("click", function () {
+    sfForm.hidden = !sfForm.hidden;
+    if (!sfForm.hidden) { renderRoomSelects(); document.getElementById("sf-name").focus(); }
+  });
+  document.getElementById("sf-cancel").addEventListener("click", function () { sfForm.hidden = true; sfErr.hidden = true; });
+  const sfPrin = document.getElementById("sf-principle");
+  sfRoom.addEventListener("change", function () {
+    const isNew = sfRoom.value === "__new__";
+    sfNew.hidden = !isNew; sfNew.required = isNew;
+    sfPrin.hidden = !isNew;
+  });
+  sfForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+    sfErr.hidden = true;
+    const name = document.getElementById("sf-name").value.trim();
+    const role = document.getElementById("sf-role").value.trim();
+    let roomKey = sfRoom.value;
+    if (roomKey === "__new__") {
+      const rn = sfNew.value.trim();
+      if (!rn) { sfErr.textContent = "새 방 이름을 적어주세요"; sfErr.hidden = false; return; }
+      const nr = createRoom(rn, sfPrin.value.trim());
+      if (!nr) { sfErr.textContent = "빈 방 자리가 없습니다 (최대 2개)"; sfErr.hidden = false; return; }
+      roomKey = nr.key;
+    }
+    const res = addStaff(name, role, roomKey);
+    if (res.err) { sfErr.textContent = res.err; sfErr.hidden = false; return; }
+    saveRoster();
+    document.getElementById("sf-name").value = "";
+    document.getElementById("sf-role").value = "";
+    sfNew.value = ""; sfNew.hidden = true; sfPrin.value = ""; sfPrin.hidden = true;
+    sfForm.hidden = true;
+    renderRoomSelects();
+  });
+
   const btnMtg = document.getElementById("callmtg");
   btnMtg.addEventListener("click", function () { callMeeting(); });
 
@@ -1437,12 +2109,15 @@ button{font:inherit;color:inherit;cursor:pointer}
   });
 
   document.getElementById("reset").addEventListener("click", function () {
-    ROOMS.forEach(function (r) { r.items = []; r.queue = []; r.active = null; r.progress = 0; r.lastFile = "—"; });
+    abortAll();
+    ROOMS.forEach(function (r) { r.items = []; r.queue = []; r.lastFile = "—"; r.pops = []; });
     DEPTS.forEach(function (d) { d.rooms.forEach(function (r) { d.have[r] = 0; }); d.done = 0; });
     pending.length = 0; state.log = []; transcript = [];
     TOK.total = 0; Object.keys(TOK.by).forEach(function (k) { TOK.by[k] = 0; });
-    addLog("시스템", "서가와 사용량을 비웠습니다");
+    addLog("시스템", "화면 상태를 초기화했습니다 (맥의 파일은 그대로입니다)");
     renderTree(); renderBrief(); renderDepts(); renderMtg(); renderTx(); renderTokens();
+    rvMode = "summary"; rvPick = null;
+    renderOrg();
     if (!rv.hidden && rvRoom) drawGraph(R[rvRoom]);
   });
 
@@ -1518,7 +2193,8 @@ button{font:inherit;color:inherit;cursor:pointer}
   }
   clock(); setInterval(clock, 20000);
 
-  renderTeam(); renderTree(); renderBrief(); renderDepts(); renderMtg(); renderTx(); renderTokens(); renderLog();
+  renderRoomSelects(); loadRoster(); renderRoomSelects();
+  renderTeam(); renderOrg(); renderTree(); renderBrief(); renderDepts(); renderMtg(); renderTx(); renderTokens(); renderLog();
   addLog("시스템", "사무실 문을 열었습니다");
   fit();
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
