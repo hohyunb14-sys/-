@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>voicecut</title>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--text:#1f2430;--muted:#6b7280;--line:#e5e7eb;--accent:#2563eb;--danger:#dc2626}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,"Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:15px}
+header{display:flex;align-items:center;gap:16px;padding:12px 24px;background:var(--card);border-bottom:1px solid var(--line)}
+header .brand{font-weight:700;text-decoration:none;color:var(--text);font-size:18px}
+header nav a{color:var(--muted);text-decoration:none;margin-left:12px}
+main{max-width:860px;margin:24px auto;padding:0 16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px 24px;margin-bottom:20px}
+h2{margin:0 0 14px;font-size:17px}
+.drop{border:2px dashed #c7cbd3;border-radius:12px;padding:34px;text-align:center;color:var(--muted);cursor:pointer;transition:.15s}
+.drop.over{border-color:var(--accent);background:#eff6ff;color:var(--accent)}
+.drop strong{color:var(--text)}
+.or{text-align:center;color:var(--muted);margin:12px 0;font-size:13px}
+input[type=text],select{width:100%;padding:9px 11px;border:1px solid #cfd3da;border-radius:8px;font-size:14px;font-family:inherit}
+.row{display:flex;gap:18px;align-items:center;margin:14px 0;flex-wrap:wrap}
+.row label{display:flex;align-items:center;gap:6px}
+.row select{width:auto}
+.muted{color:var(--muted);font-size:13px;line-height:1.6}
+button{font-family:inherit;font-size:14px;padding:9px 16px;border-radius:8px;border:1px solid #cfd3da;background:#fff;cursor:pointer}
+button.primary{background:var(--accent);color:#fff;border-color:var(--accent);font-weight:600}
+button:disabled{opacity:.5;cursor:default}
+.bar{height:8px;background:#e5e7eb;border-radius:4px;overflow:hidden;margin:10px 0 6px}
+.bar div{height:100%;background:var(--accent);width:0;transition:width .2s}
+.error{color:var(--danger);margin-top:10px;white-space:pre-wrap}
+table{width:100%;border-collapse:collapse}
+td,th{text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);font-size:14px;vertical-align:middle}
+th{color:var(--muted);font-weight:500;font-size:13px}
+td a{color:var(--accent);text-decoration:none}
+.status{display:inline-block;padding:2px 8px;border-radius:999px;font-size:12px;background:#eef0f3;color:#374151}
+.status.ready{background:#dcfce7;color:#166534}.status.error{background:#fee2e2;color:#991b1b}.status.processing{background:#dbeafe;color:#1e40af}
+.small{font-size:12px;padding:4px 10px}
+details summary{cursor:pointer;color:var(--muted);font-size:13px;margin:8px 0}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 18px}
+.grid label{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--muted)}
+.grid input{padding:7px 9px;border:1px solid #cfd3da;border-radius:8px;font-size:14px;font-family:inherit}
+</style>
+</head>
+<body>
+<header><a class="brand" href="/">voicecut</a><nav><a href="/settings">설정</a></nav></header>
+<main>
+  <section class="card">
+    <h2>새 작업</h2>
+    <div id="drop" class="drop">여기에 녹음 파일이나 영상 파일을 끌어다 놓으세요<br><strong>또는 클릭해서 파일 선택</strong><input type="file" id="file" hidden accept="audio/*,video/*,.m4a,.mp3,.wav,.mp4,.mov,.mkv,.webm,.aac,.flac,.ogg"></div>
+    <div id="picked" class="muted" style="margin-top:8px"></div>
+    <div class="or">또는 내 컴퓨터의 파일 경로를 직접 입력 (큰 영상 파일은 이 방법이 빠릅니다)</div>
+    <input type="text" id="path" placeholder="예: C:\Users\나\Videos\강의01.mp4  또는  /Users/나/Movies/강의01.mov">
+    <div class="row">
+      <label>음성 인식 <select id="backend"><option value="auto">자동</option><option value="rtzr">리턴제로 (온라인)</option><option value="whisper">Whisper (내 컴퓨터)</option></select></label>
+      <label><input type="checkbox" id="ai"> AI 검토(Claude)도 함께 실행</label>
+    </div>
+    <details><summary>이번 작업만 탐지 기준 바꾸기</summary>
+      <div class="grid">
+        <label>이 길이 이상 무음만 줄임 (초)<input id="d_silence_min" type="number" step="0.1" min="0.2"></label>
+        <label>줄인 뒤 남길 무음 (초)<input id="d_silence_keep" type="number" step="0.05" min="0"></label>
+        <label>마커 단어 (쉼표 구분)<input id="d_markers" type="text"></label>
+        <label>조건부 간투어 (쉼표 구분)<input id="d_conditional_fillers" type="text"></label>
+      </div>
+    </details>
+    <div id="caps" class="muted" style="margin:8px 0 14px"></div>
+    <button id="go" class="primary">분석 시작</button>
+    <div id="prog" hidden><div class="bar"><div id="bar"></div></div><span id="progtext" class="muted"></span></div>
+    <div id="err" class="error" hidden></div>
+  </section>
+  <section class="card">
+    <h2>최근 작업</h2>
+    <table id="jobs"><thead><tr><th>파일</th><th>만든 시간</th><th>상태</th><th>길이</th><th></th></tr></thead><tbody></tbody></table>
+    <div id="nojobs" class="muted" hidden>아직 작업이 없습니다.</div>
+  </section>
+</main>
+<script>
+const $ = id => document.getElementById(id);
+let settings = null, pickedFile = null;
+const fmt = t => { if (t == null) return ''; const m = Math.floor(t/60), s = (t - m*60); return `${String(m).padStart(2,'0')}:${s.toFixed(1).padStart(4,'0')}`; };
+const statusLabel = s => ({queued:'대기', processing:'처리 중', ready:'완료', error:'오류'})[s] || s;
+
+async function loadSettings() {
+  settings = await (await fetch('/api/settings')).json();
+  const c = settings.capabilities, d = settings.detect || {};
+  $('backend').value = settings.backend || 'auto';
+  $('ai').checked = !!settings.ai_review && c.anthropic_key && c.anthropic_installed;
+  $('ai').disabled = !(c.anthropic_key && c.anthropic_installed);
+  $('d_silence_min').value = d.silence_min; $('d_silence_keep').value = d.silence_keep;
+  $('d_markers').value = (d.markers||[]).join(', '); $('d_conditional_fillers').value = (d.conditional_fillers||[]).join(', ');
+  const parts = [];
+  parts.push(c.rtzr ? '리턴제로 API 키: 있음 (자동 선택 시 리턴제로 사용)' : '리턴제로 API 키: 없음 → 자동 선택 시 Whisper 사용');
+  parts.push(c.whisper_installed ? 'Whisper: 설치됨' : 'Whisper: 미설치 (pip install faster-whisper)');
+  parts.push(c.anthropic_key && c.anthropic_installed ? 'AI 검토: 사용 가능' : 'AI 검토: Anthropic API 키' + (c.anthropic_installed ? '' : '와 anthropic 패키지') + ' 필요');
+  $('caps').innerHTML = parts.join(' · ') + ' — <a href="/settings">설정</a>';
+}
+
+async function loadJobs() {
+  const jobs = await (await fetch('/api/jobs')).json();
+  const tb = $('jobs').querySelector('tbody'); tb.innerHTML = '';
+  $('nojobs').hidden = jobs.length > 0;
+  for (const j of jobs) {
+    const tr = document.createElement('tr');
+    const when = new Date(j.created * 1000).toLocaleString('ko-KR', {month:'numeric', day:'numeric', hour:'2-digit', minute:'2-digit'});
+    const sum = j.summary ? ` → ${fmt(j.summary.result_duration)}` : '';
+    tr.innerHTML = `<td><a href="/job/${j.id}">${esc(j.filename)}</a></td><td>${when}</td><td><span class="status ${j.status}">${statusLabel(j.status)}</span></td><td>${fmt(j.duration)}${sum}</td><td><button class="small" data-del="${j.id}">삭제</button></td>`;
+    tb.appendChild(tr);
+  }
+}
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+$('jobs').addEventListener('click', async e => {
+  const id = e.target.dataset.del; if (!id) return;
+  if (!confirm('이 작업을 삭제할까요? (원본 파일은 지워지지 않습니다)')) return;
+  const r = await fetch('/api/jobs/' + id, {method:'DELETE'});
+  if (!r.ok) alert((await r.json()).detail); loadJobs();
+});
+
+const drop = $('drop');
+drop.addEventListener('click', () => $('file').click());
+$('file').addEventListener('change', () => pick($('file').files[0]));
+['dragenter','dragover'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add('over'); }));
+['dragleave','drop'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove('over'); }));
+drop.addEventListener('drop', e => { if (e.dataTransfer.files[0]) pick(e.dataTransfer.files[0]); });
+function pick(f) { pickedFile = f; $('picked').textContent = f ? `선택한 파일: ${f.name} (${(f.size/1048576).toFixed(1)} MB)` : ''; $('path').value = ''; }
+
+$('go').addEventListener('click', () => {
+  const path = $('path').value.trim();
+  if (!pickedFile && !path) { showErr('파일을 선택하거나 경로를 입력하세요.'); return; }
+  $('err').hidden = true; $('go').disabled = true;
+  const fd = new FormData();
+  if (path) fd.append('path', path); else fd.append('file', pickedFile, pickedFile.name);
+  fd.append('backend', $('backend').value);
+  fd.append('ai_review', $('ai').checked ? 'true' : 'false');
+  const detect = {};
+  if ($('d_silence_min').value) detect.silence_min = parseFloat($('d_silence_min').value);
+  if ($('d_silence_keep').value) detect.silence_keep = parseFloat($('d_silence_keep').value);
+  if ($('d_markers').value.trim()) detect.markers = $('d_markers').value;
+  if ($('d_conditional_fillers').value.trim() !== '') detect.conditional_fillers = $('d_conditional_fillers').value;
+  fd.append('detect', JSON.stringify(detect));
+  const xhr = new XMLHttpRequest();
+  xhr.open('POST', '/api/jobs');
+  $('prog').hidden = false;
+  xhr.upload.onprogress = e => { if (e.lengthComputable) { const p = e.loaded / e.total; $('bar').style.width = (p*100).toFixed(1) + '%'; $('progtext').textContent = p < 1 ? `업로드 중 ${(p*100).toFixed(0)}%` : '서버에 저장 중…'; } };
+  xhr.onload = () => {
+    $('go').disabled = false;
+    if (xhr.status === 200) { location.href = '/job/' + JSON.parse(xhr.responseText).id; }
+    else { let msg = xhr.responseText; try { msg = JSON.parse(xhr.responseText).detail; } catch {} showErr(msg); $('prog').hidden = true; }
+  };
+  xhr.onerror = () => { $('go').disabled = false; showErr('서버에 연결할 수 없습니다.'); };
+  xhr.send(fd);
+});
+function showErr(m) { $('err').textContent = m; $('err').hidden = false; }
+loadSettings(); loadJobs(); setInterval(loadJobs, 5000);
+</script>
+</body>
+</html>

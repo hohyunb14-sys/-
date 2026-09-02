@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>voicecut 설정</title>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--text:#1f2430;--muted:#6b7280;--line:#e5e7eb;--accent:#2563eb;--danger:#dc2626}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,"Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:15px}
+header{display:flex;align-items:center;gap:16px;padding:12px 24px;background:var(--card);border-bottom:1px solid var(--line)}
+header .brand{font-weight:700;text-decoration:none;color:var(--text);font-size:18px}
+header nav a{color:var(--muted);text-decoration:none;margin-left:12px}
+main{max-width:760px;margin:24px auto;padding:0 16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px 24px;margin-bottom:20px}
+h2{margin:0 0 6px;font-size:17px}
+p.help{color:var(--muted);font-size:13px;margin:0 0 14px;line-height:1.6}
+label{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--muted);margin-bottom:12px}
+input,select{padding:8px 10px;border:1px solid #cfd3da;border-radius:8px;font-size:14px;font-family:inherit;color:var(--text)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:0 18px}
+label.check{flex-direction:row;align-items:center;gap:8px;color:var(--text);font-size:14px}
+button{font-family:inherit;font-size:14px;padding:9px 16px;border-radius:8px;border:1px solid #cfd3da;background:#fff;cursor:pointer}
+button.primary{background:var(--accent);color:#fff;border-color:var(--accent);font-weight:600}
+.ok{color:#166534;margin-left:12px}.bad{color:var(--danger)}
+.muted{color:var(--muted);font-size:13px}
+code{background:#eef0f3;padding:1px 5px;border-radius:4px;font-size:13px}
+</style>
+</head>
+<body>
+<header><a class="brand" href="/">voicecut</a><nav><a href="/">작업 목록</a></nav></header>
+<main>
+  <section class="card">
+    <h2>음성 인식 (STT)</h2>
+    <p class="help">리턴제로 키가 있으면 한국어 간투어("음", "어")까지 잘 받아써서 정확도가 높습니다. <a href="https://developers.rtzr.ai/" target="_blank">developers.rtzr.ai</a>에서 무료로 발급받을 수 있습니다. 키가 없으면 내 컴퓨터의 Whisper를 씁니다(<code>pip install faster-whisper</code> 필요, GPU 없으면 느림). 환경변수 <code>RTZR_CLIENT_ID</code>, <code>RTZR_CLIENT_SECRET</code>가 있으면 그 값이 우선합니다.</p>
+    <div class="grid">
+      <label>리턴제로 client_id<input id="rtzr_client_id" type="text" autocomplete="off"></label>
+      <label>리턴제로 client_secret<input id="rtzr_client_secret" type="password" autocomplete="off"></label>
+      <label>기본 음성 인식<select id="backend"><option value="auto">자동 (키 있으면 리턴제로)</option><option value="rtzr">리턴제로</option><option value="whisper">Whisper</option></select></label>
+      <label>Whisper 모델<input id="whisper_model" type="text" placeholder="large-v3-turbo"></label>
+    </div>
+    <div id="capstt" class="muted"></div>
+  </section>
+  <section class="card">
+    <h2>AI 검토 (Claude)</h2>
+    <p class="help">전사문(텍스트)만 Claude에 보내서 규칙이 놓친 말실수·다시 말한 구간을 찾고, 규칙 컷 중 이상한 것을 표시합니다. 음성 파일은 보내지 않습니다. <code>pip install anthropic</code>과 API 키가 필요하며, 환경변수 <code>ANTHROPIC_API_KEY</code>가 있으면 그 값이 우선합니다.</p>
+    <div class="grid">
+      <label>Anthropic API 키<input id="anthropic_api_key" type="password" autocomplete="off"></label>
+      <label>모델<input id="ai_model" type="text" placeholder="claude-opus-5"></label>
+    </div>
+    <label class="check"><input type="checkbox" id="ai_review"> 새 작업에서 기본으로 AI 검토 실행</label>
+    <div id="capai" class="muted"></div>
+  </section>
+  <section class="card">
+    <h2>탐지 기준 (기본값)</h2>
+    <p class="help">작업마다 검토 화면에서 다시 조정할 수 있습니다.</p>
+    <div class="grid">
+      <label>이 길이 이상의 무음만 줄임 (초)<input id="d_silence_min" type="number" step="0.1" min="0.2"></label>
+      <label>줄인 뒤 남길 무음 길이 (초)<input id="d_silence_keep" type="number" step="0.05" min="0"></label>
+      <label>무음 기준 음량 (dB, 낮을수록 엄격)<input id="d_silence_noise_db" type="number" step="1"></label>
+      <label>마커 단어 (틀렸을 때 말하는 신호, 쉼표 구분)<input id="d_markers" type="text"></label>
+      <label>항상 지우는 간투어 (쉼표 구분)<input id="d_fillers" type="text"></label>
+      <label>뒤에 멈춤이 있을 때만 지우는 간투어 (쉼표 구분)<input id="d_conditional_fillers" type="text"></label>
+      <label>반복 발화 유사도 기준 (0.5~1)<input id="d_repeat_similarity" type="number" step="0.05" min="0.5" max="1"></label>
+    </div>
+    <label class="check"><input type="checkbox" id="d_silence_enabled"> 무음 줄이기</label>
+    <label class="check"><input type="checkbox" id="d_filler_enabled"> 간투어 지우기</label>
+    <label class="check"><input type="checkbox" id="d_marker_enabled"> 마커 단어로 다시 말한 구간 지우기</label>
+    <label class="check"><input type="checkbox" id="d_repeat_enabled"> 마커 없이 반복한 문장 찾기</label>
+  </section>
+  <button id="save" class="primary">저장</button><span id="msg"></span>
+  <p class="muted" style="margin-top:20px">작업 폴더: <span id="jobsdir"></span> — 키는 이 폴더의 settings.json 에 평문으로 저장됩니다. 내 컴퓨터에서만 쓰는 도구라는 전제입니다.</p>
+</main>
+<script>
+const $ = id => document.getElementById(id);
+const TEXT = ['rtzr_client_id','rtzr_client_secret','anthropic_api_key','backend','whisper_model','ai_model'];
+const DNUM = ['silence_min','silence_keep','silence_noise_db','repeat_similarity'];
+const DLIST = ['markers','fillers','conditional_fillers'];
+const DBOOL = ['silence_enabled','filler_enabled','marker_enabled','repeat_enabled'];
+async function load() {
+  const s = await (await fetch('/api/settings')).json();
+  TEXT.forEach(k => $(k).value = s[k] || '');
+  $('ai_review').checked = !!s.ai_review;
+  DNUM.forEach(k => $('d_'+k).value = s.detect[k]);
+  DLIST.forEach(k => $('d_'+k).value = (s.detect[k]||[]).join(', '));
+  DBOOL.forEach(k => $('d_'+k).checked = !!s.detect[k]);
+  $('jobsdir').textContent = s.jobs_dir;
+  const c = s.capabilities;
+  $('capstt').innerHTML = (c.rtzr ? '<span class="ok">리턴제로 키 있음</span>' : '리턴제로 키 없음') + ' · ' + (c.whisper_installed ? 'Whisper 설치됨' : '<span class="bad">Whisper 미설치</span>');
+  $('capai').innerHTML = (c.anthropic_installed ? 'anthropic 패키지 설치됨' : '<span class="bad">anthropic 패키지 미설치</span>') + ' · ' + (c.anthropic_key ? '<span class="ok">API 키 있음</span>' : 'API 키 없음');
+}
+$('save').addEventListener('click', async () => {
+  const body = {detect: {}};
+  TEXT.forEach(k => body[k] = $(k).value);
+  body.ai_review = $('ai_review').checked;
+  DNUM.forEach(k => body.detect[k] = parseFloat($('d_'+k).value));
+  DLIST.forEach(k => body.detect[k] = $('d_'+k).value);
+  DBOOL.forEach(k => body.detect[k] = $('d_'+k).checked);
+  const r = await fetch('/api/settings', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body)});
+  $('msg').textContent = r.ok ? '저장했습니다.' : '저장 실패';
+  $('msg').className = r.ok ? 'ok' : 'bad';
+  load();
+});
+load();
+</script>
+</body>
+</html>

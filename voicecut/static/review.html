@@ -1,0 +1,426 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>voicecut 검토</title>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--text:#1f2430;--muted:#6b7280;--line:#e5e7eb;--accent:#2563eb;--danger:#dc2626;
+--k-silence:#9ca3af;--k-filler:#f59e0b;--k-marker:#ef4444;--k-repeat:#8b5cf6;--k-ai:#0ea5e9;--k-manual:#10b981}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;font-family:-apple-system,"Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:15px;display:flex;flex-direction:column}
+header.top{display:flex;align-items:center;gap:14px;padding:10px 18px;background:var(--card);border-bottom:1px solid var(--line);flex-wrap:wrap}
+.brand{font-weight:700;text-decoration:none;color:var(--text);font-size:17px}
+.title{font-weight:600;max-width:34vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.spacer{flex:1}
+.summary{color:var(--muted);font-size:13px}
+button{font-family:inherit;font-size:13px;padding:7px 12px;border-radius:8px;border:1px solid #cfd3da;background:#fff;cursor:pointer;color:var(--text)}
+button.primary{background:var(--accent);color:#fff;border-color:var(--accent);font-weight:600}
+button.on{background:#eff6ff;border-color:var(--accent);color:var(--accent)}
+button:disabled{opacity:.5;cursor:default}
+main{flex:1;display:grid;grid-template-columns:minmax(0,1fr) 400px;min-height:0}
+.processing{margin:60px auto;max-width:520px;text-align:center}
+.processing .stage{font-size:17px;margin:14px 0 8px}
+.bar{height:8px;background:#e5e7eb;border-radius:4px;overflow:hidden}
+.bar div{height:100%;background:var(--accent);width:0;transition:width .3s}
+.spinner{width:28px;height:28px;border:3px solid #dbeafe;border-top-color:var(--accent);border-radius:50%;margin:0 auto;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.error{color:var(--danger);white-space:pre-wrap;margin-top:12px;text-align:left;background:#fff;border:1px solid #fecaca;padding:10px 12px;border-radius:8px;font-size:13px}
+.left{display:flex;flex-direction:column;min-height:0;border-right:1px solid var(--line)}
+.toolbar{display:flex;gap:10px;align-items:center;padding:8px 14px;background:var(--card);border-bottom:1px solid var(--line);font-size:13px}
+.toolbar input[type=text]{padding:6px 10px;border:1px solid #cfd3da;border-radius:8px;font-size:13px;font-family:inherit;width:220px}
+.hint{color:var(--accent)}
+.transcript{overflow:auto;padding:14px 22px 90px;line-height:2.05;font-size:16px}
+.utt{margin:0 0 6px;padding-left:56px;position:relative}
+.utt .ts{position:absolute;left:0;top:0;color:#9ca3af;font-size:12px;font-variant-numeric:tabular-nums;cursor:pointer}
+.w{cursor:pointer;border-radius:3px;padding:1px 1px}
+.w:hover{background:#eef2ff}
+.w.now{background:#fde68a}
+.w.anchor{outline:2px solid var(--accent)}
+.w.hit{background:#bfdbfe}
+.w.cut.on{text-decoration:line-through;color:#fff}
+.w.cut.off{text-decoration:underline dotted;text-decoration-thickness:2px}
+.w.cut.on.k-filler{background:var(--k-filler)}.w.cut.off.k-filler{text-decoration-color:var(--k-filler)}
+.w.cut.on.k-marker{background:var(--k-marker)}.w.cut.off.k-marker{text-decoration-color:var(--k-marker)}
+.w.cut.on.k-repeat{background:var(--k-repeat)}.w.cut.off.k-repeat{text-decoration-color:var(--k-repeat)}
+.w.cut.on.k-ai{background:var(--k-ai)}.w.cut.off.k-ai{text-decoration-color:var(--k-ai)}
+.w.cut.on.k-manual{background:var(--k-manual)}.w.cut.off.k-manual{text-decoration-color:var(--k-manual)}
+.w.cut.on.k-silence{background:var(--k-silence)}
+.pill{display:inline-block;font-size:11px;padding:0 6px;border-radius:999px;background:#e5e7eb;color:#4b5563;margin:0 3px;cursor:pointer;vertical-align:middle;line-height:18px}
+.pill.off{opacity:.45;text-decoration:line-through}
+.pill.focus{outline:2px solid var(--accent)}
+.right{display:flex;flex-direction:column;min-height:0;background:#fafbfc}
+.filters{display:flex;flex-wrap:wrap;gap:6px 12px;padding:10px 14px;border-bottom:1px solid var(--line);font-size:13px;background:var(--card)}
+.filters label{display:flex;align-items:center;gap:4px;cursor:pointer}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%}
+.bulk{display:flex;gap:6px;padding:8px 14px;border-bottom:1px solid var(--line);font-size:12px;align-items:center;color:var(--muted)}
+.bulk button{padding:4px 9px;font-size:12px}
+.cutlist{list-style:none;margin:0;padding:0;overflow:auto;flex:1;min-height:120px}
+.cut-item{padding:8px 14px;border-bottom:1px solid var(--line);border-left:4px solid transparent;font-size:13px;background:var(--card)}
+.cut-item.off{opacity:.6}
+.cut-item.focus{background:#eff6ff}
+.cut-item.k-silence{border-left-color:var(--k-silence)}.cut-item.k-filler{border-left-color:var(--k-filler)}.cut-item.k-marker{border-left-color:var(--k-marker)}
+.cut-item.k-repeat{border-left-color:var(--k-repeat)}.cut-item.k-ai{border-left-color:var(--k-ai)}.cut-item.k-manual{border-left-color:var(--k-manual)}
+.cut-item .head{display:flex;align-items:center;gap:8px}
+.cut-item .badge{font-size:11px;padding:1px 7px;border-radius:999px;color:#fff}
+.badge.k-silence{background:var(--k-silence)}.badge.k-filler{background:var(--k-filler)}.badge.k-marker{background:var(--k-marker)}.badge.k-repeat{background:var(--k-repeat)}.badge.k-ai{background:var(--k-ai)}.badge.k-manual{background:var(--k-manual)}
+.cut-item .time{color:var(--muted);font-variant-numeric:tabular-nums;font-size:12px}
+.cut-item .snippet{margin:4px 0 2px;color:#374151;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cut-item .reason{color:var(--muted);font-size:12px}
+.cut-item .actions{margin-top:5px;display:flex;gap:5px}
+.cut-item .actions button{padding:3px 8px;font-size:12px}
+.panel{border-top:1px solid var(--line);background:var(--card);font-size:13px}
+.panel summary{padding:9px 14px;cursor:pointer;font-weight:600}
+.panel .body{padding:4px 14px 12px}
+.panel .grid{display:grid;grid-template-columns:1fr 1fr;gap:6px 12px;margin-bottom:8px}
+.panel label{display:flex;flex-direction:column;gap:2px;color:var(--muted);font-size:12px}
+.panel label.check{flex-direction:row;align-items:center;gap:6px;color:var(--text);font-size:13px}
+.panel input[type=text],.panel input[type=number]{padding:5px 8px;border:1px solid #cfd3da;border-radius:6px;font-size:13px;font-family:inherit}
+.panel .muted{color:var(--muted);font-size:12px;line-height:1.5}
+footer.player{display:flex;align-items:center;gap:12px;padding:10px 18px;background:var(--card);border-top:1px solid var(--line);font-variant-numeric:tabular-nums;font-size:13px}
+footer .seek{flex:1}
+footer select{font-family:inherit;padding:4px}
+#play{width:40px;font-size:15px}
+a.dl{display:inline-block;margin-top:6px;color:var(--accent);font-weight:600}
+@media (max-width:900px){main{grid-template-columns:1fr}.right{max-height:45vh}}
+</style>
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="/">voicecut</a>
+  <div class="title" id="title">불러오는 중…</div>
+  <div class="spacer"></div>
+  <div class="summary" id="summary"></div>
+  <button id="btnPreviewAll" title="선택한 컷을 건너뛰며 재생">편집본 미리듣기</button>
+  <button id="btnExport" class="primary">내보내기</button>
+</header>
+
+<div id="processing" class="processing">
+  <div class="spinner"></div>
+  <div class="stage" id="stage">준비 중</div>
+  <div class="bar"><div id="pbar"></div></div>
+  <div id="perr" class="error" hidden></div>
+  <div id="pactions" hidden style="margin-top:12px"><button id="btnRetry">다시 시도</button> <a href="/settings"><button>설정 열기</button></a></div>
+</div>
+
+<main id="main" hidden>
+  <section class="left">
+    <div class="toolbar">
+      <input type="text" id="search" placeholder="대본에서 찾기 (Enter)">
+      <span class="hint" id="anchorHint" hidden></span>
+      <span class="spacer"></span>
+      <label><input type="checkbox" id="follow" checked> 재생 위치 따라가기</label>
+    </div>
+    <div class="transcript" id="transcript"></div>
+  </section>
+  <aside class="right">
+    <div class="filters" id="filters"></div>
+    <div class="bulk"><span id="cutcount"></span><span class="spacer"></span><button data-act="all">보이는 것 전체 선택</button><button data-act="none">전체 해제</button></div>
+    <ol class="cutlist" id="cutlist"></ol>
+    <details class="panel"><summary>탐지 기준 조정</summary><div class="body">
+      <div class="grid">
+        <label>이 길이 이상 무음만 줄임 (초)<input type="number" id="c_silence_min" step="0.1" min="0.2"></label>
+        <label>줄인 뒤 남길 무음 (초)<input type="number" id="c_silence_keep" step="0.05" min="0"></label>
+        <label>무음 기준 음량 (dB)<input type="number" id="c_silence_noise_db" step="1"></label>
+        <label>반복 유사도 기준<input type="number" id="c_repeat_similarity" step="0.05" min="0.5" max="1"></label>
+        <label>마커 단어<input type="text" id="c_markers"></label>
+        <label>조건부 간투어<input type="text" id="c_conditional_fillers"></label>
+      </div>
+      <label class="check"><input type="checkbox" id="c_filler_enabled"> 간투어</label>
+      <label class="check"><input type="checkbox" id="c_marker_enabled"> 마커</label>
+      <label class="check"><input type="checkbox" id="c_repeat_enabled"> 반복 발화</label>
+      <div style="margin-top:8px"><button id="btnRedetect">다시 분석</button> <span class="muted">직접 추가한 컷과 AI 컷, 이미 정한 선택은 유지됩니다.</span></div>
+    </div></details>
+    <details class="panel"><summary>AI 검토 (Claude)</summary><div class="body">
+      <div class="muted" id="aiInfo"></div>
+      <div style="margin-top:8px"><button id="btnAi">AI 검토 실행</button></div>
+    </div></details>
+    <details class="panel" open><summary>내보내기</summary><div class="body">
+      <label class="check" id="audioOnlyWrap" hidden><input type="checkbox" id="audioOnly"> 영상 대신 오디오만 내보내기</label>
+      <div class="muted" id="exportInfo">선택한 컷을 적용해 새 파일을 만듭니다. 원본은 그대로 둡니다.</div>
+      <div class="bar" id="ebarWrap" hidden style="margin-top:6px"><div id="ebar"></div></div>
+      <a class="dl" id="dl" hidden>결과 파일 다운로드</a><br>
+      <a class="dl" id="txt" style="font-weight:400">정리된 대본(txt) 받기</a>
+    </div></details>
+  </aside>
+</main>
+
+<footer class="player">
+  <button id="play">▶</button>
+  <span id="time">00:00.0</span>
+  <input type="range" class="seek" id="seek" min="0" max="1000" value="0">
+  <span id="dur">00:00.0</span>
+  <select id="rate"><option value="1">1×</option><option value="1.25">1.25×</option><option value="1.5">1.5×</option><option value="2">2×</option></select>
+  <audio id="audio" preload="auto"></audio>
+</footer>
+
+<script>
+const $ = id => document.getElementById(id);
+const jobId = location.pathname.split('/').pop();
+const KIND = {silence:'무음', filler:'간투어', marker:'마커', repeat:'반복', ai:'AI', manual:'직접'};
+const KIND_ORDER = ['marker','repeat','ai','filler','silence','manual'];
+let state = null, cuts = [], words = [], starts = [], mids = [], hidden = new Set(), skipAll = false;
+let stopAt = null, skipRange = null, anchor = null, saveTimer = null, lastHit = -1, focusId = null;
+const audio = $('audio');
+
+const fmt = t => { t = Math.max(0, t || 0); const m = Math.floor(t/60), s = t - m*60; return `${String(m).padStart(2,'0')}:${s.toFixed(1).padStart(4,'0')}`; };
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+// ---------------------------------------------------------------- 상태 불러오기
+async function load() {
+  const r = await fetch(`/api/jobs/${jobId}`);
+  if (!r.ok) { $('stage').textContent = '작업을 찾을 수 없습니다.'; return; }
+  state = await r.json();
+  $('title').textContent = state.filename; document.title = `${state.filename} · voicecut`;
+  if (state.status === 'ready') { init(); return; }
+  $('stage').textContent = state.stage || state.status;
+  $('pbar').style.width = state.progress != null ? (state.progress*100) + '%' : '0';
+  if (state.status === 'error') { $('perr').textContent = state.error; $('perr').hidden = false; $('pactions').hidden = false; document.querySelector('.spinner').style.display = 'none'; return; }
+  setTimeout(load, 1500);
+}
+$('btnRetry').addEventListener('click', async () => { await fetch(`/api/jobs/${jobId}/retry`, {method:'POST'}); $('perr').hidden = true; $('pactions').hidden = true; document.querySelector('.spinner').style.display = ''; load(); });
+
+function init() {
+  $('processing').hidden = true; $('main').hidden = false;
+  audio.src = `/api/jobs/${jobId}/audio`;
+  audio.addEventListener('error', () => { $('time').textContent = '재생 불가'; });
+  $('dur').textContent = fmt(state.duration);
+  cuts = state.cuts || [];
+  renderTranscript(); indexCuts(); renderFilters(); paintCuts(); renderCutList(); updateSummary();
+  fillDetectForm(); updateAiInfo(); updateExportInfo();
+  $('audioOnlyWrap').hidden = !state.has_video;
+  $('txt').href = `/api/jobs/${jobId}/transcript.txt`;
+  requestAnimationFrame(tick);
+}
+
+// ---------------------------------------------------------------- 대본
+function renderTranscript() {
+  const box = $('transcript'); box.innerHTML = ''; words = []; starts = []; mids = [];
+  (state.transcript.utterances || []).forEach((u, ui) => {
+    const p = document.createElement('p'); p.className = 'utt'; p.dataset.u = ui;
+    const ts = document.createElement('span'); ts.className = 'ts'; ts.textContent = fmt(u.start); ts.dataset.t = u.start; p.appendChild(ts);
+    u.words.forEach(w => {
+      const s = document.createElement('span'); s.className = 'w'; s.textContent = w.text; s.dataset.i = words.length;
+      words.push({text: w.text, start: w.start, end: w.end, utt: ui, el: s});
+      starts.push(w.start); mids.push((w.start + w.end) / 2);
+      p.appendChild(s); p.appendChild(document.createTextNode(' '));
+    });
+    box.appendChild(p);
+  });
+}
+function lowerBound(arr, x) { let lo = 0, hi = arr.length; while (lo < hi) { const m = (lo + hi) >> 1; if (arr[m] < x) lo = m + 1; else hi = m; } return lo; }
+function wordRange(start, end) { // 단어 중심이 [start,end] 안에 있는 단어 인덱스 [i0, i1)
+  const i0 = lowerBound(mids, start); let i1 = i0; while (i1 < mids.length && mids[i1] <= end) i1++; return [i0, i1];
+}
+function indexCuts() {
+  cuts.sort((a, b) => a.start - b.start || a.end - b.end);
+  cuts.forEach(c => { const [a, b] = wordRange(c.start, c.end); c._w0 = a; c._w1 = b; });
+}
+function paintCuts() {
+  words.forEach(w => { w.el.className = 'w'; w.el.title = ''; delete w.el.dataset.cut; });
+  document.querySelectorAll('.pill').forEach(p => p.remove());
+  for (const c of cuts) {
+    if (hidden.has(c.kind)) continue;
+    const label = `${KIND[c.kind] || c.kind} · ${c.reason}`;
+    if (c._w1 > c._w0) {
+      for (let i = c._w0; i < c._w1; i++) { const el = words[i].el; el.classList.add('cut', 'k-' + c.kind, c.selected ? 'on' : 'off'); el.dataset.cut = c.id; el.title = label; }
+    } else if (c.kind === 'silence' || c._w1 === c._w0) {
+      // 단어가 없는 컷(무음): 앞 단어 뒤에 작은 표시
+      const pill = document.createElement('span'); pill.className = 'pill' + (c.selected ? '' : ' off'); pill.dataset.cut = c.id; pill.title = label;
+      pill.textContent = c.kind === 'silence' ? `· ${(c.end - c.start).toFixed(1)}s` : `${KIND[c.kind]} ${(c.end - c.start).toFixed(1)}s`;
+      const i = lowerBound(starts, c.start); // 첫 단어 인덱스가 컷 시작 이후
+      if (i === 0) { const p = document.querySelector('.utt'); if (p) p.insertBefore(pill, p.children[1] || null); }
+      else { const prev = words[i - 1].el; prev.after(pill); }
+    }
+  }
+  if (focusId) document.querySelectorAll(`[data-cut="${focusId}"]`).forEach(e => e.classList.add('focus'));
+}
+
+// ---------------------------------------------------------------- 컷 목록
+function renderFilters() {
+  const kinds = KIND_ORDER.filter(k => cuts.some(c => c.kind === k));
+  $('filters').innerHTML = kinds.map(k => {
+    const n = cuts.filter(c => c.kind === k).length, sel = cuts.filter(c => c.kind === k && c.selected).length;
+    return `<label><input type="checkbox" data-kind="${k}" ${hidden.has(k) ? '' : 'checked'}><span class="dot" style="background:var(--k-${k})"></span>${KIND[k]} <span style="color:var(--muted)">${sel}/${n}</span></label>`;
+  }).join('') || '<span style="color:var(--muted)">잘라낼 후보를 찾지 못했습니다.</span>';
+}
+$('filters').addEventListener('change', e => { const k = e.target.dataset.kind; if (!k) return; if (e.target.checked) hidden.delete(k); else hidden.add(k); paintCuts(); renderCutList(); });
+document.querySelector('.bulk').addEventListener('click', e => {
+  const act = e.target.dataset.act; if (!act) return;
+  cuts.forEach(c => { if (!hidden.has(c.kind)) c.selected = act === 'all'; });
+  afterChange();
+});
+function renderCutList() {
+  const list = $('cutlist'); list.innerHTML = '';
+  const vis = cuts.filter(c => !hidden.has(c.kind));
+  $('cutcount').textContent = `${vis.filter(c => c.selected).length} / ${vis.length}개 선택`;
+  const frag = document.createDocumentFragment();
+  for (const c of vis) {
+    const li = document.createElement('li'); li.className = `cut-item k-${c.kind}${c.selected ? '' : ' off'}${c.id === focusId ? ' focus' : ''}`; li.dataset.id = c.id;
+    const conf = c.confidence != null && c.kind !== 'manual' ? ` · 신뢰도 ${Math.round(c.confidence*100)}%` : '';
+    li.innerHTML = `<div class="head"><input type="checkbox" ${c.selected ? 'checked' : ''} data-toggle="${c.id}"><span class="badge k-${c.kind}">${KIND[c.kind] || c.kind}</span><span class="time">${fmt(c.start)} – ${fmt(c.end)} (${(c.end-c.start).toFixed(1)}초)</span></div>` +
+      (c.text ? `<div class="snippet" title="${esc(c.text)}">${esc(c.text)}</div>` : '') +
+      `<div class="reason">${esc(c.reason)}${conf}</div>` +
+      `<div class="actions"><button data-play="ctx" data-id="${c.id}">▶ 앞뒤 포함</button><button data-play="cut" data-id="${c.id}">▶ 잘릴 부분</button>${c.source === 'user' ? `<button data-remove="${c.id}">지우기</button>` : ''}</div>`;
+    frag.appendChild(li);
+  }
+  list.appendChild(frag);
+}
+$('cutlist').addEventListener('change', e => { const id = e.target.dataset.toggle; if (!id) return; const c = cuts.find(x => x.id === id); if (c) { c.selected = e.target.checked; afterChange(); } });
+$('cutlist').addEventListener('click', e => {
+  const b = e.target.closest('button'); const li = e.target.closest('.cut-item');
+  if (b && b.dataset.play) { const c = cuts.find(x => x.id === b.dataset.id); if (!c) return; focusCut(c.id, false);
+    if (b.dataset.play === 'ctx') playRange(Math.max(0, c.start - 1.5), c.end + 1.5, c.selected ? [c.start, c.end] : null); else playRange(c.start, c.end, null); return; }
+  if (b && b.dataset.remove) { cuts = cuts.filter(x => x.id !== b.dataset.remove); indexCuts(); afterChange(); return; }
+  if (li && !b && e.target.tagName !== 'INPUT') { focusCut(li.dataset.id, true); }
+});
+function focusCut(id, scrollTranscript) {
+  focusId = id;
+  document.querySelectorAll('.focus').forEach(e => e.classList.remove('focus'));
+  document.querySelectorAll(`[data-cut="${id}"], .cut-item[data-id="${id}"]`).forEach(e => e.classList.add('focus'));
+  const li = document.querySelector(`.cut-item[data-id="${id}"]`); if (li) li.scrollIntoView({block: 'nearest'});
+  if (scrollTranscript) { const el = document.querySelector(`.transcript [data-cut="${id}"]`); if (el) el.scrollIntoView({block: 'center'}); }
+}
+function afterChange() { paintCuts(); renderFilters(); renderCutList(); updateSummary(); saveCuts(); }
+function saveCuts() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(async () => {
+    const body = cuts.map(({_w0, _w1, ...c}) => c);
+    await fetch(`/api/jobs/${jobId}/cuts`, {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({cuts: body})});
+  }, 400);
+}
+function mergedSelected() {
+  const rs = cuts.filter(c => c.selected).map(c => [c.start, c.end]).sort((a, b) => a[0] - b[0]);
+  const out = []; for (const [s, e] of rs) { if (out.length && s <= out[out.length-1][1]) out[out.length-1][1] = Math.max(out[out.length-1][1], e); else out.push([s, e]); } return out;
+}
+function updateSummary() {
+  const removed = mergedSelected().reduce((a, [s, e]) => a + (e - s), 0);
+  $('summary').textContent = `원본 ${fmt(state.duration)} → 편집 후 ${fmt(state.duration - removed)} (−${fmt(removed)}) · 컷 ${cuts.filter(c => c.selected).length}/${cuts.length}`;
+}
+
+// ---------------------------------------------------------------- 대본 클릭: 이동 / 직접 컷 추가
+$('transcript').addEventListener('click', e => {
+  const ts = e.target.closest('.ts'); if (ts) { seekTo(parseFloat(ts.dataset.t)); return; }
+  const pill = e.target.closest('.pill'); if (pill) { focusCut(pill.dataset.cut, false); const c = cuts.find(x => x.id === pill.dataset.cut); if (c) playRange(Math.max(0, c.start - 1.5), c.end + 1.5, c.selected ? [c.start, c.end] : null); return; }
+  const el = e.target.closest('.w'); if (!el) return;
+  const w = words[parseInt(el.dataset.i)];
+  if (el.dataset.cut && !e.shiftKey && !anchor) { focusCut(el.dataset.cut, false); seekTo(w.start); return; }
+  if (!anchor) { anchor = w; el.classList.add('anchor'); $('anchorHint').innerHTML = `시작: "${esc(w.text)}" — 끝 단어를 클릭하면 삭제 구간이 추가됩니다. <a href="#" id="cancelAnchor">취소</a>`; $('anchorHint').hidden = false; seekTo(w.start); return; }
+  const s = Math.min(anchor.start, w.start), en = Math.max(anchor.end, w.end);
+  const text = words.filter(x => x.start >= s && x.end <= en).map(x => x.text).join(' ');
+  cuts.push({id: `manual-${Math.round(s*1000)}-${Math.round(en*1000)}-${Date.now()%10000}`, start: s, end: en, kind: 'manual', reason: '직접 지정', text, confidence: 1, selected: true, source: 'user'});
+  clearAnchor(); indexCuts(); afterChange(); playRange(Math.max(0, s - 1.5), en + 1.5, [s, en]);
+});
+document.addEventListener('click', e => { if (e.target.id === 'cancelAnchor') { e.preventDefault(); clearAnchor(); } });
+function clearAnchor() { anchor = null; document.querySelectorAll('.w.anchor').forEach(x => x.classList.remove('anchor')); $('anchorHint').hidden = true; }
+
+// ---------------------------------------------------------------- 찾기
+$('search').addEventListener('keydown', e => {
+  if (e.key !== 'Enter') return;
+  const q = $('search').value.trim(); if (!q) return;
+  document.querySelectorAll('.w.hit').forEach(x => x.classList.remove('hit'));
+  for (let k = 1; k <= words.length; k++) {
+    const i = (lastHit + k) % words.length;
+    if (words[i].text.includes(q)) { lastHit = i; words[i].el.classList.add('hit'); words[i].el.scrollIntoView({block: 'center'}); seekTo(words[i].start); return; }
+  }
+  lastHit = -1;
+});
+
+// ---------------------------------------------------------------- 재생
+function safePlay() { const pr = audio.play(); if (pr && pr.catch) pr.catch(err => { $('time').textContent = '재생 불가'; console.warn('재생 실패:', err); }); }
+function seekTo(t) { stopAt = null; skipRange = null; audio.currentTime = Math.max(0, t); }
+function playRange(from, to, skip) { stopAt = to; skipRange = skip; audio.currentTime = Math.max(0, from); safePlay(); }
+$('play').addEventListener('click', () => { if (audio.paused) { stopAt = null; skipRange = null; safePlay(); } else audio.pause(); });
+audio.addEventListener('play', () => $('play').textContent = '❚❚');
+audio.addEventListener('pause', () => $('play').textContent = '▶');
+$('seek').addEventListener('input', () => { seekTo($('seek').value / 1000 * state.duration); });
+$('rate').addEventListener('change', () => audio.playbackRate = parseFloat($('rate').value));
+$('btnPreviewAll').addEventListener('click', () => { skipAll = !skipAll; $('btnPreviewAll').classList.toggle('on', skipAll); if (skipAll && audio.paused) { stopAt = null; skipRange = null; safePlay(); } });
+document.addEventListener('keydown', e => { if (e.code === 'Space' && !['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) { e.preventDefault(); $('play').click(); } });
+let lastNow = -1;
+function tick() {
+  const t = audio.currentTime;
+  if (!audio.paused) {
+    if (skipRange && t >= skipRange[0] && t < skipRange[1]) audio.currentTime = skipRange[1];
+    else if (skipAll) { for (const [s, e] of mergedSelected()) { if (t >= s && t < e) { audio.currentTime = e; break; } if (s > t) break; } }
+    if (stopAt != null && t >= stopAt) { audio.pause(); stopAt = null; skipRange = null; }
+  }
+  $('time').textContent = fmt(t);
+  if (state.duration) $('seek').value = Math.round(t / state.duration * 1000);
+  const i = lowerBound(starts, t + 0.001) - 1;
+  if (i !== lastNow) { if (lastNow >= 0 && words[lastNow]) words[lastNow].el.classList.remove('now'); if (i >= 0 && words[i] && t < words[i].end + 0.3) { words[i].el.classList.add('now'); if (!audio.paused && $('follow').checked) words[i].el.scrollIntoView({block: 'nearest'}); } lastNow = i; }
+  requestAnimationFrame(tick);
+}
+
+// ---------------------------------------------------------------- 다시 분석
+function fillDetectForm() {
+  const s = state.settings || {};
+  ['silence_min', 'silence_keep', 'silence_noise_db', 'repeat_similarity'].forEach(k => $('c_' + k).value = s[k]);
+  $('c_markers').value = (s.markers || []).join(', '); $('c_conditional_fillers').value = (s.conditional_fillers || []).join(', ');
+  ['filler_enabled', 'marker_enabled', 'repeat_enabled'].forEach(k => $('c_' + k).checked = !!s[k]);
+}
+$('btnRedetect').addEventListener('click', async () => {
+  const detect = {};
+  ['silence_min', 'silence_keep', 'silence_noise_db', 'repeat_similarity'].forEach(k => detect[k] = parseFloat($('c_' + k).value));
+  detect.markers = $('c_markers').value; detect.conditional_fillers = $('c_conditional_fillers').value;
+  ['filler_enabled', 'marker_enabled', 'repeat_enabled'].forEach(k => detect[k] = $('c_' + k).checked);
+  $('btnRedetect').disabled = true;
+  try {
+    const r = await fetch(`/api/jobs/${jobId}/redetect`, {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({detect})});
+    const data = await r.json();
+    if (!r.ok) { alert(data.detail || '다시 분석 실패'); return; }
+    cuts = data.cuts; state.settings = data.settings; indexCuts(); paintCuts(); renderFilters(); renderCutList(); updateSummary();
+  } finally { $('btnRedetect').disabled = false; }
+});
+
+// ---------------------------------------------------------------- AI 검토
+function updateAiInfo() {
+  const a = state.ai_review || {};
+  let msg = '전사문을 Claude에 보내 규칙이 놓친 말실수·다시 말한 구간을 찾습니다. 음성은 보내지 않습니다.';
+  if (a.status === 'done') msg = `완료 (${a.model || ''}): 새 제안 ${a.added}개, 의심스러운 규칙 컷 ${a.doubts}개${a.skipped ? `, 위치 못 찾음 ${a.skipped}개` : ''}. AI 제안은 신뢰도가 높은 것만 기본 선택됩니다.`;
+  else if (a.status === 'running') msg = 'AI 검토 진행 중…';
+  else if (a.status === 'error') msg = 'AI 검토 오류: ' + a.error;
+  $('aiInfo').textContent = msg; $('btnAi').disabled = a.status === 'running';
+}
+$('btnAi').addEventListener('click', async () => {
+  const r = await fetch(`/api/jobs/${jobId}/ai-review`, {method: 'POST'});
+  if (!r.ok) { alert((await r.json()).detail); return; }
+  state.ai_review = {status: 'running'}; updateAiInfo();
+  const poll = async () => {
+    const s = await (await fetch(`/api/jobs/${jobId}?light=1`)).json();
+    state.ai_review = s.ai_review;
+    if (s.ai_review.status === 'running') { setTimeout(poll, 2000); return; }
+    updateAiInfo();
+    if (s.ai_review.status === 'done') { const full = await (await fetch(`/api/jobs/${jobId}`)).json(); cuts = full.cuts; indexCuts(); paintCuts(); renderFilters(); renderCutList(); updateSummary(); }
+  };
+  poll();
+});
+
+// ---------------------------------------------------------------- 내보내기
+function updateExportInfo() {
+  const ex = state.export || {};
+  if (ex.status === 'running') { $('ebarWrap').hidden = false; $('ebar').style.width = ((ex.progress || 0) * 100) + '%'; $('exportInfo').textContent = `렌더링 중 ${Math.round((ex.progress || 0) * 100)}%`; $('btnExport').disabled = true; }
+  else if (ex.status === 'done') { $('ebarWrap').hidden = true; $('exportInfo').textContent = `완료: ${ex.file}`; $('dl').hidden = false; $('dl').href = `/api/jobs/${jobId}/download`; $('btnExport').disabled = false; }
+  else if (ex.status === 'error') { $('ebarWrap').hidden = true; $('exportInfo').textContent = '내보내기 실패: ' + ex.error; $('btnExport').disabled = false; }
+  else { $('btnExport').disabled = false; }
+}
+$('btnExport').addEventListener('click', async () => {
+  clearTimeout(saveTimer);
+  await fetch(`/api/jobs/${jobId}/cuts`, {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({cuts: cuts.map(({_w0, _w1, ...c}) => c)})});
+  const r = await fetch(`/api/jobs/${jobId}/export`, {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({audio_only: $('audioOnly').checked})});
+  if (!r.ok) { alert((await r.json()).detail); return; }
+  state.export = {status: 'running', progress: 0}; updateExportInfo(); $('dl').hidden = true;
+  document.querySelector('details.panel[open]') || document.querySelectorAll('details.panel')[2].setAttribute('open', '');
+  const poll = async () => {
+    const s = await (await fetch(`/api/jobs/${jobId}?light=1`)).json();
+    state.export = s.export; updateExportInfo();
+    if (s.export.status === 'running') setTimeout(poll, 1000);
+  };
+  poll();
+});
+
+load();
+</script>
+</body>
+</html>
